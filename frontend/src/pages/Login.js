@@ -1,10 +1,10 @@
 import React from 'react';
 import {
-  // BrowserRouter as Router,
-  Switch,
-  Route,
   Link,
 } from 'react-router-dom';
+import Container from '@material-ui/core/Container';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 const BACKEND_URL = 'http://localhost:5005/';
 
@@ -21,40 +21,17 @@ function Login() {
   }
 
   return (
-    <section>
-      <h2>Login the fucken page</h2>
-      <div name="login-container">
-        <form name="login-form">
-          <input
-            type="text"
-            placeholder="ENTER YOUR FUCKEN EMAIL BITCH"
-            name="email"
-            onChange={(event) => setEmail(event.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="ENTER YOUR FUCKEN PASSWORD BITCH"
-            name="password"
-            onChange={(event) => setPassword(event.target.value)}
-          />
+    <main>
+      <Container>
+        <h1>Sign In Bitch</h1>
+        <form>
+          <TextField label="Email*" varient="outlined" name="email" id="email" onChange={(event) => setEmail(event.target.value)} />
+          <TextField label="Password*" varient="outlined" type="password" name="password" id="password" onChange={(event) => setPassword(event.target.value)} />
+          <Button onClick={fetchLogin()} variant="contained">Sign In</Button>
+          <Link to="/register">Wanna participate in the best fucking game in the world? Register here</Link>
         </form>
-        <button name="login" onClick={fetchLogin()}>
-          Login
-        </button>
-        <span>
-          {' '}
-          If you don't have an account,
-          <Link to="/register">Register here</Link>
-        </span>
-
-        {/* So for each link we add, we need to include the Route in the switch tag, and the tag of the page we want to render */}
-        <Switch>
-          <Route path="/register">
-            {/* <Register /> */}
-          </Route>
-        </Switch>
-      </div>
-    </section>
+      </Container>
+    </main>
   );
 }
 
