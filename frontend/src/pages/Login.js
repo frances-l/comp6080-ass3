@@ -5,8 +5,9 @@ import {
 import Container from '@material-ui/core/Container';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import API from '../utils/api';
 
-const BACKEND_URL = 'http://localhost:5005/';
+const api = new API('http://localhost:5005');
 
 function Login() {
   const [email, setEmail] = React.useState('');
@@ -14,9 +15,9 @@ function Login() {
 
   async function fetchLogin() {
     if (email && password) {
-      const res = await fetch(`${BACKEND_URL}admin/auth/login`);
-      const responseJson = await res.json();
-      console.log(responseJson);
+      // const res = await fetch(`${BACKEND_URL}admin/auth/login`);
+      // const responseJson = await res.json();
+      // console.log(responseJson);
     }
   }
 
