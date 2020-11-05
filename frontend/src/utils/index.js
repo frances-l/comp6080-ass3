@@ -1,4 +1,4 @@
-const TOKEN_KEY = 'TOKEN';
+const TOKEN_KEY = 'user_token';
 
 function isLogin() {
   if (localStorage.getItem(TOKEN_KEY)) {

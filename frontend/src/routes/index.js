@@ -8,7 +8,7 @@ import PublicRoute from '../components/PublicRoute';
 const routes = [
   <PublicRoute restricted component={Login} path="/login" exact />,
   <PublicRoute restricted component={Register} path="/register" exact />,
-  <PublicRoute restricted={false} component={Homepage} path="/" exact />,
+  <PublicRoute restricted={false} component={Homepage} path="/homepage" exact />,
 ];
 
 export default routes;
