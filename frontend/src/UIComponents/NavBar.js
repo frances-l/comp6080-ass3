@@ -32,7 +32,7 @@ const NavBar = () => {
 
   return (
     <header>
-      <AppBar className={classes.navBar}>
+      <AppBar className={classes.navBar} key="nav-bar">
         <IconButton onClick={(event) => toggleMenu(event)}>
           <MenuIcon />
         </IconButton>

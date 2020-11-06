@@ -8,28 +8,43 @@ import GameCard from '../UIComponents/GameCard';
 
 const api = new API('http://localhost:5005');
 
-const getQuizzes = async () => {
-  // The quizzes in the response don't contain all of the information we need
-  const quizzes = await api.get('/admin/quiz', {
-    header: getToken(),
-  });
-
-  // using all of the id's we found from the previous api call
-  // we can get all of the information we actually need
-  // this should return a list of quiz meta data.
-  return Promise.all(quizzes.map(async (quiz) => {
-    await api.get(`/admin/quiz/${quiz.id}`, { header: getToken() });
-  }));
-};
-
 function Dashboard() {
   const [games, setGames] = React.useState([]);
-  const allQuizzes = getQuizzes();
-  console.log(allQuizzes);
-  setGames(allQuizzes);
+
+  React.useEffect(async () => {
+    const quizzes = await api.get('admin/quiz', {
+      headers: { Authorization: getToken() },
+    });
+
+    console.log(quizzes.quizzes);
+    // using all of the id's we found from the previous api call
+    // we can get all of the information we actually need
+    // this should return a list of quiz meta data.
+
+    // const allPromises = Promise.all(quizzes.quizzes.map(async (quiz) => {
+    //   const resp = await api.get(`admin/quiz/${quiz.id}`,
+    //     { headers: { Authorization: getToken() } });
+    //   return resp;
+    // }));
+
+    // const allQuizzes = await Promise.all(quizzes.quizzes.map(async (quiz) => (
+    //   api.get(`admin/quiz/${quiz.id}`, { headers: { Authorization: getToken() } })
+    // )));
+    console.log(getToken());
+    const allQuizzes = await Promise.all(quizzes.quizzes.map(async (quiz) => {
+      const res = await api.get(`admin/quiz/${quiz.id}`, { headers: { Authorization: getToken() } });
+      console.log(res);
+      return {
+        id: quiz.id, questions: res.questions, title: quiz.name, imgSrc: res.thumbnail,
+      };
+    }));
+    console.log(allQuizzes);
+    setGames(allQuizzes);
+  }, []);
 
   return (
     <main>
+
       <header>
         <NavBar />
       </header>
@@ -38,6 +53,7 @@ function Dashboard() {
         {/* {Note lint doesn't fucking allow object types so we have to do this} */}
         {games.map((quiz) => (
           <GameCard
+            qId={quiz.id}
             questions={quiz.questions}
             title={quiz.name}
             imgSrc={quiz.thumbnail}

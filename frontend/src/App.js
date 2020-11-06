@@ -9,7 +9,7 @@ import routes from './routes';
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter key="routes">
       <Switch>{routes}</Switch>
     </BrowserRouter>
   );
