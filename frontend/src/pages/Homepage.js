@@ -2,8 +2,11 @@ import React from 'react';
 import { Button, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import NavBar from '../UIComponents/NavBar';
+import getToken from '../utils/helpers';
 
 function Homepage() {
+  console.log(getToken());
+
   const history = useHistory();
 
   function register() {
