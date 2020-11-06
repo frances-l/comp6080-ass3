@@ -1,21 +1,15 @@
 import React from 'react';
 import {
-  AppBar, Typography, Button, Popper, makeStyles, MenuList, MenuItem, IconButton, Paper,
+  AppBar, Paper, Typography, Button, makeStyles, Popover, TextField,
 } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
 import { useHistory } from 'react-router-dom';
+// import Popup from './Popup';
 
 const NavBar = () => {
   const history = useHistory();
-  const [menuOpen, setMenuOpen] = React.useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const toggleMenu = (event) => {
-    setAnchorEl(anchorEl ? null : event.currentTarget);
-    setMenuOpen(true);
-  };
 
-  const open = Boolean(anchorEl);
-
+  const [anchorEl1, setAnchorEl1] = React.useState(null);
+  const [anchorEl2, setAnchorEl2] = React.useState(null);
   const useStyles = makeStyles(() => ({
     navBar: {
       display: 'flex',
@@ -28,25 +22,55 @@ const NavBar = () => {
     history.push('/login');
   };
 
+  const handleClick1 = (event) => {
+    setAnchorEl1(event.currentTarget);
+  };
+  const handleClick2 = (event) => {
+    setAnchorEl2(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl1(null);
+    setAnchorEl2(null);
+  };
   const classes = useStyles();
 
   return (
     <header>
       <AppBar className={classes.navBar} key="nav-bar">
-        <IconButton onClick={(event) => toggleMenu(event)}>
-          <MenuIcon />
-        </IconButton>
-        <Popper open={open} anchorEl={anchorEl} disablePortal>
-          <Paper>
-            <MenuList autoFocusItem={menuOpen}>
-              <MenuItem key="1">New Game</MenuItem>
-              <MenuItem key="2">Join Game</MenuItem>
-            </MenuList>
-          </Paper>
-        </Popper>
         <Typography variant="h4">BigBrain</Typography>
+        <Button onClick={(event) => handleClick1(event)}>Create Quiz</Button>
+        <Popover
+          id="a"
+          open={Boolean(anchorEl1)}
+          anchorEl={anchorEl1}
+          onClose={handleClose}
+        >
+          <Button>helo</Button>
+          <Button>he321lo</Button>
+          <Button>he213lo</Button>
+          <Button>hel432o</Button>
+        </Popover>
+        <Button onClick={(event) => handleClick2(event)}>Join Game</Button>
+        <Popover
+          id="a"
+          open={Boolean(anchorEl2)}
+          anchorEl={anchorEl2}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+        >
+          <Paper>
+            <TextField variant="outlined" label="Enter Game ID" />
+          </Paper>
+        </Popover>
         <Button onClick={handleLogout}>Logout</Button>
-        {/* <Button onClick={(event) => toggleMenu(event)}>clickme</Button> */}
       </AppBar>
     </header>
   );
