@@ -66,7 +66,7 @@ function Register() {
             <TextField label="Name*" variant="outlined" name="name" id="name" onChange={(event) => setName(event.target.value)} />
             {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             <TextField label="Email*" variant="outlined" name="email" id="email" onChange={(event) => setEmail(event.target.value)} />
-            <TextField label="Password" variant="outlined" name="password" type="password" id="password" onChange={(event) => setPassword(event.target.value)} />
+            <TextField label="Password*" variant="outlined" name="password" type="password" id="password" onChange={(event) => setPassword(event.target.value)} />
             {/* <TextField label="Confirm Password*" variant="outlined"
             name="confirm-password" type="password" id="confirm-password"
             onChange={(event) => setConfirmPassword(event.target.value)} /> */}

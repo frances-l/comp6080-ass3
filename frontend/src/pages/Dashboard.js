@@ -29,7 +29,7 @@ function Dashboard() {
         return {
           id: quiz.id, questions: res.questions, title: quiz.name, imgSrc: res.thumbnail,
         };
-      })); // push so i can work on my own
+      }));
       console.log(allQuizzes);
       setGames(allQuizzes);
     })();
