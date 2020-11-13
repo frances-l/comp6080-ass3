@@ -5,6 +5,7 @@ import NavBar from '../UIComponents/NavBar';
 import API from '../utils/api';
 import getToken from '../utils/helpers';
 import GameCard from '../UIComponents/GameCard';
+import logo from '../assets/BBLogo.jpg';
 
 const api = new API('http://localhost:5005');
 
@@ -25,9 +26,14 @@ function Dashboard() {
       // the second we get the questions and thumbnail.
       const allQuizzes = await Promise.all(quizzes.quizzes.map(async (quiz) => {
         const res = await api.get(`admin/quiz/${quiz.id}`, { headers: { Authorization: getToken() } });
-        console.log(res);
+        let { thumbnail } = res;
+        if (thumbnail === null) {
+          console.log('ok');
+          thumbnail = logo;
+        }
+        console.log(thumbnail);
         return {
-          id: quiz.id, questions: res.questions, title: quiz.name, imgSrc: res.thumbnail,
+          id: quiz.id, questions: res.questions, title: quiz.name, thumbnail,
         };
       })); // push so i can work on my own
       console.log(allQuizzes);
@@ -36,8 +42,7 @@ function Dashboard() {
   }, []);
 
   return (
-    <main>
-
+    <main id="dashboard">
       <header>
         <NavBar />
       </header>

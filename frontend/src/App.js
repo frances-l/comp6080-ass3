@@ -6,12 +6,15 @@ import {
   Switch,
 } from 'react-router-dom';
 import routes from './routes';
+import StoreProvider from './utils/store';
 
 function App() {
   return (
-    <BrowserRouter key="routes">
-      <Switch>{routes}</Switch>
-    </BrowserRouter>
+    <StoreProvider>
+      <BrowserRouter key="routes">
+        <Switch>{routes}</Switch>
+      </BrowserRouter>
+    </StoreProvider>
   );
 }
 
