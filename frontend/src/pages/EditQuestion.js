@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
 }));
 
-function EditGame(props) {
+function EditQuestion(props) {
   const { questions } = React.useContext(StoreContext);
   const [quizQuestions, setQuizQuestions] = questions;
   const { match: { params } } = props;
@@ -111,8 +111,8 @@ function EditGame(props) {
   );
 }
 
-EditGame.propTypes = {
+EditQuestion.propTypes = {
   match: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
-export default EditGame;
+export default EditQuestion;
