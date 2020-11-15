@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  AppBar, Paper, Typography, Button, makeStyles, Modal, TextField,
+  AppBar, Typography, Button, makeStyles, Modal,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 // import Popup from './Popup';
@@ -51,12 +51,9 @@ const NavBar = () => {
           aria-labelledby="new-game"
           aria-describedby="new-game-popup"
         >
-          <NewGameModal />
+          <NewGameModal setOpen={setOpen} />
         </Modal>
         <Button>Join Game</Button>
-        <Paper>
-          <TextField variant="outlined" label="Enter Game ID" />
-        </Paper>
         <Button onClick={handleLogout}>Logout</Button>
       </AppBar>
     </header>

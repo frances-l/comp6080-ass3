@@ -5,6 +5,8 @@ import {
   CardContent, Typography, Card, CardMedia, Button, CardActions, makeStyles,
 } from '@material-ui/core';
 
+// TODO handle deleting the quiz
+
 const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
@@ -39,6 +41,7 @@ const GameCard = ({
       </CardContent>
       <CardActions>
         <Button onClick={linkEdit}>Edit Game</Button>
+        <Button>Delete Game</Button>
         <Button onClick={linkStart}>Start Game</Button>
       </CardActions>
     </Card>

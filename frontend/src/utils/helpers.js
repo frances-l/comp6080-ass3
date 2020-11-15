@@ -34,3 +34,8 @@ export function getStockImage() {
   reader.readAsDataURL(logo);
   return dataUrlPromise;
 }
+
+export function getQuestion(questions, id) {
+  const exists = questions.filter((question) => (question.id === id));
+  return exists;
+}

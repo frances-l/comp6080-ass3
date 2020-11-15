@@ -1,115 +1,152 @@
 import React from 'react';
 import {
-  Grid, Button, makeStyles, Box, TextField,
+  TextField, Grid, Button, FormControl, Box, InputBase,
+  InputLabel, Select, MenuItem, Checkbox, FormControlLabel, Snackbar, styled, Paper,
 } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
+import { DropzoneArea } from 'material-ui-dropzone';
 import PropTypes from 'prop-types';
-// import { useHistory } from 'react-router-dom';
-import NavBar from '../UIComponents/NavBar';
-// import QuestionsTab from '../UIComponents/QuestionsTab';
-import API from '../utils/api';
-import getToken from '../utils/helpers';
-import QuestionPanel from '../UIComponents/QuestionPanel';
-import QuizNav from '../UIComponents/QuizNav';
 import { StoreContext } from '../utils/store';
+import { getQuestion } from '../utils/helpers';
+import NavBar from '../UIComponents/NavBar';
+// import PropTypes from 'prop-types';
+import AppBarSpacer from '../utils/styles';
 
-const api = new API('http://localhost:5005');
+const FormLayout = styled(Box)({
+  display: 'flex',
+  flexDirection: 'row',
+});
 
-// note for future reference,
-// giving up on this shit for now cuz its fucking annoying me and taking too much time
-// need to finish the way we handle answers in QuestionPanel.js
-// need to finish the way we confirm questions with edit
-// the way it works is that the page is split up into 3 portions
-// first part is the page itself
-// this consists of a side bar (Quiz Bar) that contains buttons that links to each question in quiz
-// also has a button to add a new question to the quiz and to confirm
-// button that links to question works-ish, confirm should be simple. Do need to handle errors still
-// Main portion of page is the actualy part where we edit
-// from this you can edit the quiz title (from any question you're edditing)
-// you can set/change question, upload media/files, answers, time, question type, delete question
-// and confirm. Confirm is difficult theres alot of different ways we can do it
-// I think it should be each time a user makes a change they have to confirm the question before
-// doing ANYTHING else or i guess lose what they've done (i havent thought on how to do that yet)
-// also might add a new button on the side bar to add optional answers
-// easier thing to do is just to have them all there already, and set them as optional.
-// also choosing the answers has to be dynamic in relation to the questionType
-// ie if its a single choice answer, then we should create the answers with radio buttons
-// if they change to multiple choice answers, then we should create the answers with select boxes
+const SecondaryButton = styled(Button)({
+  background: 'red',
+  color: 'white',
+});
 
-const useStyles = makeStyles((theme) => ({
-  sidebar: {
-    background: '#363636',
-    color: 'white',
-    maxWidth: '20vw',
-  },
-  text: {
-    color: 'white',
-  },
-  container: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  appBarSpacer: theme.mixins.toolbar,
-}));
-
-function EditQuestion(props) {
+const EditQuestion = (props) => {
+  const [question, setQuestion] = React.useState({});
+  const [open, setOpen] = React.useState(false);
   const { questions } = React.useContext(StoreContext);
-  const [quizQuestions, setQuizQuestions] = questions;
+  const [allQuestions, setAllQuestions] = questions;
   const { match: { params } } = props;
-  // figure out a way to get the quiz title
-  const [quizTitle, setQuizTitle] = React.useState('');
-  const handleClick = () => {
-    // first we need to check that all of the questions are valid
-    const quiz = { questions: quizQuestions, name: quizTitle };
-    api.put(`admin/quiz/${params.gid}`, { body: quiz });
+
+  const handleChange = (attr, value) => {
+    const updatedQuestion = question;
+    updatedQuestion[attr] = value;
+    setQuestion(updatedQuestion);
+  };
+
+  const handleSelect = (event) => {
+    console.log(event.target.value);
+    handleChange('qType', event.target.value);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   React.useEffect(() => {
-    (async () => {
-      const res = await api.get(`admin/quiz/${params.gid}`, { headers: { Authorization: getToken() } });
-      console.log(res);
-      if (res.questions.length > 1) {
-        console.log(res.questions);
-        setQuizQuestions(res.questions);
-      } else {
-        const questionPlaceholder = {
-          id: 0, question: '', qType: 'single', answers: [], points: 0, media: '', time: 0,
-        };
-        console.log('setting Questions');
-        setQuizQuestions([questionPlaceholder]);
-      }
-      setQuizTitle(res.name);
-    })();
-  }, [params.gid, setQuizQuestions, setQuizTitle]);
+    let currQuestion = getQuestion(allQuestions, params.qid);
+    if (!currQuestion) {
+      // if we're creating a new question
+      // allQuestions will be empty, so we need to set place holders so we can correctly
+      // render the default values of question type, points and timer.
+      currQuestion = {
+        id: allQuestions.length, question: '', qType: 'single', answers: [], points: 10, media: '', time: 30,
+      };
+    }
+    setQuestion(currQuestion);
+  }, [allQuestions, params.qid]);
 
-  console.log(quizTitle);
-  const classes = useStyles();
-
+  const handleConfirm = () => {
+    if (!open) {
+      setAllQuestions(question);
+    }
+  };
+  // if we're editting a previous question
   return (
-    <main>
+    <section>
       <NavBar />
-      <div className={classes.appBarSpacer} />
-      <Box className={classes.container}>
-        <Grid
-          container
-          direction="column"
-          role="navigation"
-          className={classes.sidebar}
-        >
-          <Grid item>
-            <QuizNav quizId={Number(params.gid)} questionId={Number(params.qid)} />
-            {/* <Button color="inherit"
-            fullWidth variant="outlined" onClick={handleAddQuestionClick}>Add Question</Button> */}
-            <Button color="inherit" fullWidth variant="outlined" onClick={handleClick}>Confirm Quiz</Button>
+      <AppBarSpacer />
+      <FormLayout container direction="row">
+        <Grid container item direction="column">
+          <Grid item xs={8}>
+            <TextField
+              variant="filled"
+              fullWidth
+              label="Whats your Question?"
+              onBlur={(event) => { handleChange('question', event.target.value); }}
+            />
+          </Grid>
+          <Grid item xs={11}>
+            <DropzoneArea
+              acceptedFiles={['image/*', 'audio/*', 'video/*']}
+              dropzoneText="Elevate your question! Click or drag and drop to upload a picture, audio clip, or video!"
+              onChange={(file) => { handleChange('media', file); }}
+              filesLimit={1}
+            />
           </Grid>
         </Grid>
-        <Grid container>
-          <TextField fullWidth label="Quiz Title" defaultValue={quizTitle} />
-          <QuestionPanel />
+        <Grid container item direction="column" xs={4} justify="space-between">
+          <FormControl>
+            <InputLabel id="question-type-label">Question Type</InputLabel>
+            <Select displayEmpty labelId="question-type-label" id="question-type-select" defaultValue="Single Choice" onChange={handleSelect}>
+              <MenuItem value="single">Single Choice</MenuItem>
+              <MenuItem value="multi">Multiple Choice</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField id="points" onChange={(event) => handleChange('points', event.target.value)} label="Points?" />
+          <Grid item>
+            <SecondaryButton variant="contained">Delete Question</SecondaryButton>
+          </Grid>
+          <Button variant="contained" onClick={handleConfirm}>Confirm Question</Button>
+          <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+            <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity="error">
+              Please Confirm your question before Continuing
+            </MuiAlert>
+          </Snackbar>
         </Grid>
-      </Box>
-    </main>
+      </FormLayout>
+      <Grid container direction="row" spacing={2}>
+        <Grid item xs={6}>
+          <Paper>
+            <InputBase variant="filled" required placeholder="Answer 1" />
+            <FormControlLabel control={<Checkbox />} />
+          </Paper>
+        </Grid>
+        <Grid item xs={6} justify="spaced-between">
+          <Paper>
+            <TextField variant="filled" placeholder="Answer 2" />
+            <FormControlLabel control={<Checkbox />} />
+          </Paper>
+        </Grid>
+        <Grid item xs={6}>
+          <Paper>
+            <TextField variant="filled" placeholder="Answer 1 (Optional)" />
+            <FormControlLabel control={<Checkbox />} />
+          </Paper>
+        </Grid>
+        <Grid item xs={6}>
+          <Paper>
+            <TextField variant="filled" placeholder="Answer 4 (Optional)" />
+            <FormControlLabel control={<Checkbox />} />
+          </Paper>
+        </Grid>
+        <Grid item xs={6}>
+          <Paper>
+            <TextField variant="filled" placeholder="Answer 5 (Optional)" />
+            <FormControlLabel control={<Checkbox />} />
+          </Paper>
+        </Grid>
+        <Grid item xs={6}>
+          <Paper>
+            <TextField variant="filled" placeholder="Answer 6 (Optional)" />
+            <FormControlLabel control={<Checkbox />} />
+          </Paper>
+        </Grid>
+      </Grid>
+    </section>
   );
-}
+};
 
 EditQuestion.propTypes = {
   match: PropTypes.objectOf(PropTypes.any).isRequired,

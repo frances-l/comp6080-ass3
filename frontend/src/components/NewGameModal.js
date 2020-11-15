@@ -28,15 +28,16 @@ const NewGameModal = ({ setOpen }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    console.log(title);
     if (title === '') {
       setErrorToggle(true);
       setTitleError('Please enter a name');
     } else {
-      const res = await api.post('admin/quiz/new', { headers: { 'content-type': 'application/json', Authorization: getToken() } });
+      const res = await api.post('admin/quiz/new', { headers: { 'content-type': 'application/json', Authorization: getToken() }, body: JSON.stringify({ name: title }) });
       if (res.quizId) {
         setOpen(false);
         setQuiz(res.quizId);
-        history.push(`/edit/${res.quizId}/0`);
+        history.push(`/edit/${res.quizId}`);
       } else {
         // handle errors
       }
