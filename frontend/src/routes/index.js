@@ -6,6 +6,7 @@ import Dashboard from '../pages/Dashboard';
 import EditGame from '../pages/EditGame';
 import PublicRoute from '../components/PublicRoute';
 import PrivateRoute from '../components/PrivateRoute';
+import JoinGame from '../pages/JoinGame';
 
 const routes = [
   <PublicRoute restricted component={Login} path="/login" exact />,
@@ -16,6 +17,7 @@ const routes = [
   // incase you wanted to pass in some props you would do it this way
   <PrivateRoute component={EditGame} path="/edit/:gid/:qid" exact />,
   <PrivateRoute component={EditGame} path="/edit/:gid" exact />,
+  <PrivateRoute component={JoinGame} path="/join" exact />,
 ];
 
 export default routes;
