@@ -8,10 +8,12 @@ export default ({ children }) => {
   const [questions, setQuestions] = React.useState([]);
   const [editQuestion, setEditQuestion] = React.useState({});
   const [quiz, setQuiz] = React.useState(0);
+  const [questionConfirmed, setQuestionConfirmed] = React.useState(false);
   const store = {
     questions: [questions, setQuestions],
     editQuestion: [editQuestion, setEditQuestion],
     quiz: [quiz, setQuiz],
+    questionConfirmed: [questionConfirmed, setQuestionConfirmed],
   };
 
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;

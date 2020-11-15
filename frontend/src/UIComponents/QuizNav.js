@@ -56,7 +56,6 @@ const QuizNav = ({ quizId, questionId }) => {
           {`Question ${i + 1}`}
         </Button>
       ))}
-      <Button>placeholder</Button>
       <Button color="inherit" fullWidth variant="outlined" onClick={handleAddQuestionClick}>Add Question</Button>
     </aside>
   );

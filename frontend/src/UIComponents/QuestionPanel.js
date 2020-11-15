@@ -1,9 +1,11 @@
 import React from 'react';
 import {
-  TextField, Grid, Button, styled, Paper, FormControl,
-  InputLabel, Select, MenuItem, Checkbox, FormControlLabel, Box,
+  TextField, Grid, Button, styled, FormControl,
+  InputLabel, Select, MenuItem, Checkbox, FormControlLabel, Box, Snackbar,
 } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 import { DropzoneArea } from 'material-ui-dropzone';
+import PropTypes from 'prop-types';
 import { StoreContext } from '../utils/store';
 
 const FormLayout = styled(Box)({
@@ -11,11 +13,36 @@ const FormLayout = styled(Box)({
   flexDirection: 'row',
 });
 
-const QuestionPanel = () => {
-  // const context = React.useContext(StoreContext);
-  // const { editQuestion: [editQuestion, setEditQuestion] } = context;
+const AnswerContainer = styled(Box)({
+  display: 'flex',
+  flexDirection: 'row',
+  background: '#333333',
+  color: 'white',
+});
+
+const AnswerTextField = styled(TextField)({
+  color: 'white',
+});
+
+const SideBar = styled(Grid)({
+  background: '#363636',
+  color: 'white',
+});
+
+const SecondaryButton = styled(Button)({
+  background: 'red',
+  color: 'white',
+});
+
+const QuestionPanel = ({ qId }) => {
   const { editQuestion } = React.useContext(StoreContext);
+  // const { questionConfirmed } = React.useContext(StoreContext);
+  const { questions } = React.useContext(StoreContext);
+  const [quizQuestions, setQuizQuestions] = questions;
+  // const [confirmed, setConfirmed] = questionConfirmed;
   const [edit, setEdit] = editQuestion;
+  const [open, setOpen] = React.useState(false);
+
   const handleChange = (attr, value) => {
     console.log(value);
     const updatedQuestion = edit;
@@ -26,6 +53,39 @@ const QuestionPanel = () => {
 
   const handleSelect = (event) => {
     handleChange('qType', event.target.value);
+  };
+  const toggleError = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  // before user wants to add a question, they need to confirm the question first
+  // if its a valid question, then add the question to the list
+  const handleConfirm = () => {
+    const doesExist = quizQuestions.filter(((question) => (question.id === qId)));
+
+    if (edit.question && edit.answers && edit.points && edit.time) {
+      // there are 2 cases
+      // case 1 if the question doesnt already exist in the list
+      const newQuestion = edit;
+      newQuestion.id = qId;
+      let newQuizQuestions;
+      if (!doesExist) {
+        // just append the question
+        newQuizQuestions = [...quizQuestions, newQuestion];
+      // case 2 if the question already exists in the list
+      } else {
+        // find the id of the question and update the values,
+        newQuizQuestions = quizQuestions.map((question) => (
+          question.id === qId ? newQuestion : question));
+      }
+
+      setQuizQuestions(newQuizQuestions);
+    } else {
+      toggleError();
+    }
   };
 
   return (
@@ -42,7 +102,7 @@ const QuestionPanel = () => {
         </Grid>
         <Grid item sm={12}>
           <DropzoneArea
-            acceptedFiles={['image/*']}
+            acceptedFiles={['image/*', 'audio/*', 'video/*']}
             dropzoneText="Elevate your question! Click or drag and drop to upload a picture, audio clip, or video!"
             onChange={(file) => { handleChange('media', file); }}
             filesLimit={1}
@@ -50,24 +110,24 @@ const QuestionPanel = () => {
         </Grid>
         <Grid container item direction="row">
           <Grid item>
-            <Paper>
-              <TextField
+            <AnswerContainer>
+              <AnswerTextField
                 id="answer-1"
-                variant="filled"
+                variant="outlined"
                 fullWidth
                 label="Enter Answers here"
-                onChange={(event) => handleChange('answer', event.target.value)}
+                onChange={(event) => handleChange('answers', event.target.value)}
               />
               <FormControlLabel
                 value="ans-1"
                 control={<Checkbox />}
                 label="Correct Answer"
               />
-            </Paper>
+            </AnswerContainer>
           </Grid>
         </Grid>
       </Grid>
-      <Grid container item direction="row" xs={3} alignContent="space-between">
+      <SideBar container item direction="row" xs={3} alignContent="space-between">
         <FormControl>
           <InputLabel id="question-type-label">Question Type</InputLabel>
           <Select displayEmpty labelId="question-type-label" id="question-type-select" defaultValue="Single Choice" onChange={handleSelect}>
@@ -77,11 +137,21 @@ const QuestionPanel = () => {
         </FormControl>
         <TextField id="points" onChange={(event) => handleChange('points', event.target.value)} label="How many points is your question worth?" />
         <Grid item>
-          <Button variant="contained">Delete Question</Button>
+          <SecondaryButton variant="contained">Delete Question</SecondaryButton>
         </Grid>
-      </Grid>
+        <Button variant="contained" onClick={handleConfirm}>Confirm Question</Button>
+        <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+          <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity="error">
+            Please Confirm your question before Continuing
+          </MuiAlert>
+        </Snackbar>
+      </SideBar>
     </FormLayout>
   );
+};
+
+QuestionPanel.propTypes = {
+  qId: PropTypes.number.isRequired,
 };
 
 export default QuestionPanel;
