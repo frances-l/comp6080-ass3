@@ -4,13 +4,13 @@ import {
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
-import { StoreContext } from '../utils/store';
+// import { StoreContext } from '../utils/store';
 import logo from '../assets/BBLogo.jpg';
 import NavBar from '../UIComponents/NavBar';
-import getToken from '../utils/helpers';
-import API from '../utils/api';
+import { getQuiz } from '../utils/helpers';
+// import API from '../utils/api';
 
-const api = new API('http://localhost:5005');
+// const api = new API('http://localhost:5005');
 
 const useStyles = makeStyles(() => ({
   appBarSpacer: {
@@ -21,36 +21,42 @@ const useStyles = makeStyles(() => ({
 
 const EditQuiz = (props) => {
   // this should contain all of the questions from the quiz we want to check out.
-  const { questions } = React.useContext(StoreContext);
-  const [allQuestions, setAllQuestions] = questions;
+  const [quiz, setQuiz] = React.useState({});
+  const [questions, setQuestions] = React.useState([]);
   const { match: { params } } = props;
   const history = useHistory();
   const handleMedia = (file) => (file || logo);
 
   React.useEffect(() => {
     (async () => {
-      const res = await api.get(`admin/quiz/${params.gid}`, { headers: { Authorization: getToken() } });
+      const res = await getQuiz(params.gid);
       console.log(res);
-      if (res.questions.length > 1) {
-        setAllQuestions(questions);
+      setQuiz(res);
+      console.log('setting quiz');
+      if (res.questions.length >= 1) {
+        console.log('setting pre-existing');
+        setQuestions(res.questions);
       }
     })();
-  }, [params.gid, questions, setAllQuestions]);
+  }, [params.gid]);
 
   const QuestionCard = () => {
     const handleRedirect = (qId) => {
-      history.push(`edit/${params.gid}/${qId}`);
+      history.push(`/edit/${params.gid}/${qId}`);
     };
     const handleDelete = (qId) => {
-      const newQuestions = allQuestions.filter((question) => (
+      const newQuestions = questions.filter((question) => (
         question.id !== qId
       ));
-      setAllQuestions(newQuestions);
+      setQuestions(newQuestions);
+      const updatedQuiz = quiz;
+      updatedQuiz.questions = questions;
+      setQuiz(updatedQuiz);
     };
 
     return (
       <Grid container spacing={5}>
-        {allQuestions.map((question) => (
+        {questions.map((question) => (
           <Grid item xs={4} key={`question-card-${question.id}`}>
             <Card>
               <CardMedia
@@ -82,22 +88,22 @@ const EditQuiz = (props) => {
   const classes = useStyles();
 
   const handleNewQuestion = () => {
-    console.log(allQuestions.length);
-    history.push(`${params.gid}/${allQuestions.length}`);
+    console.log(questions.length);
+    history.push(`${params.gid}/${questions.length}`);
   };
 
   return (
     <div>
       <NavBar />
       <div className={classes.appBarSpacer} />
-      <Typography variant="h2">Title placeholder</Typography>
+      <Typography variant="h1">Title placeholder</Typography>
+      <div className={classes.appBarSpacer} />
       <Grid container spacing={5}>
         <QuestionCard />
       </Grid>
       <Grid direction="column" container>
         {(() => {
-          if (allQuestions.length === 0) {
-            console.log('hel232lo');
+          if (questions.length === 0) {
             return <Typography variant="h3">Heres a nice fresh quiz for you! Click the button below to start adding some questions!</Typography>;
           }
           return <div />;
@@ -109,8 +115,6 @@ const EditQuiz = (props) => {
           Add a new Question!
 
         </Button>
-        <Button>FASDFADSF</Button>
-        <Button>FASDFADSF</Button>
       </Grid>
     </div>
   );

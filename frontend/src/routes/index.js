@@ -16,8 +16,8 @@ const routes = [
   <PrivateRoute component={Dashboard} path="/dashboard" exact />,
   // <PrivateRoute component={NewGame} path="/CreateQuiz" exact />,
   // incase you wanted to pass in some props you would do it this way
-  <PrivateRoute component={EditQuestion} path="/edit/:gid/:qid" exact />,
   <PrivateRoute component={EditQuiz} path="/edit/:gid" exact />,
+  <PrivateRoute component={EditQuestion} path="/edit/:gid/:qid" exact />,
   <PrivateRoute component={JoinGame} path="/join" exact />,
 ];
 

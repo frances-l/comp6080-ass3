@@ -3,7 +3,7 @@ import { Typography } from '@material-ui/core';
 import NavBar from '../UIComponents/NavBar';
 // import isLogin from '../utils';
 import API from '../utils/api';
-import getToken from '../utils/helpers';
+import { getToken } from '../utils/helpers';
 import GameCard from '../UIComponents/GameCard';
 import logo from '../assets/BBLogo.jpg';
 

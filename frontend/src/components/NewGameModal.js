@@ -4,7 +4,7 @@ import {
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import getToken from '../utils/helpers';
+import { getToken } from '../utils/helpers';
 import API from '../utils/api';
 import { StoreContext } from '../utils/store';
 
@@ -37,7 +37,8 @@ const NewGameModal = ({ setOpen }) => {
       if (res.quizId) {
         setOpen(false);
         setQuiz(res.quizId);
-        history.push(`edit/${res.quizId}`);
+        console.log(`Setting quiz to ${res}`);
+        history.push(`/edit/${res.quizId}`);
       } else {
         // handle errors
       }

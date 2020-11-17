@@ -1,10 +1,13 @@
 import logo from '../assets/BBLogo.jpg';
-// import API from './api';
+import API from './api';
 
-// const api = new API('http://localhost:5005');
+const api = new API('http://localhost:5005');
 
-export default function getToken() {
+export function getToken() {
   return `Bearer ${localStorage.getItem('user_token')}`;
+}
+export async function getQuiz(id) {
+  return api.get(`admin/quiz/${id}`, { headers: { Authorization: getToken() } });
 }
 
 export function fileToDataUrl(file) {
@@ -36,6 +39,6 @@ export function getStockImage() {
 }
 
 export function getQuestion(questions, id) {
-  const exists = questions.filter((question) => (question.id === id));
+  const exists = questions.find((question) => (question.id === id));
   return exists;
 }

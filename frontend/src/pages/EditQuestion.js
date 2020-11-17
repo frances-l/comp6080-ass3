@@ -6,12 +6,13 @@ import {
 import MuiAlert from '@material-ui/lab/Alert';
 import { DropzoneArea } from 'material-ui-dropzone';
 import PropTypes from 'prop-types';
-import { StoreContext } from '../utils/store';
-import { getQuestion } from '../utils/helpers';
+import { useHistory } from 'react-router-dom';
+import { getQuestion, getQuiz, getToken } from '../utils/helpers';
 import NavBar from '../UIComponents/NavBar';
-// import PropTypes from 'prop-types';
 import AppBarSpacer from '../utils/styles';
+import API from '../utils/api';
 
+const api = new API('http://localhost:5005');
 const FormLayout = styled(Box)({
   display: 'flex',
   flexDirection: 'row',
@@ -23,43 +24,117 @@ const SecondaryButton = styled(Button)({
 });
 
 const EditQuestion = (props) => {
-  const [question, setQuestion] = React.useState({});
+  const [question, setQuestion] = React.useState({ score: 10, timer: 30, qType: 'single' });
   const [open, setOpen] = React.useState(false);
-  const { questions } = React.useContext(StoreContext);
-  const [allQuestions, setAllQuestions] = questions;
-  const { match: { params } } = props;
 
+  const { match: { params } } = props;
+  const history = useHistory();
   const handleChange = (attr, value) => {
     const updatedQuestion = question;
     updatedQuestion[attr] = value;
     setQuestion(updatedQuestion);
   };
 
-  const handleSelect = (event) => {
-    console.log(event.target.value);
-    handleChange('qType', event.target.value);
-  };
-
   const handleClose = () => {
     setOpen(false);
   };
 
-  React.useEffect(() => {
-    let currQuestion = getQuestion(allQuestions, params.qid);
-    if (!currQuestion) {
-      // if we're creating a new question
-      // allQuestions will be empty, so we need to set place holders so we can correctly
-      // render the default values of question type, points and timer.
-      currQuestion = {
-        id: allQuestions.length, question: '', qType: 'single', answers: [], points: 10, media: '', time: 30,
-      };
+  const handleAnswerTextChange = (aId, text) => {
+    const updatedQuestion = question;
+    const foundAnswer = question.answers.filter((a) => a.id === aId);
+    if (foundAnswer.length === 1) {
+      const newAnswers = question.answers.map((a) => {
+        if (a.id === aId) {
+          return { id: aId, answer: text, correct: a.correct };
+        }
+        return a;
+      });
+      updatedQuestion.answers = newAnswers;
+    } else {
+      const newAns = { id: aId, text, correct: false };
+      updatedQuestion.answers.push(newAns);
     }
-    setQuestion(currQuestion);
-  }, [allQuestions, params.qid]);
 
-  const handleConfirm = () => {
+    setQuestion(updatedQuestion);
+  };
+
+  const handleAnswerCorrectChange = (aId, isCorrect) => {
+    const updatedQuestion = question;
+    const foundAnswer = question.answers.filter((a) => a.id === aId);
+    if (foundAnswer.length === 1) {
+      const newAnswers = question.answers.map((a) => {
+        if (a.id === aId) {
+          return { id: aId, answer: a.text, correct: isCorrect };
+        }
+        return a;
+      });
+      updatedQuestion.answers = newAnswers;
+      setQuestion(updatedQuestion);
+    } else {
+      const newAns = { id: aId, text: '', correct: isCorrect };
+      updatedQuestion.answers.push(newAns);
+    }
+
+    setQuestion(updatedQuestion);
+  };
+
+  React.useEffect(() => {
+    (async () => {
+      // get the quiz
+      const res = await getQuiz(params.gid);
+      // if the quiz has questions, setQuestion to the correct question we want to edit
+      const questionCheck = getQuestion(res.questions, params.qid);
+      console.log(questionCheck);
+      if (questionCheck) {
+        console.log('setting question from questionCheck');
+        setQuestion(questionCheck);
+      // otherwise if we're adding a new question
+      } else {
+        // add a placeholder question so we can manipulate it
+        console.log('setting placeholder question');
+        setQuestion({
+          id: params.qid,
+          qType: 'single',
+          question: '',
+          score: 10,
+          time: 30,
+          media: '',
+          answers: [],
+        });
+      }
+    })();
+  }, [params.gid, params.qid]);
+
+  const handleConfirm = async () => {
     if (!open) {
-      setAllQuestions(question);
+      const quiz = await getQuiz(params.gid);
+      const qExist = quiz.questions.find((q) => q.id === params.qid);
+      // if there are already questions
+      if (qExist) {
+        const quizQuestions = quiz.questions.map((q) => {
+          if (q.id === params.qid) {
+            return question;
+          }
+          return q;
+        });
+        quiz.questions = quizQuestions;
+      } else {
+        quiz.questions = [...quiz.questions, question];
+      }
+
+      console.log(quiz);
+      console.log(quiz.questions);
+      console.log(params.gid);
+      const res = await api.put(`admin/quiz/${params.gid}`, {
+        headers: { 'Content-type': 'application/json', Authorization: getToken() },
+        body: JSON.stringify({
+          questions: quiz.questions,
+          name: 'yo',
+          thumbnail: quiz.thumbnail,
+        }),
+      });
+      console.log(res);
+      history.push(`/edit/${params.gid}`);
     }
   };
   // if we're editting a previous question
@@ -89,12 +164,13 @@ const EditQuestion = (props) => {
         <Grid container item direction="column" xs={4} justify="space-between">
           <FormControl>
             <InputLabel id="question-type-label">Question Type</InputLabel>
-            <Select displayEmpty labelId="question-type-label" id="question-type-select" defaultValue="Single Choice" onChange={handleSelect}>
+            <Select displayEmpty labelId="question-type-label" id="question-type-select" value={question.qType} onChange={(event) => handleChange('qType', event.target.value)}>
               <MenuItem value="single">Single Choice</MenuItem>
               <MenuItem value="multi">Multiple Choice</MenuItem>
             </Select>
           </FormControl>
-          <TextField id="points" onChange={(event) => handleChange('points', event.target.value)} label="Points?" />
+          <TextField id="points" value={question.points} onChange={(event) => handleChange('points', event.target.value)} label="Points?" />
+          <TextField id="timer" onChange={(event) => handleChange('timer', event.target.value)} label="Question Duration" />
           <Grid item>
             <SecondaryButton variant="contained">Delete Question</SecondaryButton>
           </Grid>
@@ -109,41 +185,60 @@ const EditQuestion = (props) => {
       <Grid container direction="row" spacing={2}>
         <Grid item xs={6}>
           <Paper>
-            <InputBase variant="filled" required placeholder="Answer 1" />
-            <FormControlLabel control={<Checkbox />} />
-          </Paper>
-        </Grid>
-        <Grid item xs={6} justify="spaced-between">
-          <Paper>
-            <TextField variant="filled" placeholder="Answer 2" />
-            <FormControlLabel control={<Checkbox />} />
+            <InputBase onChange={(event) => handleAnswerTextChange(1, event.target.value)} variant="filled" required placeholder="Answer 1" />
+            <FormControlLabel
+              onChange={(event) => handleAnswerCorrectChange(1, event.target.checked)}
+              control={<Checkbox />}
+            />
           </Paper>
         </Grid>
         <Grid item xs={6}>
           <Paper>
-            <TextField variant="filled" placeholder="Answer 1 (Optional)" />
-            <FormControlLabel control={<Checkbox />} />
+            <InputBase onChange={(event) => handleAnswerTextChange(2, event.target.value)} variant="filled" required placeholder="Answer 2" />
+            <FormControlLabel
+              onChange={(event) => handleAnswerCorrectChange(2, event.target.checked)}
+              control={<Checkbox />}
+            />
           </Paper>
         </Grid>
         <Grid item xs={6}>
           <Paper>
-            <TextField variant="filled" placeholder="Answer 4 (Optional)" />
-            <FormControlLabel control={<Checkbox />} />
+            <InputBase onChange={(event) => handleAnswerTextChange(3, event.target.value)} variant="filled" required placeholder="Answer 3 (Optional)" />
+            <FormControlLabel
+              onChange={(event) => handleAnswerCorrectChange(3, event.target.checked)}
+              control={<Checkbox />}
+            />
           </Paper>
         </Grid>
         <Grid item xs={6}>
           <Paper>
-            <TextField variant="filled" placeholder="Answer 5 (Optional)" />
-            <FormControlLabel control={<Checkbox />} />
+            <InputBase onChange={(event) => handleAnswerTextChange(4, event.target.value)} variant="filled" required placeholder="Answer 4 (Optional)" />
+            <FormControlLabel
+              onChange={(event) => handleAnswerCorrectChange(4, event.target.checked)}
+              control={<Checkbox />}
+            />
           </Paper>
         </Grid>
         <Grid item xs={6}>
           <Paper>
-            <TextField variant="filled" placeholder="Answer 6 (Optional)" />
-            <FormControlLabel control={<Checkbox />} />
+            <InputBase onChange={(event) => handleAnswerTextChange(5, event.target.value)} variant="filled" required placeholder="Answer 5" />
+            <FormControlLabel
+              onChange={(event) => handleAnswerCorrectChange(5, event.target.checked)}
+              control={<Checkbox />}
+            />
+          </Paper>
+        </Grid>
+        <Grid item xs={6}>
+          <Paper>
+            <InputBase onChange={(event) => handleAnswerTextChange(6, event.target.value)} variant="filled" required placeholder="Answer 6 (Optional)" />
+            <FormControlLabel
+              onChange={(event) => handleAnswerCorrectChange(6, event.target.checked)}
+              control={<Checkbox />}
+            />
           </Paper>
         </Grid>
       </Grid>
+
     </section>
   );
 };
