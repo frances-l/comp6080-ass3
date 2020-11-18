@@ -42,8 +42,10 @@ const NavBar = () => {
     <header>
       <AppBar className={classes.navBar} key="nav-bar">
         {/* Probably change this logo to a svg so its not dooky quality */}
-        <img src={logo} alt="BB-logo" className={classes.image} />
-        <Typography variant="h4">BigBrain</Typography>
+        <a href="http://localhost:3000/dashboard">
+          <img src={logo} alt="BB-logo" className={classes.image} />
+        </a>
+        <Typography variant="h4" onClick={() => history.push('/dashboard')}>BigBrain</Typography>
         <Button onClick={handleNewGameClick}>Create Quiz</Button>
         <Modal
           open={open}

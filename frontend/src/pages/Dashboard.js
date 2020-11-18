@@ -31,9 +31,13 @@ function Dashboard() {
           console.log('ok');
           thumbnail = logo;
         }
+        console.log(7777, res.active);
+        if (res.active !== null) {
+          console.log(9999, 'yay');
+        }
         console.log(thumbnail);
         return {
-          id: quiz.id, questions: res.questions, title: quiz.name, thumbnail,
+          id: quiz.id, questions: res.questions, title: quiz.name, thumbnail, active: res.active,
         };
       }));
       console.log(allQuizzes);
@@ -55,6 +59,7 @@ function Dashboard() {
             questions={quiz.questions}
             title={quiz.name}
             imgSrc={quiz.thumbnail}
+            active={quiz.active}
           />
         ))}
       </section>
