@@ -28,6 +28,7 @@ function Dashboard() {
         const allQuizzes = await Promise.all(quizzes.quizzes.map(async (quiz) => {
           const res = await api.get(`admin/quiz/${quiz.id}`, { headers: { Authorization: getToken() } });
           let { thumbnail } = res;
+          console.log(272727, res);
           if (thumbnail === null) {
             console.log('ok');
             thumbnail = logo;
@@ -35,9 +36,10 @@ function Dashboard() {
           if (res.active !== null) {
             console.log(9999, 'yay');
           }
+          console.log(989898, quiz);
           console.log(thumbnail);
           return {
-            id: quiz.id, questions: res.questions, title: quiz.name, thumbnail,
+            id: quiz.id, questions: res.questions, title: res.name, thumbnail, active: quiz.active,
           };
         }));
         console.log(allQuizzes);

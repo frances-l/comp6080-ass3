@@ -9,6 +9,7 @@ import PublicRoute from '../components/PublicRoute';
 import PrivateRoute from '../components/PrivateRoute';
 import JoinGame from '../pages/JoinGame';
 import PlayPage from '../pages/PlayPage';
+import Results from '../pages/Results';
 
 const routes = [
   <PublicRoute restricted component={Login} path="/login" exact />,
@@ -21,6 +22,7 @@ const routes = [
   <PrivateRoute component={EditQuiz} path="/edit/:gid" exact />,
   <PrivateRoute component={JoinGame} path="/join" exact />,
   <PrivateRoute component={PlayPage} path="/play/:gid/:sid" exact />,
+  <PrivateRoute component={Results} path="/session/:sid/results" exact />,
 ];
 
 export default routes;

@@ -32,18 +32,20 @@ const useStyles = makeStyles((theme) => ({
 
 // card needs just the id really
 const GameCard = ({
-  qId, questions, title, imgSrc, active,
+  gId, questions, title, imgSrc, active,
 }) => {
   const history = useHistory();
   const classes = useStyles();
   const [startOpen, setStartOpen] = React.useState(false);
   const [code, setCode] = React.useState(0);
   const [endOpen, setEndOpen] = React.useState(false);
+  const [sum, setSum] = React.useState(0);
   // const [image, setImage] = React.useState(logo);
   const inputRef = React.useRef(null);
-  const linkEdit = () => history.push(`/edit/${qId}`);
+  const linkEdit = () => history.push(`/edit/${gId}`);
   console.log(active);
   console.log(code);
+  console.log(questions);
 
   React.useEffect(() => {
     if (active !== null) {
@@ -51,13 +53,17 @@ const GameCard = ({
     } else {
       setCode(0);
     }
-  }, [active]);
+    for (let i = 0; i < questions.length; i += 1) {
+      const question = questions[i];
+      setSum((s) => s + question.time);
+    }
+  }, [active, questions]);
 
   // const yo = 'pooooo';
   const linkStartEnd = async () => {
     if (code === 0) { // start game
-      await api.post(`admin/quiz/${qId}/start`, { headers: { Authorization: getToken() } });
-      const res = await api.get(`admin/quiz/${qId}`, { headers: { Authorization: getToken() } });
+      await api.post(`admin/quiz/${gId}/start`, { headers: { Authorization: getToken() } });
+      const res = await api.get(`admin/quiz/${gId}`, { headers: { Authorization: getToken() } });
       setCode(res.active);
       // console.log(44444, res.active);
       // console.log(888, res);
@@ -68,7 +74,7 @@ const GameCard = ({
     } else { // end game
       console.log('hello');
       console.log(87878, code);
-      const end = await api.post(`admin/quiz/${qId}/end`, { headers: { Authorization: getToken() } });
+      const end = await api.post(`admin/quiz/${gId}/end`, { headers: { Authorization: getToken() } });
       console.log(end);
 
       setEndOpen(true);
@@ -85,7 +91,7 @@ const GameCard = ({
   };
 
   const viewResult = () => {
-    history.push(`/admin/session/${code}/results`);
+    history.push(`/session/${code}/results`);
     setCode(0);
   };
 
@@ -94,21 +100,26 @@ const GameCard = ({
     document.execCommand('copy');
   };
 
+  const remove = () => {
+    api.delete(`admin/quiz/${gId}`, { headers: { Authorization: getToken() } });
+  };
+
   console.log(imgSrc);
 
   return (
-    <Card key={qId}>
+    <Card key={gId}>
       <CardMedia className={classes.imageContainer}>
         <img src={imgSrc} className={classes.image} alt="card-thumbnail" />
       </CardMedia>
       <CardContent>
         <Typography variant="h6">{title}</Typography>
         <Typography variant="h6">{`Questions: ${questions.length}`}</Typography>
-        <Typography variant="h6">{`Length: ${qId}`}</Typography>
+        <Typography variant="h6">{`Game id: ${gId}`}</Typography>
+        <Typography variant="h6">{`Time needed: ${sum} seconds`}</Typography>
       </CardContent>
       <CardActions>
         <Button onClick={linkEdit}>Edit Game</Button>
-        <Button>Delete Game</Button>
+        <Button onClick={remove}>Delete Game</Button>
         <Button id="start-end" onClick={() => linkStartEnd()}>{code ? 'End Game' : 'Start Game'}</Button>
         <Modal
           open={startOpen}
@@ -141,11 +152,11 @@ const GameCard = ({
   );
 };
 GameCard.propTypes = {
-  qId: PropTypes.number.isRequired,
-  questions: PropTypes.arrayOf(PropTypes.string).isRequired,
+  gId: PropTypes.number.isRequired,
+  questions: PropTypes.arrayOf(PropTypes.object).isRequired,
   title: PropTypes.string.isRequired,
   imgSrc: PropTypes.string.isRequired,
-  active: PropTypes.string.isRequired,
+  active: PropTypes.number.isRequired,
 };
 
 export default GameCard;
