@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import {
-  CardContent, Typography, Card, CardMedia, Button, CardActions, makeStyles, Modal,
+  CardContent, Typography, Card, CardMedia, Button, CardActions, makeStyles, Modal, Input,
 } from '@material-ui/core';
 import API from '../utils/api';
 import { getToken } from '../utils/helpers';
@@ -29,20 +29,6 @@ const useStyles = makeStyles((theme) => ({
 
   },
 }));
-// function rand() {
-//   return Math.round(Math.random() * 20) - 10;
-// }
-
-// const modalStyle = () => {
-//   const top = 50 + rand();
-//   const left = 50 + rand();
-
-//   return {
-//     top: `${top}%`,
-//     left: `${left}%`,
-//     transform: `translate(-${top}%, -${left}%)`,
-//   };
-// };
 
 // card needs just the id really
 const GameCard = ({
@@ -50,46 +36,62 @@ const GameCard = ({
 }) => {
   const history = useHistory();
   const classes = useStyles();
-  // const [gameActive, setGameActive] = React.useState(false);
   const [startOpen, setStartOpen] = React.useState(false);
   const [code, setCode] = React.useState(0);
-  // const [endOpen, setEndOpen] = React.useState(false);
+  const [endOpen, setEndOpen] = React.useState(false);
   // const [image, setImage] = React.useState(logo);
+  const inputRef = React.useRef(null);
   const linkEdit = () => history.push(`/edit/${qId}`);
   console.log(active);
+  console.log(code);
 
-  const determineActive = () => {
-    if (active === null) {
-      return false;
+  React.useEffect(() => {
+    if (active !== null) {
+      setCode(active);
+    } else {
+      setCode(0);
     }
-    return true;
-  };
-  // const body = (
-  //   <div style={modalStyle} className={classes.paper}>
-  //     <p>hello</p>
-  //   </div>
-  // );
-  console.log(77222777, determineActive());
+  }, [active]);
+
   // const yo = 'pooooo';
   const linkStartEnd = async () => {
-    if (active === null) { // start game
-      const start = await api.post(`admin/quiz/${qId}/start`, { headers: { Authorization: getToken() } });
+    if (code === 0) { // start game
+      await api.post(`admin/quiz/${qId}/start`, { headers: { Authorization: getToken() } });
       const res = await api.get(`admin/quiz/${qId}`, { headers: { Authorization: getToken() } });
       setCode(res.active);
-      console.log(44444, res.active);
-      console.log(888, res);
-      console.log(222, start);
+      // console.log(44444, res.active);
+      // console.log(888, res);
+      // console.log(222, start);
       console.log(111111, code);
 
       setStartOpen(true);
     } else { // end game
       console.log('hello');
+      console.log(87878, code);
+      const end = await api.post(`admin/quiz/${qId}/end`, { headers: { Authorization: getToken() } });
+      console.log(end);
+
+      setEndOpen(true);
     }
-    // history.push('/placeholder');
   };
 
   const handleStartClose = () => {
     setStartOpen(false);
+  };
+
+  const handleEndClose = () => {
+    setEndOpen(false);
+    setCode(0);
+  };
+
+  const viewResult = () => {
+    history.push(`/admin/session/${code}/results`);
+    setCode(0);
+  };
+
+  const copy = () => {
+    inputRef.current.select();
+    document.execCommand('copy');
   };
 
   console.log(imgSrc);
@@ -107,16 +109,31 @@ const GameCard = ({
       <CardActions>
         <Button onClick={linkEdit}>Edit Game</Button>
         <Button>Delete Game</Button>
-        <Button id="start-end" onClick={linkStartEnd}>{determineActive() ? 'End Game' : 'Start Game'}</Button>
+        <Button id="start-end" onClick={() => linkStartEnd()}>{code ? 'End Game' : 'Start Game'}</Button>
         <Modal
           open={startOpen}
           onClose={handleStartClose}
+          aria-labelledby="start game"
+          aria-describedby="start game modal"
+        >
+          <div className={classes.paper}>
+            <Typography variant="h5">Link to the started game</Typography>
+            <Input inputRef={inputRef} type="text" value={`http://localhost:3000/play/join/${code}`} />
+            <br />
+            <Button variant="outlined" onClick={copy}>Copy text</Button>
+          </div>
+        </Modal>
+        <Modal
+          open={endOpen}
+          onClose={handleEndClose}
           aria-labelledby="end game"
           aria-describedby="end game modal"
         >
           <div className={classes.paper}>
-            <h2>hello</h2>
-            <h3>{code}</h3>
+            <Typography variant="h5">Would you like to view the results?</Typography>
+            <br />
+            <Button variant="outlined" onClick={() => viewResult()}>Yes</Button>
+            <Button variant="outlined" onClick={() => handleEndClose()}>No</Button>
           </div>
         </Modal>
       </CardActions>
