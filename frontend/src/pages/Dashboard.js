@@ -24,20 +24,22 @@ function Dashboard() {
       console.log(getToken());
       // from the first fetch we get id, and the title,
       // the second we get the questions and thumbnail.
-      const allQuizzes = await Promise.all(quizzes.quizzes.map(async (quiz) => {
-        const res = await api.get(`admin/quiz/${quiz.id}`, { headers: { Authorization: getToken() } });
-        let { thumbnail } = res;
-        if (thumbnail === null) {
-          console.log('ok');
-          thumbnail = logo;
-        }
-        console.log(thumbnail);
-        return {
-          id: quiz.id, questions: res.questions, title: quiz.name, thumbnail,
-        };
-      }));
-      console.log(allQuizzes);
-      setGames(allQuizzes);
+      if (quizzes.quizzes) {
+        const allQuizzes = await Promise.all(quizzes.quizzes.map(async (quiz) => {
+          const res = await api.get(`admin/quiz/${quiz.id}`, { headers: { Authorization: getToken() } });
+          let { thumbnail } = res;
+          if (thumbnail === null) {
+            console.log('ok');
+            thumbnail = logo;
+          }
+          console.log(thumbnail);
+          return {
+            id: quiz.id, questions: res.questions, title: quiz.name, thumbnail,
+          };
+        }));
+        console.log(allQuizzes);
+        setGames(allQuizzes);
+      }
     })();
   }, []);
 
@@ -51,7 +53,8 @@ function Dashboard() {
         {/* {Note lint doesn't fucking allow object types so we have to do this} */}
         {games.map((quiz) => (
           <GameCard
-            qId={quiz.id}
+            key={`quiz-${quiz.id}`}
+            gId={quiz.id}
             questions={quiz.questions}
             title={quiz.name}
             imgSrc={quiz.thumbnail}

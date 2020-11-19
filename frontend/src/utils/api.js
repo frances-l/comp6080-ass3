@@ -40,4 +40,9 @@ export default class API {
       method: 'DELETE',
     });
   }
+
+  advance(qId, token) {
+    const options = { headers: { Authorization: token } };
+    return getJSON(`${this.url}/admin/quiz/${qId}/advance`, options);
+  }
 }

@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import {
   CardContent, Typography, Card, CardMedia, Button, CardActions, makeStyles,
 } from '@material-ui/core';
-
+// import { StoreContext } from '../utils/store';
 // TODO handle deleting the quiz
 
 const useStyles = makeStyles(() => ({
@@ -19,25 +19,28 @@ const useStyles = makeStyles(() => ({
 
 // card needs just the id really
 const GameCard = ({
-  qId, questions, title, imgSrc,
+  gId, questions, title, imgSrc,
 }) => {
   const history = useHistory();
   const classes = useStyles();
   // const [image, setImage] = React.useState(logo);
-  const linkEdit = () => history.push(`/edit/${qId}`);
+  const linkEdit = () => {
+    console.log('linkedit');
+    history.push(`/edit/${gId}/`);
+  };
   const linkStart = () => history.push('/placeholder');
 
   console.log(imgSrc);
 
   return (
-    <Card key={qId}>
+    <Card key={gId}>
       <CardMedia className={classes.imageContainer}>
         <img src={imgSrc} className={classes.image} alt="card-thumbnail" />
       </CardMedia>
       <CardContent>
         <Typography variant="h6">{title}</Typography>
         <Typography variant="h6">{`Questions: ${questions.length}`}</Typography>
-        <Typography variant="h6">{`Length: ${qId}`}</Typography>
+        <Typography variant="h6">{`Length: ${gId}`}</Typography>
       </CardContent>
       <CardActions>
         <Button onClick={linkEdit}>Edit Game</Button>
@@ -48,7 +51,7 @@ const GameCard = ({
   );
 };
 GameCard.propTypes = {
-  qId: PropTypes.number.isRequired,
+  gId: PropTypes.number.isRequired,
   questions: PropTypes.arrayOf(PropTypes.string).isRequired,
   title: PropTypes.string.isRequired,
   imgSrc: PropTypes.string.isRequired,
