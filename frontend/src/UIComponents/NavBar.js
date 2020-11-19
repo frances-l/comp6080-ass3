@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  AppBar, Typography, Button, makeStyles, Modal,
+  AppBar, Typography, Button, makeStyles, Modal, IconButton,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 // import Popup from './Popup';
@@ -11,6 +11,7 @@ const useStyles = makeStyles((theme) => ({
   navBar: {
     display: 'flex',
     flexDirection: 'row',
+    maxHeight: '10vh',
     ...theme.mixins.toolbar,
   },
   image: {
@@ -28,6 +29,10 @@ const NavBar = () => {
     history.push('/login');
   };
 
+  const redirectToDashBoard = () => {
+    history.push('/');
+  };
+
   const handleNewGameClick = () => {
     setOpen(true);
   };
@@ -36,16 +41,20 @@ const NavBar = () => {
     setOpen(false);
   };
 
+  const handleJoin = () => {
+    history.push('/join');
+  };
+
   const classes = useStyles();
 
   return (
     <header>
       <AppBar className={classes.navBar} key="nav-bar">
         {/* Probably change this logo to a svg so its not dooky quality */}
-        <a href="http://localhost:3000/dashboard">
+        <IconButton onClick={redirectToDashBoard}>
           <img src={logo} alt="BB-logo" className={classes.image} />
-        </a>
-        <Typography variant="h4" onClick={() => history.push('/dashboard')}>BigBrain</Typography>
+        </IconButton>
+        <Typography variant="h4">BigBrain</Typography>
         <Button onClick={handleNewGameClick}>Create Quiz</Button>
         <Modal
           open={open}
@@ -55,7 +64,7 @@ const NavBar = () => {
         >
           <NewGameModal setOpen={setOpen} />
         </Modal>
-        <Button>Join Game</Button>
+        <Button onClick={handleJoin}>Join Game</Button>
         <Button onClick={handleLogout}>Logout</Button>
       </AppBar>
     </header>

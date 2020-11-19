@@ -25,6 +25,8 @@ const NewGameModal = ({ setOpen }) => {
   const history = useHistory();
   const { quiz } = React.useContext(StoreContext);
   const setQuiz = quiz[1];
+  const context = React.useContext(StoreContext);
+  const { edit: [, setEdit] } = context;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -37,6 +39,9 @@ const NewGameModal = ({ setOpen }) => {
       if (res.quizId) {
         setOpen(false);
         setQuiz(res.quizId);
+        setEdit({
+          id: 0, points: 10, timer: 30, qType: 'single',
+        });
         console.log(`Setting quiz to ${res}`);
         history.push(`/edit/${res.quizId}`);
       } else {
@@ -62,7 +67,7 @@ const NewGameModal = ({ setOpen }) => {
           <Button type="submit">Confirm</Button>
           <Typography>
             Wondering where to add your questions?
-            Don`&apos;`t worry, once you press confirm it`&apos;`ll;
+            Don&apos;t worry, once you press confirm it&apos;ll;
             direct you to a page where you can get going!
           </Typography>
         </form>

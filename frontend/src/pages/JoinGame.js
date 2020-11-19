@@ -1,19 +1,35 @@
 import React from 'react';
-import { TextField, Typography, Button } from '@material-ui/core';
+import {
+  TextField, Typography, Button, Container, Grid, styled,
+} from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 import NavBar from '../UIComponents/NavBar';
 import API from '../utils/api';
+import { StoreContext } from '../utils/store';
+import { getQuizId, getToken } from '../utils/helpers';
 
 const api = new API('http://localhost:5005');
 
 // game id is 984485397, session is 191470
+const PageLayout = styled(Container)({
+  paddingTop: '10vh',
+});
 
 function JoinGame() {
+  // const { player } = React.useContext(StoreContext);
+  // console.log(player);
+  // const [setPlayer] = player[1];
+  const context = React.useContext(StoreContext);
+  const { player: [, setPlayer] } = context;
+  const { session: [, setSession] } = context;
   const [joinid, setJoinID] = React.useState('');
   const [nickname, setNickname] = React.useState('');
+  const [error, setError] = React.useState(false);
+  const history = useHistory();
 
   const join = async () => {
     console.log(nickname);
-    const path = 'play/join/191470'; // will need to change path later so it has id of session
+    const path = `play/join/${joinid}`; // will need to change path later so it has id of session
     const options = {
       headers: { 'Content-type': 'application/json' },
       body: JSON.stringify({
@@ -22,6 +38,27 @@ function JoinGame() {
     };
     const res = await api.post(path, options);
     console.log(res);
+    if (res.playerId) {
+      console.log('setting player and session');
+      setPlayer(res.playerId);
+      // seeing if the session is active.
+      const session = await api.get(`admin/session/${joinid}/status`, { headers: { Authorization: getToken() } });
+      // REMOVE LATER ONLY USED FOR TESTING
+      session.results.position = 0;
+      const quizId = await getQuizId(joinid);
+      api.get(`admin/quiz/${quizId}/start`, { headers: { Authorization: getToken() } });
+
+      setSession(session.results);
+      console.log(session);
+      console.log(quizId);
+      if (session.results.active) {
+        history.push(`/play/${quizId}/${joinid}`);
+      } else {
+        // print that the session isnt active.
+      }
+    } else {
+      setError(true);
+    }
   };
 
   const handleClick = (e) => {
@@ -39,12 +76,16 @@ function JoinGame() {
         <NavBar />
       </header>
       <section>
-        <Typography variant="h2">Join a game!</Typography>
-        <form onSubmit={(event) => handleClick(event)}>
-          <TextField label="ID of the quiz session*" variant="outlined" name="joinid" id="joinid" onChange={(event) => setJoinID(event.target.value)} />
-          <TextField label="Nickname for the quiz*" variant="outlined" name="nickname" id="nickname" onChange={(event) => setNickname(event.target.value)} />
-          <Button type="onSubmit" variant="contained">Join game!</Button>
-        </form>
+        <PageLayout>
+          <Grid container direction="column">
+            <Typography variant="h2">Join a game!</Typography>
+            <form onSubmit={(event) => handleClick(event)}>
+              <TextField error={error} helperText={error ? 'This Session doesnt exist' : ''} label="ID of the quiz session*" variant="outlined" name="joinid" id="joinid" onChange={(event) => setJoinID(event.target.value)} />
+              <TextField label="Nickname for the quiz*" variant="outlined" name="nickname" id="nickname" onChange={(event) => setNickname(event.target.value)} />
+              <Button type="onSubmit" variant="contained">Join game!</Button>
+            </form>
+          </Grid>
+        </PageLayout>
       </section>
     </main>
   );
