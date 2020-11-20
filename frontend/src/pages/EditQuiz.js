@@ -1,21 +1,31 @@
 import {
-  Typography, Grid, Button, makeStyles,
+  Typography, Grid, Button, makeStyles, Modal, Input,
 } from '@material-ui/core';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import QuestionCard from '../UIComponents/QuestionCard';
 import NavBar from '../UIComponents/NavBar';
-import { getQuiz } from '../utils/helpers';
+import { fileToDataUrl, getQuiz, getToken } from '../utils/helpers';
 import { StoreContext } from '../utils/store';
-// import API from '../utils/api';
+import API from '../utils/api';
 
-// const api = new API('http://localhost:5005');
+const api = new API('http://localhost:5005');
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   appBarSpacer: {
     height: '15vh',
     // backgroundColor: 'black',
+  },
+  paper: {
+    // position: 'absolute',
+    width: 400,
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+    margin: 'auto',
+
   },
 }));
 
@@ -27,6 +37,8 @@ const EditQuiz = (props) => {
   const { match: { params } } = props;
   const history = useHistory();
   const context = React.useContext(StoreContext);
+  const [image, setImage] = React.useState();
+  const [open, setOpen] = React.useState(false);
   const { edit: [, setEdit] } = context;
 
   React.useEffect(() => {
@@ -54,6 +66,44 @@ const EditQuiz = (props) => {
     history.push(`/edit/${params.gid}/${questions.length}`);
   };
 
+  const displayModal = () => {
+    console.log(6767);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleImage = async (event) => {
+    console.log(event);
+    const info = await fileToDataUrl(event.target.files[0]);
+    console.log(info);
+    setImage(info);
+
+    // console.log(fileToDataUrl(file));
+  };
+
+  const submit = async () => {
+    const quiz = await api.get(`admin/quiz/${params.gid}`, {
+      headers: {
+        Authorization: getToken(),
+      },
+    });
+    const res = await api.put(`admin/quiz/${params.gid}`, {
+      headers: { 'Content-type': 'application/json', Authorization: getToken() },
+      body: JSON.stringify({
+        questions: quiz.questions,
+        name: quiz.name,
+        thumbnail: image,
+      }),
+    });
+    if (res.error) {
+      console.log(res.error);
+    }
+    console.log(res);
+  };
+
   return (
     <div>
       <NavBar />
@@ -78,6 +128,19 @@ const EditQuiz = (props) => {
           Add a new Question!
 
         </Button>
+        <Button variant="contained" onClick={() => displayModal()}>Add a thumbnail</Button>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="upload photo"
+          aria-describedby="upload photo modal"
+        >
+          <main className={classes.paper}>
+            <Typography variant="h5">Upload photo here!</Typography>
+            <Input type="file" onChange={(e) => handleImage(e)} />
+            <Button variant="outlined" onClick={() => submit()}>Submit thumbnail</Button>
+          </main>
+        </Modal>
       </Grid>
     </div>
   );
