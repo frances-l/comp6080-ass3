@@ -4,14 +4,11 @@ import PropTypes from 'prop-types';
 import {
   Typography, Container, Grid, Button,
 } from '@material-ui/core';
-// import API from '../utils/api';
-// import { getToken } from '../utils/helpers';
+import { getToken } from '../utils/helpers';
 import { StoreContext } from '../utils/store';
+import API from '../utils/api';
 
-// const api = new API('http://localhost:5005');
-// import API from '../utils/api';
-
-// const api = new API('http://localhost:5005');
+const api = new API('http://localhost:5005');
 const StartStage = ({
   setStage, sessionId,
 }) => {
@@ -24,9 +21,10 @@ const StartStage = ({
   const handleStart = async () => {
     // setCurrQuestion(session.results.questions[session.results.position]);
     if (session.results.position === -1) {
-      console.log('hello');
       setCurrQuestion(session.results.questions[0]);
     }
+    const results = await api.get(`admin/session/${sessionId}/status`, { headers: { Authorization: getToken() } });
+    console.log(results);
     setStage('preview');
   };
 

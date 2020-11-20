@@ -11,17 +11,20 @@ const api = new API('http://localhost:5005');
 // this component will interchange with the p
 const QuestionResults = ({
   // question, setNextQuestion, sId, gId,
-  setStage,
+  setStage, sId,
 }) => {
   // console.log(question);
   const context = React.useContext(StoreContext);
   const { player: [player] } = context;
   const { session: [session] } = context;
+  const { currQuestion: [, setCurrQuestion] } = context;
   const [answers, setAnswers] = React.useState([]);
   // make this only visible/possible from admin
   const handleClick = async () => {
     // handle pressing next in results page
     // should advance the game, and set the question to the next one
+    const results = await api.get(`admin/session/${sId}/status`, { headers: { Authorization: getToken() } });
+    setCurrQuestion(results.results.questions[results.results.position + 1]);
     setStage('preview');
   };
 
@@ -56,7 +59,7 @@ QuestionResults.propTypes = {
   // question: PropTypes.objectOf(PropTypes.any).isRequired,
   setStage: PropTypes.func.isRequired,
   // setNextQuestion: PropTypes.func.isRequired,
-  // sId: PropTypes.number.isRequired,
+  sId: PropTypes.number.isRequired,
   // gId: PropTypes.number.isRequired,
 };
 export default QuestionResults;
