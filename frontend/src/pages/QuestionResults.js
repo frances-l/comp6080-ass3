@@ -16,7 +16,7 @@ const QuestionResults = ({
   // console.log(question);
   const context = React.useContext(StoreContext);
   const { player: [player] } = context;
-  // const { session: [, setSession] } = context;
+  const { session: [session] } = context;
   const [answers, setAnswers] = React.useState([]);
   // make this only visible/possible from admin
   const handleClick = async () => {
@@ -27,11 +27,12 @@ const QuestionResults = ({
 
   React.useEffect(() => {
     (async () => {
+      console.log(session);
       const result = await api.get(`play/${player}/answer`, { headers: { Authorization: getToken() } });
       console.log(result);
       setAnswers(result.answerIds);
     })();
-  }, [player]);
+  }, [player, session]);
 
   return (
     <div>

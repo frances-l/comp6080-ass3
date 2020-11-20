@@ -24,6 +24,7 @@ const StartStage = ({
   const handleStart = async () => {
     // setCurrQuestion(session.results.questions[session.results.position]);
     if (session.results.position === -1) {
+      console.log('hello');
       setCurrQuestion(session.results.questions[0]);
     }
     setStage('preview');

@@ -80,6 +80,7 @@ const PlayPage = (props) => {
             question={currQuestion}
             setStage={setStage}
             quizId={Number(params.gid)}
+            sId={Number(params.sid)}
           />
         );
       case stages.QUESTION:
