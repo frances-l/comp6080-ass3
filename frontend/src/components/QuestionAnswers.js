@@ -16,18 +16,15 @@ const QuestionAnswers = ({ questionAnswers }) => {
   const { player: [player] } = context;
   const [answers, setAnswers] = React.useState([]);
   React.useEffect(() => {
-    if (answers.length > 1) {
-      console.log(answers);
-      (async () => {
-        const res = await api.put(`play/${player}/answer`, {
-          headers: { 'Content-type': 'application/json', Authorization: getToken() },
-          body: JSON.stringify({
-            answerIds: answers,
-          }),
-        });
-        console.log(res);
-      })();
-    }
+    (async () => {
+      const res = await api.put(`play/${player}/answer`, {
+        headers: { 'Content-type': 'application/json', Authorization: getToken() },
+        body: JSON.stringify({
+          answerIds: answers,
+        }),
+      });
+      console.log(res);
+    })();
   }, [answers, player]);
 
   return (

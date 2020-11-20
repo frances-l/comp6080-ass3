@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Typography } from '@material-ui/core';
 import NavBar from '../UIComponents/NavBar';
 import API from '../utils/api';
 import { getToken } from '../utils/helpers';
+// import { StoreContext } from '../utils/store';
 
 const api = new API('http://localhost:5005');
 const Results = (props) => {
@@ -10,6 +12,7 @@ const Results = (props) => {
 
   console.log(params.sid);
   (async () => {
+    // await api.post(`admin/quiz/${quiz}/end`, { headers: { Authorization: getToken() } });
     const res = await api.get(`admin/session/${params.sid}/results`, { headers: { Authorization: getToken() } });
     console.log(res);
   })();
@@ -18,6 +21,7 @@ const Results = (props) => {
   return (
     <header>
       <NavBar />
+      <Typography variant="h1">Results!</Typography>
     </header>
 
   );
