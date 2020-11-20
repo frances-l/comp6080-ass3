@@ -63,3 +63,9 @@ export function isTimerExpired(duration, length) {
   const convertedTime = Date.parse(duration) + length;
   return now > convertedTime;
 }
+
+export function updateSession(attr, value, session) {
+  const updatedSession = session;
+  updatedSession.results.attr = value;
+  return updatedSession;
+}

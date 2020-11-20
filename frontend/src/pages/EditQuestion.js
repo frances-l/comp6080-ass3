@@ -138,7 +138,7 @@ const EditQuestion = (props) => {
             </Select>
           </FormControl>
           <TextField defaultValue={question.points} id="points" onChange={(event) => handleChange('points', event.target.value)} label="Points?" />
-          <TextField defaultValue={question.time} id="timer" onChange={(event) => handleChange('time', event.target.value)} label="Question Duration" />
+          <TextField defaultValue={question.time} id="timer" onChange={(event) => handleChange('time', Number(event.target.value))} label="Question Duration" />
           <Grid item>
             <SecondaryButton variant="contained">Cancel</SecondaryButton>
           </Grid>

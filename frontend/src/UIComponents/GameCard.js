@@ -43,9 +43,9 @@ const GameCard = ({
   // const [image, setImage] = React.useState(logo);
   const inputRef = React.useRef(null);
   const linkEdit = () => history.push(`/edit/${gId}`);
-  console.log(active);
-  console.log(code);
-  console.log(questions);
+  // console.log(active);
+  // console.log(code);
+  // console.log(questions);
 
   React.useEffect(() => {
     if (active !== null) {
@@ -55,7 +55,7 @@ const GameCard = ({
     }
     for (let i = 0; i < questions.length; i += 1) {
       const question = questions[i];
-      setSum((s) => s + question.time);
+      setSum((s) => s + Number(question.time));
     }
   }, [active, questions]);
 
@@ -129,7 +129,7 @@ const GameCard = ({
         >
           <div className={classes.paper}>
             <Typography variant="h5">Link to the started game</Typography>
-            <Input inputRef={inputRef} type="text" value={`http://localhost:3000/play/join/${code}`} />
+            <Input inputRef={inputRef} type="text" value={`http://localhost:3000/join/${code}`} />
             <br />
             <Button variant="outlined" onClick={copy}>Copy text</Button>
           </div>

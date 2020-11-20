@@ -11,6 +11,7 @@ const useStyles = makeStyles(() => ({
   },
   nonSelectedAnswer: {
     backgroundColor: 'white',
+    height: '10vh',
   },
 }));
 

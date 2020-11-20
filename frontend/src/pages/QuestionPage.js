@@ -5,13 +5,23 @@ import {
 import PropTypes from 'prop-types';
 import Timer from '../components/Timer';
 import QuestionAnswers from '../components/QuestionAnswers';
+// import API from '../utils/api';
+import { StoreContext } from '../utils/store';
+// import { getToken } from '../utils/helpers';
+
+// const api = new API('http://localhost:5005');
 // this will interchange with the PlayPage, itll alternate between this and question results
 const QuestionPage = ({ setStage, question }) => {
   // so it doesnt scream at me
+  const context = React.useContext(StoreContext);
+  const { session: [session, setSession] } = context;
+
   console.log(question);
 
   const handleDurationExpire = () => {
-    console.log('setting result');
+    const updatedSession = session;
+    updatedSession.results.answerAvailable = true;
+    setSession(updatedSession);
     setStage('results');
   };
 
@@ -31,7 +41,7 @@ const QuestionPage = ({ setStage, question }) => {
           return (null);
         })()}
       </Container>
-      <Timer duration={question.time} onComplete={handleDurationExpire} />
+      <Timer duration={Number(question.time)} onComplete={handleDurationExpire} />
       <QuestionAnswers questionAnswers={question.answers} />
     </article>
   );
