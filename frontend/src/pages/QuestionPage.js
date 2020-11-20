@@ -4,6 +4,7 @@ import {
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import Timer from '../components/Timer';
+// eslint-disable-next-line import/no-named-as-default-member
 import QuestionAnswers from '../components/QuestionAnswers';
 // import API from '../utils/api';
 // import { StoreContext } from '../utils/store';
@@ -17,7 +18,7 @@ const QuestionPage = ({ setStage, question }) => {
   // const { session: [session, setSession] } = context;
 
   console.log(question);
-
+  console.log(question.qType);
   const handleDurationExpire = () => {
     setStage('results');
   };
@@ -39,7 +40,7 @@ const QuestionPage = ({ setStage, question }) => {
         })()}
       </Container>
       <Timer duration={Number(question.time)} onComplete={handleDurationExpire} />
-      <QuestionAnswers questionAnswers={question.answers} />
+      <QuestionAnswers questionAnswers={question.answers} type={question.qType} />
     </article>
   );
 };

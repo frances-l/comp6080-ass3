@@ -11,12 +11,15 @@ const api = new API('http://localhost:5005');
 // TODO handle deleting the quiz
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  container: {
     display: 'flex',
     flexDirection: 'row',
+    maxHeight: '40vh',
+    maxwidth: '60vw',
   },
   image: {
     backgroundSize: 'cover',
+    maxHeight: '100%',
   },
   paper: {
     // position: 'absolute',
@@ -107,7 +110,7 @@ const GameCard = ({
   console.log(imgSrc);
 
   return (
-    <Card key={gId}>
+    <Card className={classes.container} key={gId}>
       <CardMedia className={classes.imageContainer}>
         <img src={imgSrc} className={classes.image} alt="card-thumbnail" />
       </CardMedia>

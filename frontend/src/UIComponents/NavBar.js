@@ -1,11 +1,11 @@
 import React from 'react';
 import {
-  AppBar, Typography, Button, makeStyles, Modal, IconButton,
+  AppBar, Typography, Button, makeStyles, Modal, IconButton, Grid,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 // import Popup from './Popup';
 import NewGameModal from '../components/NewGameModal';
-import logo from '../assets/BBLogo.jpg';
+import logo from '../assets/BBlogo.png';
 
 const useStyles = makeStyles((theme) => ({
   navBar: {
@@ -15,8 +15,7 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
   },
   image: {
-    height: '10vh',
-    width: '10vw',
+    maxHeight: '5vh',
   },
 }));
 
@@ -50,22 +49,34 @@ const NavBar = () => {
   return (
     <header>
       <AppBar className={classes.navBar} key="nav-bar">
-        {/* Probably change this logo to a svg so its not dooky quality */}
-        <IconButton onClick={redirectToDashBoard}>
-          <img src={logo} alt="BB-logo" className={classes.image} />
-        </IconButton>
-        <Typography variant="h4">BigBrain</Typography>
-        <Button onClick={handleNewGameClick}>Create Quiz</Button>
-        <Modal
-          open={open}
-          onClose={handleNewGameClose}
-          aria-labelledby="new-game"
-          aria-describedby="new-game-popup"
-        >
-          <NewGameModal setOpen={setOpen} />
-        </Modal>
-        <Button onClick={handleJoin}>Join Game</Button>
-        <Button onClick={handleLogout}>Logout</Button>
+        <Grid container direction="row" alignItems="center" spacing={5}>
+          {/* Probably change this logo to a svg so its not dooky quality */}
+          <Grid item>
+            <IconButton onClick={redirectToDashBoard}>
+              <img src={logo} alt="BB-logo" className={classes.image} />
+            </IconButton>
+          </Grid>
+          <Grid item>
+            <Typography variant="h4">BigBrain</Typography>
+          </Grid>
+          <Grid item>
+            <Button onClick={handleNewGameClick}>Create Quiz</Button>
+          </Grid>
+          <Modal
+            open={open}
+            onClose={handleNewGameClose}
+            aria-labelledby="new-game"
+            aria-describedby="new-game-popup"
+          >
+            <NewGameModal setOpen={setOpen} />
+          </Modal>
+          <Grid item>
+            <Button onClick={handleJoin}>Join Game</Button>
+          </Grid>
+          <Grid item>
+            <Button onClick={handleLogout}>Logout</Button>
+          </Grid>
+        </Grid>
       </AppBar>
     </header>
   );
