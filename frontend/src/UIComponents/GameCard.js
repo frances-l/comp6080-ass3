@@ -115,7 +115,7 @@ const GameCard = ({
         <img src={imgSrc} className={classes.image} alt="card-thumbnail" />
       </CardMedia>
       <CardContent>
-        <Typography variant="h6">{title}</Typography>
+        <Typography variant="h5">{title}</Typography>
         <Typography variant="h6">{`Questions: ${questions.length}`}</Typography>
         <Typography variant="h6">{`Game id: ${gId}`}</Typography>
         <Typography variant="h6">{`Time needed: ${sum} seconds`}</Typography>

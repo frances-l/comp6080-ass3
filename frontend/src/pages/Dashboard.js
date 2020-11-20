@@ -61,7 +61,7 @@ function Dashboard() {
             key={`quiz-${quiz.id}`}
             gId={quiz.id}
             questions={quiz.questions}
-            title={quiz.name}
+            title={quiz.title}
             imgSrc={quiz.thumbnail}
             active={quiz.active}
           />
