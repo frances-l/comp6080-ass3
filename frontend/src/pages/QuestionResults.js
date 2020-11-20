@@ -1,6 +1,7 @@
 import { Typography, Button } from '@material-ui/core';
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useHistory } from 'react-router-dom';
 import API from '../utils/api';
 import { StoreContext } from '../utils/store';
 import Answer from '../components/Answer';
@@ -19,13 +20,20 @@ const QuestionResults = ({
   const { session: [session] } = context;
   const { currQuestion: [, setCurrQuestion] } = context;
   const [answers, setAnswers] = React.useState([]);
+  const history = useHistory();
   // make this only visible/possible from admin
   const handleClick = async () => {
     // handle pressing next in results page
     // should advance the game, and set the question to the next one
     const results = await api.get(`admin/session/${sId}/status`, { headers: { Authorization: getToken() } });
-    setCurrQuestion(results.results.questions[results.results.position + 1]);
-    setStage('preview');
+    const nextQuestion = results.results.questions[results.results.position + 1];
+    if (!nextQuestion) {
+      console.log('hello');
+      history.push(`/session/${sId}/results`);
+    } else {
+      setCurrQuestion(nextQuestion);
+      setStage('preview');
+    }
   };
 
   React.useEffect(() => {

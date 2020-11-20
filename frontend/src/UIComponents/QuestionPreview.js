@@ -18,9 +18,8 @@ const QuestionPreview = ({
 
   const handleComplete = async () => {
     let res;
-    res = await api.post(`admin/quiz/${quizId}/advance`, { headers: { Authorization: getToken() } });
-    console.log(res);
     res = await api.get(`admin/session/${sId}/status`, { headers: { Authorization: getToken() } });
+    res = await api.post(`admin/quiz/${quizId}/advance`, { headers: { Authorization: getToken() } });
     console.log(res);
     setStage('question');
   };
