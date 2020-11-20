@@ -32,7 +32,7 @@ const MediaZone = ({ question, setQuestion }) => {
       acceptedFiles={['image/*', 'video/*']}
       dropzoneText="Elevate your question! Click or drag and drop to upload a
   picture, audio clip, or video!"
-      onChange={(file) => { handleChange('media', file); }}
+      onChange={(file) => { handleChange('image', file); }}
       filesLimit={1}
     />
   );
@@ -56,6 +56,7 @@ const MediaZone = ({ question, setQuestion }) => {
   const embedLink = (value) => {
     const embeddedLink = value.replace('watch?v=', 'embed/');
     setLink(embeddedLink);
+    handleChange('video', embeddedLink);
   };
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -78,10 +79,10 @@ const MediaZone = ({ question, setQuestion }) => {
         {mediaType === media.IMAGE ? imageArea : videoArea}
         <Grid container item direction="row">
           <Grid item>
-            <Button>Upload an Image</Button>
+            <Button color="primary" variant="contained" onClick={() => { setMediaType(media.IMAGE); }}>Upload an Image</Button>
           </Grid>
           <Grid item>
-            <Button onClick={handleYoutubeLink}>Link a YouTube Video</Button>
+            <Button color="primary" variant="contained" onClick={handleYoutubeLink}>Link a YouTube Video</Button>
             <Popover
               id={id}
               open={open}
@@ -100,12 +101,12 @@ const MediaZone = ({ question, setQuestion }) => {
                 onChange={(event) => embedLink(event.target.value)}
                 label="Insert Your link here"
               />
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleAddLink}>Add</Button>
+              <Button color="primary" variant="contained" onClick={handleClose}>Cancel</Button>
+              <Button color="primary" variant="contained" onClick={handleAddLink}>Add</Button>
             </Popover>
           </Grid>
           <Grid item>
-            <Button onClick={handleRemove}>Remove</Button>
+            <Button color="primary" variant="contained" onClick={handleRemove}>Remove</Button>
           </Grid>
         </Grid>
       </Grid>

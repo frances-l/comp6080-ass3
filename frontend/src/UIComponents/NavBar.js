@@ -51,7 +51,12 @@ const NavBar = () => {
     <header>
       <Paper>
         <AppBar className={classes.navBar} key="nav-bar" color="inherit">
-          <Grid container direction="row" alignItems="center" justify="space-between">
+          <Grid
+            container
+            direction="row"
+            alignItems="center"
+            justify="space-between"
+          >
             <Grid container item direction="row" xs={4}>
               <Grid item>
                 <IconButton onClick={redirectToDashBoard}>
@@ -62,7 +67,7 @@ const NavBar = () => {
                 <Typography variant="h4">BigBrain</Typography>
               </Grid>
             </Grid>
-            <Grid container item xs={6} spacing={3}>
+            <Grid container item xs={6} spacing={2} justify="flex-end">
               <Grid item>
                 <Button variant="contained" color="primary" onClick={handleNewGameClick}>Create Quiz</Button>
               </Grid>

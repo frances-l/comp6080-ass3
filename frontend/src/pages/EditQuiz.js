@@ -1,5 +1,5 @@
 import {
-  Typography, Grid, Button, makeStyles,
+  Typography, Grid, Button, makeStyles, Paper,
 } from '@material-ui/core';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -15,7 +15,9 @@ import { StoreContext } from '../utils/store';
 const useStyles = makeStyles(() => ({
   appBarSpacer: {
     height: '15vh',
-    // backgroundColor: 'black',
+  },
+  pageLayout: {
+    margin: '0 10vw',
   },
 }));
 
@@ -55,30 +57,44 @@ const EditQuiz = (props) => {
   };
 
   return (
-    <div>
+    <div className={classes.pageLayout}>
       <NavBar />
       <div className={classes.appBarSpacer} />
-      <Typography variant="h1">{quizTitle}</Typography>
-      <div className={classes.appBarSpacer} />
-      <Grid container spacing={5}>
-        <QuestionCard gid={Number(params.gid)} questions={questions} />
-      </Grid>
-      <Grid direction="column" container>
-        {/* {(() => {
-          if (questions.length === 0) {
-            return <Typography variant="h3">Heres a nice fresh
-            quiz for you! Click the button below to start adding some questions!</Typography>;
-          }
-          return <Typography variant="h3">hello</Typography>;
-        })()} */}
-        <Button
-          variant="contained"
-          onClick={() => handleNewQuestion()}
-        >
-          Add a new Question!
-
-        </Button>
-      </Grid>
+      <Paper>
+        <Grid container direction="column" alignItems="center">
+          <Grid item>
+            <Typography color="textPrimary" variant="h1">{quizTitle}</Typography>
+          </Grid>
+        </Grid>
+        <div className={classes.appBarSpacer} />
+        <Grid container spacing={5}>
+          <QuestionCard gid={Number(params.gid)} questions={questions} />
+        </Grid>
+        <Grid direction="column" container spacing={3} alignItems="center">
+          <Grid item>
+            {(() => {
+              if (questions.length === 0) {
+                return (
+                  <Typography color="textPrimary" variant="h3" align="center">
+                    Heres a nice fresh
+                    quiz for you! Click the button below to start adding some questions!
+                  </Typography>
+                );
+              }
+              return <Typography variant="h3">hello</Typography>;
+            })()}
+          </Grid>
+          <Grid item>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handleNewQuestion()}
+            >
+              Add a new Question!
+            </Button>
+          </Grid>
+        </Grid>
+      </Paper>
     </div>
   );
 };

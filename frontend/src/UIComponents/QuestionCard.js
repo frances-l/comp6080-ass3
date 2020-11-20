@@ -21,6 +21,7 @@ const QuestionCard = ({ gid, questions }) => {
   const history = useHistory();
   const context = React.useContext(StoreContext);
   const { edit: [, setEdit] } = context;
+
   const handleRedirect = (qId) => {
     console.log(questions.find((q) => q.id === qId));
     setEdit(questions.find((q) => q.id === qId));

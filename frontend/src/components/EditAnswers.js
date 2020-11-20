@@ -1,10 +1,16 @@
 import React from 'react';
 import {
-  Grid, InputBase,
+  Grid, InputBase, makeStyles,
   Checkbox, FormControlLabel, Paper,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { StoreContext } from '../utils/store';
+
+const useStyles = makeStyles(() => ({
+  answerContainer: {
+    height: '10vh',
+  },
+}));
 
 const EditAnswers = ({ aId, question, setQuestion }) => {
   // const [answer, setAnswer] = React.useState('');
@@ -54,10 +60,10 @@ const EditAnswers = ({ aId, question, setQuestion }) => {
 
     setQuestion(updatedQuestion);
   };
-
+  const classes = useStyles();
   return (
     <Grid item xs={6}>
-      <Paper>
+      <Paper className={classes.answerContainer}>
         <InputBase
           onChange={(event) => handleAnswerTextChange(event.target.value)}
           variant="filled"

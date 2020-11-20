@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  TextField, Grid, Button, FormControl, Box,
-  InputLabel, Select, MenuItem, Snackbar, styled,
+  TextField, Grid, Button, FormControl, Box, makeStyles,
+  InputLabel, Select, MenuItem, Snackbar, styled, Paper,
 } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import PropTypes from 'prop-types';
@@ -24,6 +24,22 @@ const SecondaryButton = styled(Button)({
   background: 'red',
   color: 'white',
 });
+
+const useStyles = makeStyles(() => ({
+  pageLayout: {
+    margin: '0 10vw',
+  },
+  sidebar: {
+    backgroundColor: 'rgb(62,62,66)',
+    padding: '1em',
+    borderRadius: '0.5em',
+  },
+  answersContainer: {
+    backgroundColor: 'rgb(24,25,26)',
+    padding: '1em',
+    marginTop: '1em',
+  },
+}));
 
 const EditQuestion = (props) => {
   const context = React.useContext(StoreContext);
@@ -85,14 +101,14 @@ const EditQuestion = (props) => {
       history.push(`/edit/${params.gid}/`);
     }
   };
-
+  const classes = useStyles();
   // if we're editting a previous question
   return (
-    <section>
+    <section className={classes.pageLayout}>
       <NavBar />
       <AppBarSpacer />
       <FormLayout container direction="row">
-        <Grid container item direction="column">
+        <Grid container item direction="column" spacing={2}>
           <Grid item xs={8}>
             <TextField
               variant="filled"
@@ -102,11 +118,11 @@ const EditQuestion = (props) => {
               defaultValue={edit.question}
             />
           </Grid>
-          <Grid>
+          <Grid item>
             <MediaZone question={question} setQuestion={setQuestion} />
           </Grid>
         </Grid>
-        <Grid container item direction="column" xs={4} justify="space-between">
+        <Grid container item direction="column" xs={4} justify="space-between" className={classes.sidebar}>
           <FormControl>
             <InputLabel id="question-type-label">Question Type</InputLabel>
             <Select displayEmpty labelId="question-type-label" id="question-type-select" defaultValue={question.qType} onChange={(event) => handleChange('qType', event.target.value)}>
@@ -119,7 +135,7 @@ const EditQuestion = (props) => {
           <Grid item>
             <SecondaryButton onClick={handleCancel} variant="contained">Cancel</SecondaryButton>
           </Grid>
-          <Button variant="contained" onClick={handleConfirm}>Confirm Question</Button>
+          <Button color="primary" variant="contained" onClick={handleConfirm}>Confirm Question</Button>
           <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
             <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity="error">
               Please Confirm your question before Continuing
@@ -127,14 +143,16 @@ const EditQuestion = (props) => {
           </Snackbar>
         </Grid>
       </FormLayout>
-      <Grid container direction="row" spacing={2}>
-        <EditAnswers aId={1} question={question} setQuestion={setQuestion} />
-        <EditAnswers aId={2} question={question} setQuestion={setQuestion} />
-        <EditAnswers aId={3} question={question} setQuestion={setQuestion} />
-        <EditAnswers aId={4} question={question} setQuestion={setQuestion} />
-        <EditAnswers aId={5} question={question} setQuestion={setQuestion} />
-        <EditAnswers aId={6} question={question} setQuestion={setQuestion} />
-      </Grid>
+      <Paper className={classes.answersContainer}>
+        <Grid container direction="row" spacing={2}>
+          <EditAnswers aId={1} question={question} setQuestion={setQuestion} />
+          <EditAnswers aId={2} question={question} setQuestion={setQuestion} />
+          <EditAnswers aId={3} question={question} setQuestion={setQuestion} />
+          <EditAnswers aId={4} question={question} setQuestion={setQuestion} />
+          <EditAnswers aId={5} question={question} setQuestion={setQuestion} />
+          <EditAnswers aId={6} question={question} setQuestion={setQuestion} />
+        </Grid>
+      </Paper>
 
     </section>
   );
