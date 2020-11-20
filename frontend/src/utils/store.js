@@ -9,6 +9,7 @@ export default ({ children }) => {
   const [edit, setEdit] = React.useState({});
   const [quiz, setQuiz] = React.useState(0);
   const [session, setSession] = React.useState({});
+  const [currQuestion, setCurrQuestion] = React.useState({});
   const [questionConfirmed, setQuestionConfirmed] = React.useState(false);
   const [player, setPlayer] = React.useState(0);
   const store = {
@@ -18,6 +19,7 @@ export default ({ children }) => {
     session: [session, setSession],
     questionConfirmed: [questionConfirmed, setQuestionConfirmed],
     player: [player, setPlayer],
+    currQuestion: [currQuestion, setCurrQuestion],
   };
 
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;

@@ -26,25 +26,24 @@ const PlayPage = (props) => {
   const context = React.useContext(StoreContext);
   const { player: [player] } = context;
   const { session: [session, setSession] } = context;
-  console.log(session);
-  const [currQuestion, setCurrQuestion] = React.useState({});
-  console.log(currQuestion);
+  const { currQuestion: [currQuestion, setCurrQuestion] } = context;
   const { match: { params } } = props;
 
   // This function will handle what stage the quiz should be at
   // either not started, in-progress, question, results, etc.
-
   React.useEffect(() => {
+    // we need to set the current question before preview
+    // preview only happens before start stage, and questionResults
     (async () => {
       const results = await api.get(`admin/session/${params.sid}/status`, { headers: { Authorization: getToken() } });
       if (!results.error) {
         const currSession = results;
+        console.log('setting session from playPage');
+        console.log(currSession);
         setSession(currSession);
+        console.log(currSession);
         // if the game has just began and position is still -1, load the first question
-        if (currSession.results.position === -1) {
-          setCurrQuestion(currSession.results.questions[0]);
-        // otherwise we can just set the question to whatever
-        } else if (currSession.results.position >= currSession.results.questions.length) {
+        if (currSession.results.position < currSession.results.questions.length) {
           setCurrQuestion(currSession.results.questions[currSession.results.position]);
         // if the position is greater than the length of questions, then the game is finished
         // redirect to the end results.
@@ -53,7 +52,7 @@ const PlayPage = (props) => {
         }
       }
     })();
-  }, [params.sid, setSession]);
+  }, [params.sid, setCurrQuestion, setSession]);
 
   React.useEffect(() => {
     (async () => {
@@ -80,7 +79,7 @@ const PlayPage = (props) => {
           <QuestionPreview
             question={currQuestion}
             setStage={setStage}
-            sId={params.sid}
+            quizId={Number(params.gid)}
           />
         );
       case stages.QUESTION:
@@ -97,15 +96,15 @@ const PlayPage = (props) => {
             setStage={setStage}
             question={currQuestion}
             gId={Number(params.gid)}
-            sId={params.sid}
+            sId={Number(params.sid)}
           />
         );
       default:
         return (
           <StartStage
             setStage={setStage}
-            quizId={Number(params.gid)}
             sessionId={Number(params.sid)}
+            quizId={Number(params.gid)}
           />
         );
     }

@@ -10,41 +10,28 @@ const api = new API('http://localhost:5005');
 
 // this component will interchange with the p
 const QuestionResults = ({
-  question, setStage, setNextQuestion, sId, gId,
+  // question, setNextQuestion, sId, gId,
+  setStage,
 }) => {
-  console.log(question);
+  // console.log(question);
   const context = React.useContext(StoreContext);
   const { player: [player] } = context;
-  const { session: [session, setSession] } = context;
+  // const { session: [, setSession] } = context;
   const [answers, setAnswers] = React.useState([]);
   // make this only visible/possible from admin
   const handleClick = async () => {
     // handle pressing next in results page
     // should advance the game, and set the question to the next one
-    const res = await api.post(`admin/quiz/${gId}/advance`, { headers: { Authorization: getToken() } });
-    if (!res.error) {
-      const newSession = await api.get(`admin/session/${sId}/status`, { headers: { Authorization: getToken() } });
-      console.log(newSession);
-      if (newSession.results.questions[newSession.results.position]) {
-        console.log('setting next question');
-        setNextQuestion(newSession.results.questions[newSession.results.position]);
-      } else {
-        // display final results!
-      }
-
-      setSession(newSession);
-    }
     setStage('preview');
   };
-  console.log(session);
+
   React.useEffect(() => {
     (async () => {
       const result = await api.get(`play/${player}/answer`, { headers: { Authorization: getToken() } });
       console.log(result);
-      const correctAnswers = question.answers.filter((a) => result.answerIds.includes(a.id));
-      setAnswers(correctAnswers);
+      setAnswers(result.answerIds);
     })();
-  }, [player, question.answers]);
+  }, [player]);
 
   return (
     <div>
@@ -65,10 +52,10 @@ const QuestionResults = ({
 };
 
 QuestionResults.propTypes = {
-  question: PropTypes.objectOf(PropTypes.any).isRequired,
+  // question: PropTypes.objectOf(PropTypes.any).isRequired,
   setStage: PropTypes.func.isRequired,
-  setNextQuestion: PropTypes.func.isRequired,
-  sId: PropTypes.number.isRequired,
-  gId: PropTypes.number.isRequired,
+  // setNextQuestion: PropTypes.func.isRequired,
+  // sId: PropTypes.number.isRequired,
+  // gId: PropTypes.number.isRequired,
 };
 export default QuestionResults;
