@@ -13,21 +13,21 @@ const api = new API('http://localhost:5005');
 const QuestionAnswers = ({ questionAnswers }) => {
   const context = React.useContext(StoreContext);
   // const { answers: [answers] } = context;
+  const { currQuestion: [currQuestion] } = context;
+  console.log(currQuestion);
   const { player: [player] } = context;
   const [answers, setAnswers] = React.useState([]);
   React.useEffect(() => {
-    if (answers.length > 1) {
-      console.log(answers);
-      (async () => {
-        const res = await api.put(`play/${player}/answer`, {
-          headers: { 'Content-type': 'application/json', Authorization: getToken() },
-          body: JSON.stringify({
-            answerIds: answers,
-          }),
-        });
-        console.log(res);
-      })();
-    }
+    console.log(answers);
+    (async () => {
+      const res = await api.put(`play/${player}/answer`, {
+        headers: { 'Content-type': 'application/json', Authorization: getToken() },
+        body: JSON.stringify({
+          answerIds: answers,
+        }),
+      });
+      console.log(res);
+    })();
   }, [answers, player]);
 
   return (
@@ -39,6 +39,7 @@ const QuestionAnswers = ({ questionAnswers }) => {
           key={`answer-${a.id}`}
           answers={answers}
           setAnswers={setAnswers}
+          type={currQuestion.qType}
         />
       ))}
     </Grid>

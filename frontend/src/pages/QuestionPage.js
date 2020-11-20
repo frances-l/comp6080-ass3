@@ -17,7 +17,7 @@ const QuestionPage = ({ setStage, question }) => {
   // const { session: [session, setSession] } = context;
 
   console.log(question);
-
+  console.log(question.qType);
   const handleDurationExpire = () => {
     setStage('results');
   };
@@ -39,7 +39,7 @@ const QuestionPage = ({ setStage, question }) => {
         })()}
       </Container>
       <Timer duration={Number(question.time)} onComplete={handleDurationExpire} />
-      <QuestionAnswers questionAnswers={question.answers} />
+      <QuestionAnswers questionAnswers={question.answers} type={question.qType} />
     </article>
   );
 };

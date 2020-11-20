@@ -4,15 +4,15 @@ import {
   InputLabel, Select, MenuItem, Snackbar, styled,
 } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
-import { DropzoneArea } from 'material-ui-dropzone';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
-import { getQuestion, getQuiz, getToken } from '../utils/helpers';
+import { getQuiz, getToken } from '../utils/helpers';
 import NavBar from '../UIComponents/NavBar';
 import AppBarSpacer from '../utils/styles';
 import API from '../utils/api';
 import EditAnswers from '../components/EditAnswers';
 import { StoreContext } from '../utils/store';
+import MediaZone from '../components/MediaZone';
 
 const api = new API('http://localhost:5005');
 const FormLayout = styled(Box)({
@@ -30,9 +30,9 @@ const EditQuestion = (props) => {
   const { edit: [edit] } = context;
   const [question, setQuestion] = React.useState(edit);
   const [open, setOpen] = React.useState(false);
-  console.log(question);
   const { match: { params } } = props;
   const history = useHistory();
+
   const handleChange = (attr, value) => {
     const updatedQuestion = question;
     updatedQuestion[attr] = value;
@@ -43,40 +43,21 @@ const EditQuestion = (props) => {
     setOpen(false);
   };
 
-  React.useEffect(() => {
-    (async () => {
-      // get the quiz
-      const res = await getQuiz(params.gid);
-      // if the quiz has questions, setQuestion to the correct question we want to edit
-      const questionCheck = getQuestion(res.questions, params.qid);
-      console.log(questionCheck);
-      if (questionCheck) {
-        console.log('setting question from questionCheck');
-        setQuestion(questionCheck);
-        // setDefaultValues(questionCheck);
-      // otherwise if we're adding a new question
-      } else {
-        // add a placeholder question so we can manipulate it
-        console.log('setting placeholder question');
-        const defVal = {
-          id: params.qid,
-          qType: 'single',
-          question: '',
-          score: 10,
-          time: 30,
-          media: '',
-          answers: [],
-        };
-        setQuestion(defVal);
-      }
-    })();
-  }, [params.gid, params.qid]);
+  const handleCancel = () => {
+    history.push(`/edit/${params.gid}`);
+  };
 
+  const setQtype = () => question.answers.filter((a) => a.correct).length === 1;
   const handleConfirm = async () => {
     if (!open) {
+      // first find all of the quizzes
       const quiz = await getQuiz(params.gid);
       const qExist = quiz.questions.find((q) => q.id === params.qid);
-      // if there are already questions
+
+      // check if the new question has more than one answer then change the type accordingly
+      question.qType = setQtype() ? 'single' : 'multi';
+
+      // if we're editting a question, then set the editted question
       if (qExist) {
         const quizQuestions = quiz.questions.map((q) => {
           if (q.id === params.qid) {
@@ -85,6 +66,7 @@ const EditQuestion = (props) => {
           return q;
         });
         quiz.questions = quizQuestions;
+      // otherwise we're adding a new question so just append it.
       } else {
         quiz.questions = [...quiz.questions, question];
       }
@@ -103,7 +85,7 @@ const EditQuestion = (props) => {
       history.push(`/edit/${params.gid}/`);
     }
   };
-  console.log(question);
+
   // if we're editting a previous question
   return (
     <section>
@@ -117,30 +99,25 @@ const EditQuestion = (props) => {
               fullWidth
               label="Whats your Question?"
               onBlur={(event) => { handleChange('question', event.target.value); }}
-              defaultValue={question.question}
+              defaultValue={edit.question}
             />
           </Grid>
-          <Grid item xs={11}>
-            <DropzoneArea
-              acceptedFiles={['image/*', 'audio/*', 'video/*']}
-              dropzoneText="Elevate your question! Click or drag and drop to upload a picture, audio clip, or video!"
-              onChange={(file) => { handleChange('media', file); }}
-              filesLimit={1}
-            />
+          <Grid>
+            <MediaZone question={question} setQuestion={setQuestion} />
           </Grid>
         </Grid>
         <Grid container item direction="column" xs={4} justify="space-between">
           <FormControl>
             <InputLabel id="question-type-label">Question Type</InputLabel>
-            <Select displayEmpty labelId="question-type-label" id="question-type-select" value={question.qType} onChange={(event) => handleChange('qType', event.target.value)}>
+            <Select displayEmpty labelId="question-type-label" id="question-type-select" defaultValue={question.qType} onChange={(event) => handleChange('qType', event.target.value)}>
               <MenuItem value="single">Single Choice</MenuItem>
               <MenuItem value="multi">Multiple Choice</MenuItem>
             </Select>
           </FormControl>
-          <TextField defaultValue={question.points} id="points" onChange={(event) => handleChange('points', event.target.value)} label="Points?" />
-          <TextField defaultValue={question.time} id="timer" onChange={(event) => handleChange('time', Number(event.target.value))} label="Question Duration" />
+          <TextField defaultValue={edit.score} id="points" onChange={(event) => handleChange('points', event.target.value)} label="Points?" />
+          <TextField defaultValue={edit.time} id="timer" onChange={(event) => handleChange('time', Number(event.target.value))} label="Question Duration" />
           <Grid item>
-            <SecondaryButton variant="contained">Cancel</SecondaryButton>
+            <SecondaryButton onClick={handleCancel} variant="contained">Cancel</SecondaryButton>
           </Grid>
           <Button variant="contained" onClick={handleConfirm}>Confirm Question</Button>
           <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>

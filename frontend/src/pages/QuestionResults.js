@@ -51,6 +51,7 @@ const QuestionResults = ({
       <Typography variant="h5">The correct Answer(s) are..</Typography>
       {answers.map((a) => (
         <Answer
+          key={`answer-${a.id}`}
           id={a.id}
           text={a.answer}
           answers={[]}

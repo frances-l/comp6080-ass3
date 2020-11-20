@@ -4,23 +4,17 @@ import {
   Checkbox, FormControlLabel, Paper,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
+import { StoreContext } from '../utils/store';
 
 const EditAnswers = ({ aId, question, setQuestion }) => {
-  const [answer, setAnswer] = React.useState('');
-  const [correct, setCorrect] = React.useState(false);
+  // const [answer, setAnswer] = React.useState('');
+  // const [correct, setCorrect] = React.useState(false);
+  const context = React.useContext(StoreContext);
+  const { edit: [edit] } = context;
 
-  React.useEffect(() => {
-    const findAnswer = () => question.answers.find((a) => a.id === aId);
-    let ans;
-    if (question.answers) {
-      ans = findAnswer();
-    }
-    if (ans) {
-      setAnswer(ans.text);
-      setCorrect(ans.isCorrect);
-    }
-  }, [aId, question.answers]);
+  const handlePresets = () => edit.answers.find((a) => a.id === aId);
 
+  const [checked, setChecked] = React.useState(handlePresets() ? handlePresets().correct : false);
   const handleAnswerTextChange = (text) => {
     const updatedQuestion = question;
     const foundAnswer = question.answers.filter((a) => a.id === aId);
@@ -41,6 +35,7 @@ const EditAnswers = ({ aId, question, setQuestion }) => {
   };
 
   const handleAnswerCorrectChange = (isCorrect) => {
+    setChecked(isCorrect);
     const updatedQuestion = question;
     const foundAnswer = question.answers.filter((a) => a.id === aId);
     if (foundAnswer.length === 1) {
@@ -67,7 +62,7 @@ const EditAnswers = ({ aId, question, setQuestion }) => {
           onChange={(event) => handleAnswerTextChange(event.target.value)}
           variant="filled"
           required
-          defaultValue={answer}
+          defaultValue={handlePresets() ? handlePresets().answer : ''}
           placeholder={(() => {
             if (aId > 2) {
               return `Answer ${aId} (Optional)`;
@@ -78,7 +73,8 @@ const EditAnswers = ({ aId, question, setQuestion }) => {
         <FormControlLabel
           onChange={(event) => handleAnswerCorrectChange(event.target.checked)}
           control={<Checkbox />}
-          defaultValue={correct}
+          checked={checked}
+
         />
       </Paper>
     </Grid>
