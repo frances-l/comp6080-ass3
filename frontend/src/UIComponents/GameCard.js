@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import {
-  CardContent, Typography, Card, CardMedia, Button, CardActions, makeStyles, Modal, Input,
+  CardContent, Typography, Card, CardMedia, Button, CardActions, makeStyles, Modal, Input, Grid,
 } from '@material-ui/core';
 import API from '../utils/api';
 import { getToken } from '../utils/helpers';
@@ -16,10 +16,11 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     maxHeight: '40vh',
     maxwidth: '60vw',
+    margin: '2vh 0',
   },
   image: {
     backgroundSize: 'cover',
-    maxHeight: '100%',
+    maxHeight: '40vh',
   },
   paper: {
     // position: 'absolute',
@@ -46,9 +47,6 @@ const GameCard = ({
   // const [image, setImage] = React.useState(logo);
   const inputRef = React.useRef(null);
   const linkEdit = () => history.push(`/edit/${gId}`);
-  // console.log(active);
-  // console.log(code);
-  // console.log(questions);
 
   React.useEffect(() => {
     if (active !== null) {
@@ -62,15 +60,11 @@ const GameCard = ({
     }
   }, [active, questions]);
 
-  // const yo = 'pooooo';
   const linkStartEnd = async () => {
     if (code === 0) { // start game
       await api.post(`admin/quiz/${gId}/start`, { headers: { Authorization: getToken() } });
       const res = await api.get(`admin/quiz/${gId}`, { headers: { Authorization: getToken() } });
       setCode(res.active);
-      // console.log(44444, res.active);
-      // console.log(888, res);
-      // console.log(222, start);
       console.log(111111, code);
 
       setStartOpen(true);
@@ -110,48 +104,64 @@ const GameCard = ({
   console.log(imgSrc);
 
   return (
-    <Card className={classes.container} key={gId}>
-      <CardMedia className={classes.imageContainer}>
-        <img src={imgSrc} className={classes.image} alt="card-thumbnail" />
-      </CardMedia>
-      <CardContent>
-        <Typography variant="h6">{title}</Typography>
-        <Typography variant="h6">{`Questions: ${questions.length}`}</Typography>
-        <Typography variant="h6">{`Game id: ${gId}`}</Typography>
-        <Typography variant="h6">{`Time needed: ${sum} seconds`}</Typography>
-      </CardContent>
-      <CardActions>
-        <Button onClick={linkEdit}>Edit Game</Button>
-        <Button onClick={remove}>Delete Game</Button>
-        <Button id="start-end" onClick={() => linkStartEnd()}>{code ? 'End Game' : 'Start Game'}</Button>
-        <Modal
-          open={startOpen}
-          onClose={handleStartClose}
-          aria-labelledby="start game"
-          aria-describedby="start game modal"
-        >
-          <div className={classes.paper}>
-            <Typography variant="h5">Link to the started game</Typography>
-            <Input inputRef={inputRef} type="text" value={`http://localhost:3000/join/${code}`} />
-            <br />
-            <Button variant="outlined" onClick={copy}>Copy text</Button>
-          </div>
-        </Modal>
-        <Modal
-          open={endOpen}
-          onClose={handleEndClose}
-          aria-labelledby="end game"
-          aria-describedby="end game modal"
-        >
-          <div className={classes.paper}>
-            <Typography variant="h5">Would you like to view the results?</Typography>
-            <br />
-            <Button variant="outlined" onClick={() => viewResult()}>Yes</Button>
-            <Button variant="outlined" onClick={() => handleEndClose()}>No</Button>
-          </div>
-        </Modal>
-      </CardActions>
-    </Card>
+    <Grid container>
+      <Card className={classes.container} key={gId}>
+        <Grid item>
+          <CardMedia className={classes.imageContainer}>
+            <img src={imgSrc} className={classes.image} alt="card-thumbnail" />
+          </CardMedia>
+        </Grid>
+        <Grid item>
+          <CardContent>
+            <Grid container item direction="column" justify="space-between">
+              <Grid item>
+                <Typography variant="h3">{title}</Typography>
+              </Grid>
+              <Grid item>
+                <Typography variant="h6">{`Questions: ${questions.length}`}</Typography>
+              </Grid>
+              <Grid item>
+                <Typography variant="h6">{`Game id: ${gId}`}</Typography>
+              </Grid>
+              <Grid item>
+                <Typography variant="h6">{`Time needed: ${sum} seconds`}</Typography>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Grid>
+        <CardActions>
+          <Button variant="contained" color="secondary" onClick={remove}>Delete Game</Button>
+          <Button variant="contained" color="primary" onClick={linkEdit}>Edit Game</Button>
+          <Button variant="contained" color="primary" id="start-end" onClick={() => linkStartEnd()}>{code ? 'End Game' : 'Start Game'}</Button>
+          <Modal
+            open={startOpen}
+            onClose={handleStartClose}
+            aria-labelledby="start game"
+            aria-describedby="start game modal"
+          >
+            <div className={classes.paper}>
+              <Typography variant="h5">Link to the started game</Typography>
+              <Input inputRef={inputRef} type="text" value={`http://localhost:3000/join/${code}`} />
+              <br />
+              <Button variant="outlined" onClick={copy}>Copy text</Button>
+            </div>
+          </Modal>
+          <Modal
+            open={endOpen}
+            onClose={handleEndClose}
+            aria-labelledby="end game"
+            aria-describedby="end game modal"
+          >
+            <div className={classes.paper}>
+              <Typography variant="h5">Would you like to view the results?</Typography>
+              <br />
+              <Button variant="outlined" onClick={() => viewResult()}>Yes</Button>
+              <Button variant="outlined" onClick={() => handleEndClose()}>No</Button>
+            </div>
+          </Modal>
+        </CardActions>
+      </Card>
+    </Grid>
   );
 };
 GameCard.propTypes = {

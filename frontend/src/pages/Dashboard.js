@@ -6,6 +6,7 @@ import API from '../utils/api';
 import { getToken } from '../utils/helpers';
 import GameCard from '../UIComponents/GameCard';
 import logo from '../assets/BBLogo.jpg';
+import '../styles/styles.css';
 
 const api = new API('http://localhost:5005');
 
@@ -49,7 +50,7 @@ function Dashboard() {
   }, []);
 
   return (
-    <main id="dashboard">
+    <main id="dashboard" className="page-layout">
       <header>
         <NavBar />
       </header>
@@ -61,7 +62,7 @@ function Dashboard() {
             key={`quiz-${quiz.id}`}
             gId={quiz.id}
             questions={quiz.questions}
-            title={quiz.name}
+            title={quiz.title}
             imgSrc={quiz.thumbnail}
             active={quiz.active}
           />

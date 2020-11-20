@@ -1,6 +1,7 @@
 import React from 'react';
 import {
-  Typography, Button, makeStyles, InputLabel, Input, Container, FormControl,
+  Typography, Button, InputLabel, Input,
+  Container, FormControl, Paper, Grid, Divider, styled,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -10,13 +11,9 @@ import { StoreContext } from '../utils/store';
 
 const api = new API('http://localhost:5005');
 
-const useStyles = makeStyles(() => ({
-  formContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: 'white',
-  },
-}));
+const ModalGrid = styled(Grid)({
+  padding: '2em',
+});
 
 const NewGameModal = ({ setOpen }) => {
   const [title, setTitle] = React.useState('');
@@ -50,30 +47,46 @@ const NewGameModal = ({ setOpen }) => {
     }
   };
 
-  const classes = useStyles();
   return (
-    <Container maxWidth="xs">
-      <div className={classes.formContainer}>
-        <Typography variant="h4">Create a Quiz!</Typography>
-        <form onSubmit={(event) => handleSubmit(event)}>
-          <FormControl
-            variant="filled"
-            error={errorToggle}
-          >
-            <InputLabel htmlFor="quiz-title">Give your quiz a name!</InputLabel>
-            <Input id="quiz-title" placeholder="Name" onBlur={(event) => setTitle(event.target.value)} />
-            {titleError}
-          </FormControl>
-          <Button type="submit">Confirm</Button>
-          <Typography>
-            Wondering where to add your questions?
-            Don&apos;t worry, once you press confirm it&apos;ll;
-            direct you to a page where you can get going!
-          </Typography>
-        </form>
-
-      </div>
-    </Container>
+    <Grid
+      container
+      direction="column"
+      alignItems="center"
+      justify="center"
+    >
+      <Container maxWidth="xs">
+        <Paper>
+          <ModalGrid container spacing={3}>
+            <Grid item>
+              <Typography variant="h4">Create a Quiz!</Typography>
+            </Grid>
+            <Divider />
+            <Grid>
+              <form onSubmit={(event) => handleSubmit(event)}>
+                <Grid item>
+                  <FormControl
+                    variant="filled"
+                    error={errorToggle}
+                  >
+                    <InputLabel htmlFor="quiz-title">Give your quiz a name!</InputLabel>
+                    <Input id="quiz-title" placeholder="Name" onBlur={(event) => setTitle(event.target.value)} />
+                    {titleError}
+                  </FormControl>
+                </Grid>
+                <Grid item>
+                  <Button type="submit" variant="contained" color="primary">Confirm</Button>
+                </Grid>
+                <Typography>
+                  Wondering where to add your questions?
+                  Don&apos;t worry, once you press confirm it&apos;ll
+                  direct you to a page where you can get going!
+                </Typography>
+              </form>
+            </Grid>
+          </ModalGrid>
+        </Paper>
+      </Container>
+    </Grid>
   );
 };
 

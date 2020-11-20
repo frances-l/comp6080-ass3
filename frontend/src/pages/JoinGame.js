@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  TextField, Typography, Button, Container, Grid, styled,
+  TextField, Typography, Button, Container, Grid, styled, Paper,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -14,6 +14,11 @@ const api = new API('http://localhost:5005');
 // game id is 984485397, session is 191470
 const PageLayout = styled(Container)({
   paddingTop: '10vh',
+
+});
+
+const BackgroundTile = styled(Paper)({
+  padding: '3em',
 });
 
 function JoinGame(props) {
@@ -77,24 +82,36 @@ function JoinGame(props) {
         <NavBar />
       </header>
       <section>
-        <PageLayout>
-          <Grid container direction="column">
-            <Typography variant="h2">Join a game!</Typography>
-            <form onSubmit={(event) => handleClick(event)}>
-              <TextField
-                error={error}
-                helperText={error ? 'This Session doesnt exist' : ''}
-                label="ID of the quiz session*"
-                variant="outlined"
-                name="joinid"
-                id="joinid"
-                onChange={(event) => setJoinID(event.target.value)}
-                value={joinid}
-              />
-              <TextField label="Nickname for the quiz*" variant="outlined" name="nickname" id="nickname" onChange={(event) => setNickname(event.target.value)} />
-              <Button type="onSubmit" variant="contained">Join game!</Button>
-            </form>
-          </Grid>
+        <PageLayout maxWidth="sm">
+          <BackgroundTile>
+            <Grid container direction="column" spacing={5}>
+              <Typography color="textPrimary" variant="h2">Join a game!</Typography>
+              <form onSubmit={(event) => handleClick(event)}>
+                <Grid container item spacing={2}>
+                  <Grid container item spacing={2}>
+                    <Grid item>
+                      <TextField
+                        error={error}
+                        helperText={error ? 'This Session doesnt exist' : ''}
+                        label="ID of the quiz session*"
+                        variant="outlined"
+                        name="joinid"
+                        id="joinid"
+                        onChange={(event) => setJoinID(event.target.value)}
+                        value={joinid}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <TextField label="Nickname for the quiz*" variant="outlined" name="nickname" id="nickname" onChange={(event) => setNickname(event.target.value)} />
+                    </Grid>
+                  </Grid>
+                  <Grid item>
+                    <Button type="onSubmit" color="primary" variant="contained">Join game!</Button>
+                  </Grid>
+                </Grid>
+              </form>
+            </Grid>
+          </BackgroundTile>
         </PageLayout>
       </section>
     </main>
