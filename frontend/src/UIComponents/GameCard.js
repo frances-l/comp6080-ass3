@@ -15,13 +15,13 @@ const useStyles = makeStyles(() => ({
   container: {
     display: 'flex',
     flexDirection: 'row',
-    maxHeight: '20vh',
-    maxWidth: '60vw',
+    maxHeight: '30vh',
+    maxWidth: '70vw',
     margin: '3vh 0',
   },
   image: {
     backgroundSize: 'cover',
-    height: '20vh',
+    height: '30vh',
     minWidth: '20vh',
   },
   buttonDataPair: {
