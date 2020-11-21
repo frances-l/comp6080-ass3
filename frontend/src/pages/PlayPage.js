@@ -105,6 +105,7 @@ const PlayPage = (props) => {
             setStage={setStage}
             sessionId={Number(params.sid)}
             quizId={Number(params.gid)}
+
           />
         );
     }

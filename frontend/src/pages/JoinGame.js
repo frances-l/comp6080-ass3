@@ -50,20 +50,24 @@ function JoinGame(props) {
     const res = await api.post(path, options);
     console.log(res);
     if (res.playerId) {
-      setPlayer(res.playerId);
+
+
+        const result = await api.get(`admin/session/${joinid}/status`, { headers: { Authorization: getToken() } });
+        setPlayer({ id: res.playerId, isAdmin: true });
+        console.log('setting session from joinGame', result);
+        setSession(result);
+        const quizId = await getQuizId(joinid);
+        if (result.results.active) {
+          // history.push(`/play/${quizId}/${joinid}`);
+          history.push(`/play/${joinid}`);
+        } else {
+          // print that the session isnt active.
+        }
+
+        setError(true);
+        setPlayer({ id: res.playerId, isAdmin: false });
+
       // seeing if the session is active.
-      const result = await api.get(`admin/session/${joinid}/status`, { headers: { Authorization: getToken() } });
-      console.log('setting session from joinGame', result);
-      setSession(result);
-      const quizId = await getQuizId(joinid);
-      if (result.results.active) {
-        history.push(`/play/${quizId}/${joinid}`);
-      } else {
-        // print that the session isnt active.
-      }
-    } else {
-      setError(true);
-    }
   };
 
   const handleClick = (e) => {

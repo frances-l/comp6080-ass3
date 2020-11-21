@@ -11,7 +11,7 @@ export default ({ children }) => {
   const [session, setSession] = React.useState({});
   const [currQuestion, setCurrQuestion] = React.useState({});
   const [questionConfirmed, setQuestionConfirmed] = React.useState(false);
-  const [player, setPlayer] = React.useState(0);
+  const [player, setPlayer] = React.useState({});
   const store = {
     questions: [questions, setQuestions],
     edit: [edit, setEdit],
