@@ -17,7 +17,9 @@ const MediaZone = ({ question, setQuestion }) => {
 
   const handleChange = (type, src) => {
     const updatedQuestion = question;
+    console.log(2222222, src);
     updatedQuestion.media = { type, src };
+    console.log(updatedQuestion);
     setQuestion(updatedQuestion);
   };
   const handleRemove = () => {

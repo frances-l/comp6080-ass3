@@ -73,9 +73,9 @@ const EditQuestion = (props) => {
       const qExist = quiz.questions.find((q) => Number(q.id) === Number(params.qid));
 
       // if we're editting a question, then set the editted question
-      console.log(qExist);
       if (qExist) {
         const quizQuestions = quiz.questions.map((q) => {
+          console.log(q);
           if (q.id === params.qid) {
             return question;
           }
