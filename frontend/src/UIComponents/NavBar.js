@@ -83,7 +83,7 @@ const NavBar = () => {
                 <Button variant="contained" color="primary" onClick={handleJoin}>Join Game</Button>
               </Grid>
               <Grid item>
-                <Button variant="contained" color="secondary" onClick={handleLogout}>Logout</Button>
+                <Button id="logout" variant="contained" color="secondary" onClick={handleLogout}>Logout</Button>
               </Grid>
             </Grid>
           </Grid>
