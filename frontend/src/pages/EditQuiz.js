@@ -1,5 +1,5 @@
 import {
-  Typography, Grid, Button, makeStyles, Modal, Input, Paper,
+  Typography, Grid, Button, makeStyles, Modal, Input, Divider,
 } from '@material-ui/core';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -138,17 +138,15 @@ const EditQuiz = (props) => {
     <div className={classes.pageLayout}>
       <NavBar />
       <div className={classes.appBarSpacer} />
-      <Paper>
-        <Grid container direction="column" alignItems="center">
-          <Grid item>
-            <Typography color="textPrimary" variant="h1">{quizTitle}</Typography>
-          </Grid>
+      <Grid container direction="column" alignItems="center">
+        <Grid item>
+          <Typography color="textPrimary" variant="h1">{quizTitle}</Typography>
         </Grid>
         <div className={classes.appBarSpacer} />
         <Grid container spacing={5}>
           <QuestionCard gid={Number(params.gid)} questions={questions} />
         </Grid>
-        <Grid direction="column" container spacing={3} alignItems="center">
+        <Grid direction="column" container spacing={10} alignItems="center">
           <Grid item>
             {(() => {
               if (questions.length === 0) {
@@ -162,44 +160,53 @@ const EditQuiz = (props) => {
               return <Typography variant="h3"> </Typography>;
             })()}
           </Grid>
-          <Grid item>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleNewQuestion()}
-            >
-              Add a new Question!
-            </Button>
-            <Button variant="contained" onClick={() => displayModal()}>Add a thumbnail</Button>
-            <Modal
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="upload photo"
-              aria-describedby="upload photo modal"
-            >
-              <main className={classes.paper}>
-                <Typography variant="h5">Upload photo here!</Typography>
-                <Input type="file" onChange={(e) => handleImage(e)} />
-                <Button variant="outlined" onClick={() => submit()}>Submit thumbnail</Button>
-              </main>
-            </Modal>
-            <Button id="change-title" variant="contained" onClick={() => displayChangeTitle()}>Change the title of the game</Button>
-            <Modal
-              open={titleOpen}
-              onClose={handleClose}
-              aria-labelledby="change title"
-              aria-describedby="change title modal"
-            >
-              <main className={classes.paper}>
-                <Typography variant="h5">New title for the quiz</Typography>
-                <Input id="new-title" type="text" onChange={(event) => setTitle(event.target.value)} />
-                <Button id="submit-title" variant="outlined" onClick={() => changeTitle()}>Submit new title</Button>
-              </main>
-            </Modal>
-
+          <Divider />
+          <Grid container item direction="row" justify="center" spacing={5}>
+            <Grid item>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleNewQuestion()}
+              >
+                Add a new Question!
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button variant="contained" color="primary" onClick={() => displayModal()}>Add a thumbnail</Button>
+              <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="upload photo"
+                aria-describedby="upload photo modal"
+              >
+                <main className={classes.paper}>
+                  <Typography variant="h5">Upload photo here!</Typography>
+                  <Input type="file" onChange={(e) => handleImage(e)} />
+                  <Button variant="outlined" onClick={() => submit()}>Submit thumbnail</Button>
+                </main>
+              </Modal>
+            </Grid>
+            <Grid item>
+              <Button id="change-title" variant="contained" color="primary" onClick={() => displayChangeTitle()}>Change the title of the game</Button>
+              <Modal
+                open={titleOpen}
+                onClose={handleClose}
+                aria-labelledby="change title"
+                aria-describedby="change title modal"
+              >
+                <main className={classes.paper}>
+                  <Typography variant="h5">New title for the quiz</Typography>
+                  <Input id="new-title" type="text" onChange={(event) => setTitle(event.target.value)} />
+                  <Button id="submit-title" variant="outlined" onClick={() => changeTitle()}>Submit new title</Button>
+                </main>
+              </Modal>
+            </Grid>
+            <Grid item>
+              <Button id="confirm" variant="contained" color="primary" onclick={() => { history.push('/'); }}>Go back</Button>
+            </Grid>
           </Grid>
         </Grid>
-      </Paper>
+      </Grid>
     </div>
   );
 };
