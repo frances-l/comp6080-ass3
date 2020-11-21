@@ -95,6 +95,7 @@ const EditQuestion = (props) => {
           thumbnail: quiz.thumbnail,
         }),
       });
+      console.log(7777, res);
       if (res.error) {
         setOpen(true);
       }
@@ -132,6 +133,7 @@ const EditQuestion = (props) => {
           </FormControl>
           <TextField defaultValue={edit.score} id="points" onChange={(event) => handleChange('points', event.target.value)} label="Points?" />
           <TextField defaultValue={edit.time} id="timer" onChange={(event) => handleChange('time', Number(event.target.value))} label="Question Duration" />
+          <TextField defaultValue={edit.preview} id="preview" onChange={(event) => handleChange('preview', Number(event.target.value))} label="Preview Duration" />
           <Grid item>
             <SecondaryButton onClick={handleCancel} variant="contained">Cancel</SecondaryButton>
           </Grid>

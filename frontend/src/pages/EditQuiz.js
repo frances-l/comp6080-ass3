@@ -63,7 +63,7 @@ const EditQuiz = (props) => {
     console.log(questions.length);
     console.log('handleNewQuestion');
     setEdit({
-      id: questions.length, points: 10, timer: 30, qType: 'single', answers: [],
+      id: questions.length, points: 10, timer: 30, qType: 'single', answers: [], preview: 5,
     });
     history.push(`/edit/${params.gid}/${questions.length}`);
   };
@@ -131,7 +131,7 @@ const EditQuiz = (props) => {
                   </Typography>
                 );
               }
-              return <Typography variant="h3">hello</Typography>;
+              return <Typography variant="h3"> </Typography>;
             })()}
           </Grid>
           <Grid item>

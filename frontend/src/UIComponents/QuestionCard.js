@@ -38,13 +38,16 @@ const QuestionCard = ({ gid, questions }) => {
         questions: newQuestions,
       }),
     });
+    const elem = document.getElementById(`q-${qId}`);
+    elem.style.display = 'none';
+
     console.log(res);
   };
 
   return (
     <Grid container spacing={5}>
       {questions.map((question) => (
-        <Grid item xs={4} key={`question-card-${question.id}`}>
+        <Grid item xs={4} key={`question-card-${question.id}`} id={`q-${question.id}`}>
           <Card>
             <img src={question.media.src && (question.media.type !== 'video') ? question.media.src : logo} alt="question Thumbnail" />
             <CardContent>
@@ -59,7 +62,7 @@ const QuestionCard = ({ gid, questions }) => {
               </Grid>
             </CardContent>
             <CardActions>
-              <Button variant="contained" onClick={() => handleDelete()}>Delete Question</Button>
+              <Button variant="contained" onClick={() => handleDelete(question.id)}>Delete Question</Button>
               <Button variant="contained" onClick={() => handleRedirect(question.id)}>Edit Question</Button>
             </CardActions>
           </Card>
