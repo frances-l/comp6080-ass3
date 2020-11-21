@@ -5,7 +5,21 @@
 */
 export const quizQuestionPublicReturn = question => {
   console.log('See question: ', question);
-  return question;
+  const parsedAnswers = question.answers.map((a) => {
+    const answerNoCorrect = a;
+    delete answerNoCorrect.correct;
+    return answerNoCorrect;
+  });
+  const retQuestion = {
+    id: question.id,
+    question: question.question,
+    answers: parsedAnswers,
+    time: question.time,
+    media: question.media,
+    preview: question.preview,
+    qType: question.qType,
+  };
+  return retQuestion;
 };
 
 /*

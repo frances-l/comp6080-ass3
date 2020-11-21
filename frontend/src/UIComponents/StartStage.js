@@ -19,6 +19,7 @@ const StartStage = ({
 
   const handleStart = async () => {
     const results = await api.get(`admin/session/${sessionId}/status`, { headers: { Authorization: getToken() } });
+    console.log(results.results.questions[0]);
     if (results.results.position === -1) {
       setCurrQuestion(results.results.questions[0]);
     }
@@ -35,6 +36,10 @@ const StartStage = ({
     const checkIfGameStart = async () => {
       const started = await api.get(`play/${player.id}/status`);
       if (started.started) {
+        // once the game starts, we can start the game here
+        const question = await api.get(`play/${player.id}/question`);
+        console.log(question.question);
+        setCurrQuestion(question.question);
         setStage('preview');
       }
     };
@@ -45,7 +50,7 @@ const StartStage = ({
     }
 
     return () => clearInterval(interval);
-  }, [player.id, player.isAdmin, setStage]);
+  }, [player.id, player.isAdmin, setCurrQuestion, setStage]);
 
   return (
     <div>
@@ -69,7 +74,7 @@ const StartStage = ({
             <Typography color="textPrimary">{`This is you! ${player.name}`}</Typography>
           </Grid>
           {player.isAdmin
-            ? <Button onClick={() => { handleStart(); }}>Start the Game!</Button>
+            ? <Button onClick={() => handleStart()}>Start the Game!</Button>
             : <Typography color="textPrimary"> Waiting for the host to start...</Typography>}
         </Grid>
       </Container>

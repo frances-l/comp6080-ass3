@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import API from '../utils/api';
 import { StoreContext } from '../utils/store';
 import Answer from '../components/Answer';
-import { getToken } from '../utils/helpers';
+import { getQuizId, getToken } from '../utils/helpers';
 
 const api = new API('http://localhost:5005');
 
@@ -33,7 +33,7 @@ const QuestionResults = ({
   const context = React.useContext(StoreContext);
   const { player: [player] } = context;
   const { session: [session, setSession] } = context;
-  const { currQuestion: [, setCurrQuestion] } = context;
+  const { currQuestion: [currQuestion, setCurrQuestion] } = context;
   const [answers, setAnswers] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
@@ -50,6 +50,8 @@ const QuestionResults = ({
       setOpen(true);
       // history.push(`/session/${sId}/results`);
     } else {
+      const quizId = await getQuizId(sId);
+      await api.post(`admin/quiz/${quizId}/advance`, { headers: { Authorization: getToken() } });
       setCurrQuestion(nextQuestion);
       setStage('preview');
     }
@@ -57,10 +59,33 @@ const QuestionResults = ({
 
   React.useEffect(() => {
     (async () => {
-      const result = await api.get(`play/${player}/answer`, { headers: { Authorization: getToken() } });
+      const result = await api.get(`play/${player.id}/answer`, { headers: { Authorization: getToken() } });
       setAnswers(result.answerIds);
     })();
   }, [player, session]);
+
+  React.useEffect(() => {
+    // function to check if the game has started or not
+    // if it has then set the stage to preview
+    // player will only ever get to start stage if the game hasnt started already
+    const checkIfGameStart = async () => {
+      const question = await api.get(`play/${player.id}/question`);
+      const status = await api.get(`play/${player.id}/status`);
+      if (!status.started) {
+        setOpen(true);
+      } else if (question.question.id !== currQuestion.id) {
+        setCurrQuestion(question.question);
+        setStage('preview');
+      }
+    };
+      // we only need to poll the server if the user isnt an admin
+    let interval;
+    if (!player.isAdmin) {
+      interval = setInterval(() => checkIfGameStart(), 500);
+    }
+
+    return () => clearInterval(interval);
+  }, [currQuestion, currQuestion.position, player.id, player.isAdmin, setCurrQuestion, setStage]);
 
   const handleClose = () => {
     setOpen(false);
@@ -87,7 +112,6 @@ const QuestionResults = ({
       {player.isAdmin
         ? <Button color="primary" onClick={() => { handleClick(); }}>Next Question</Button>
         : <Typography color="textPrimary">Waiting for host to proceed...</Typography>}
-      <Button color="primary" onClick={() => { handleClick(); }}>Next Question</Button>
       <Modal
         open={open}
         onClose={handleClose}

@@ -7,18 +7,15 @@ import Timer from '../components/Timer';
 // eslint-disable-next-line import/no-named-as-default-member
 import QuestionAnswers from '../components/QuestionAnswers';
 // import API from '../utils/api';
-// import { StoreContext } from '../utils/store';
+import { StoreContext } from '../utils/store';
 // import { getToken } from '../utils/helpers';
 
 // const api = new API('http://localhost:5005');
 // this will interchange with the PlayPage, itll alternate between this and question results
-const QuestionPage = ({ setStage, question }) => {
-  // so it doesnt scream at me
-  // const context = React.useContext(StoreContext);
-  // const { session: [session, setSession] } = context;
-
-  console.log(question);
-  console.log(question.qType);
+const QuestionPage = ({ setStage }) => {
+  const context = React.useContext(StoreContext);
+  const { currQuestion: [currQuestion] } = context;
+  console.log(currQuestion);
   const handleDurationExpire = () => {
     setStage('results');
   };
@@ -29,18 +26,18 @@ const QuestionPage = ({ setStage, question }) => {
       <Grid container direction="column">
         {/* <Container> */}
         <Grid item xs={12}>
-          <Typography color="textPrimary" variant="h1" align="center">{question.question}</Typography>
+          <Typography color="textPrimary" variant="h1" align="center">{currQuestion.question}</Typography>
         </Grid>
         <Grid container item direction="row">
           <Grid item xs={4}>
-            <Timer duration={Number(question.time)} onComplete={handleDurationExpire} />
+            <Timer duration={Number(currQuestion.time)} onComplete={handleDurationExpire} />
           </Grid>
           <Grid item xs={6}>
             {(() => {
-              if (question.media.type === 'video') {
-                return <CardMedia component="iframe" title="question-preview-video" src={question.media.src} />;
-              } if (question.media.src) {
-                return <img src={question.media.src} alt="question-preview" />;
+              if (currQuestion.media.type === 'video') {
+                return <CardMedia component="iframe" title="question-preview-video" src={currQuestion.media.src} />;
+              } if (currQuestion.media.src) {
+                return <img src={currQuestion.media.src} alt="question-preview" />;
               }
               return null;
             })()}
@@ -48,7 +45,7 @@ const QuestionPage = ({ setStage, question }) => {
           {/* </Container> */}
         </Grid>
         <Grid item>
-          <QuestionAnswers questionAnswers={question.answers} type={question.qType} />
+          <QuestionAnswers questionAnswers={currQuestion.answers} type={currQuestion.qType} />
         </Grid>
       </Grid>
     </article>
@@ -57,7 +54,6 @@ const QuestionPage = ({ setStage, question }) => {
 
 QuestionPage.propTypes = {
   setStage: PropTypes.func.isRequired,
-  question: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 export default QuestionPage;
