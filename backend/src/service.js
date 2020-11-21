@@ -386,7 +386,6 @@ export const submitAnswers = (playerId, answerList) => sessionLock((resolve, rej
     } else if (session.answerAvailable) {
       reject(new InputError('Can\'t answer question once answer is available'));
     } else {
-      console.log(JSON.stringify(quizQuestionGetCorrectAnswers(session.questions[session.position]).sort()), JSON.stringify(answerList.sort()));
       session.players[playerId].answers[session.position] = {
         questionStartedAt: session.isoTimeLastQuestionStarted,
         answeredAt: new Date().toISOString(),
