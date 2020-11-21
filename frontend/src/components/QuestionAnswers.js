@@ -14,18 +14,18 @@ const QuestionAnswers = ({ questionAnswers }) => {
   const context = React.useContext(StoreContext);
   // const { answers: [answers] } = context;
   const { player: [player] } = context;
-  const [answers, setAnswers] = React.useState([]);
+  const { playerAnswers: [playerAnswers] } = context;
   React.useEffect(() => {
     (async () => {
       const res = await api.put(`play/${player.id}/answer`, {
         headers: { 'Content-type': 'application/json', Authorization: getToken() },
         body: JSON.stringify({
-          answerIds: answers,
+          answerIds: playerAnswers,
         }),
       });
       console.log(res);
     })();
-  }, [answers, player]);
+  }, [playerAnswers, player]);
 
   return (
     <Grid container spacing={2} direction="row">
@@ -34,8 +34,7 @@ const QuestionAnswers = ({ questionAnswers }) => {
           id={a.id}
           text={a.answer}
           key={`answer-${a.id}`}
-          answers={answers}
-          setAnswers={setAnswers}
+          className="questionAnswer"
         />
       ))}
     </Grid>

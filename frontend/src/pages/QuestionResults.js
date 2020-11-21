@@ -1,5 +1,5 @@
 import {
-  Typography, Button, Modal, makeStyles,
+  Typography, Button, Modal, makeStyles, Grid,
 } from '@material-ui/core';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -34,6 +34,8 @@ const QuestionResults = ({
   const { player: [player] } = context;
   const { session: [session, setSession] } = context;
   const { currQuestion: [currQuestion, setCurrQuestion] } = context;
+  const { playerAnswers: [playerAnswers, setPlayerAnswers] } = context;
+
   const [answers, setAnswers] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
@@ -53,10 +55,11 @@ const QuestionResults = ({
       const quizId = await getQuizId(sId);
       await api.post(`admin/quiz/${quizId}/advance`, { headers: { Authorization: getToken() } });
       setCurrQuestion(nextQuestion);
+      setPlayerAnswers([]);
       setStage('preview');
     }
   };
-
+  // set the answers
   React.useEffect(() => {
     (async () => {
       const result = await api.get(`play/${player.id}/answer`, { headers: { Authorization: getToken() } });
@@ -74,6 +77,7 @@ const QuestionResults = ({
       if (!status.started) {
         setOpen(true);
       } else if (question.question.id !== currQuestion.id) {
+        setPlayerAnswers([]);
         setCurrQuestion(question.question);
         setStage('preview');
       }
@@ -85,7 +89,8 @@ const QuestionResults = ({
     }
 
     return () => clearInterval(interval);
-  }, [currQuestion, currQuestion.position, player.id, player.isAdmin, setCurrQuestion, setStage]);
+  }, [currQuestion, currQuestion.position, player.id,
+    player.isAdmin, setCurrQuestion, setPlayerAnswers, setStage]);
 
   const handleClose = () => {
     setOpen(false);
@@ -95,20 +100,49 @@ const QuestionResults = ({
     history.push('/');
   };
 
+  const handleAnswers = (answer) => {
+    // answer is every choice of answer for the question
+    // playerAnswers is the answers that the player chose
+    // answers contains the correct answers for the question
+    // first we check if the player answered correctly
+    // extract the answer first
+    console.log(playerAnswers);
+    const chosen = playerAnswers.find((a) => a === answer.id);
+    // if player chose this answer
+    if (chosen) {
+      // check if answer is correct
+      const correct = answers.find((a) => a.id === chosen);
+      // if its correct then return correct answer
+      if (correct) {
+        return 'correctAnswer';
+      // otherweise its wrong
+      }
+      return 'incorrectAnswer';
+
+      // if player didnt choose this answer
+    }
+    // check if the non chosen answer is correct
+    if (answers.find((a) => a.id === answer.id)) {
+      return 'incorrectAnswer';
+    }
+    // otherwise its just neutral
+    return 'neutralAnswer';
+  };
+
   return (
     <main>
       <Typography color="textPrimary" variant="h1">How did you do?</Typography>
       <Typography color="textPrimary" variant="h5">The correct Answer(s) are..</Typography>
-      {answers.map((a) => (
-        <Answer
-          key={`answer-${a.id}`}
-          id={a.id}
-          text={a.answer}
-          answers={[]}
-          setAnswers={setAnswers}
-          className={`answer-${a.id}`}
-        />
-      ))}
+      <Grid container direction="row" spacing={1}>
+        {currQuestion.answers.map((a) => (
+          <Answer
+            key={`answer-${a.id}`}
+            id={a.id}
+            text={a.answer}
+            className={(() => handleAnswers(a))()}
+          />
+        ))}
+      </Grid>
       {player.isAdmin
         ? <Button color="primary" onClick={() => { handleClick(); }}>Next Question</Button>
         : <Typography color="textPrimary">Waiting for host to proceed...</Typography>}
