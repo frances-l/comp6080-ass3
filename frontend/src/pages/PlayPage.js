@@ -42,11 +42,28 @@ const PlayPage = (props) => {
       if (status.status) {
         // get the question that is currently happening and set the relevant information
         const question = await api.get(`play/${player.id}/question`);
-        setCurrQuestion(question);
-        setStage(QuestionPage);
+        const questionData = question.question;
+        // get total time since the question started, to see where to redirect
+        let timeSinceStart = new Date(questionData.isoTimeLastQuestionStarted);
+        timeSinceStart = Date.now().getTime() - timeSinceStart.getTime();
+        // if the time since start is more than the question time +
+        // preview, then the question is still happening
+        // set the current question with the updated time so user can still answer
+        // otherwise return the results
+        console.log(timeSinceStart);
+        if (timeSinceStart > ((questionData.preview + questionData.time) * 1000)) {
+          console.log('going to result');
+          setCurrQuestion(questionData);
+          setStage(stage.RESULT);
+        } else {
+          console.log('going to question');
+          questionData.time = timeSinceStart;
+          setCurrQuestion(questionData);
+          setStage(stage.QUESTION);
+        }
       }
     })();
-  }, [player.id, setCurrQuestion]);
+  }, [player.id, setCurrQuestion, stage.QUESTION, stage.RESULT]);
 
   const loadPage = () => {
     switch (stage) {

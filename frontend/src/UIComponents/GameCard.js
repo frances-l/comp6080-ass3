@@ -15,14 +15,14 @@ const useStyles = makeStyles(() => ({
   container: {
     display: 'flex',
     flexDirection: 'row',
-    minHeight: '20vh',
+    maxHeight: '20vh',
     maxWidth: '70vw',
     margin: '3vh 0',
     justifyContent: 'space-between',
   },
   image: {
     backgroundSize: 'cover',
-    height: '50vh',
+    height: '20vh',
     minWidth: '20vh',
   },
   imagePicturePair: {
