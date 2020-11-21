@@ -17,6 +17,7 @@ const QuestionAnswers = ({ questionAnswers }) => {
   const { playerAnswers: [playerAnswers] } = context;
   React.useEffect(() => {
     (async () => {
+      console.log('putting answer', playerAnswers);
       const res = await api.put(`play/${player.id}/answer`, {
         headers: { 'Content-type': 'application/json', Authorization: getToken() },
         body: JSON.stringify({

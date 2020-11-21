@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Typography, Grid, CardMedia,
+  Typography, Grid, CardMedia, Divider,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import Timer from '../components/Timer';
@@ -28,6 +28,7 @@ const QuestionPage = ({ setStage }) => {
         <Grid item xs={12}>
           <Typography color="textPrimary" variant="h1" align="center">{currQuestion.question}</Typography>
         </Grid>
+        <Divider />
         <Grid container item direction="row">
           <Grid item xs={4}>
             <Timer duration={Number(currQuestion.time)} onComplete={handleDurationExpire} />

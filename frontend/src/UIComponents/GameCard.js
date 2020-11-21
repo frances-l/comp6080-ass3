@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import {
-  CardContent, Typography, Card, CardMedia, Button,
+  Typography, Card, CardMedia, Button,
   CardActions, makeStyles, Modal, Input,
 } from '@material-ui/core';
 import API from '../utils/api';
@@ -16,24 +16,24 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'row',
     maxHeight: '20vh',
-    maxWidth: '70vw',
+    maxWidth: '60vw',
     margin: '3vh 0',
-    justifyContent: 'space-between',
   },
   image: {
     backgroundSize: 'cover',
     height: '20vh',
     minWidth: '20vh',
   },
-  imagePicturePair: {
+  buttonDataPair: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
   },
   metadataContainer: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    paddingRight: '3em',
   },
   paper: {
     display: 'flex',
@@ -42,6 +42,16 @@ const useStyles = makeStyles(() => ({
     padding: '2em',
     borderRadius: '1em',
     backgroundColor: 'grey',
+  },
+  cardRHS: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    paddingLeft: '2vw',
+  },
+  cardContent: {
+    display: 'flex',
+    flexDirect: 'row',
   },
 }));
 
@@ -120,48 +130,52 @@ const GameCard = ({
 
   return (
     <Card id="game-card" className={classes.container} key={gId}>
-      <div className={classes.imagePicturePair}>
-        <CardMedia className={classes.imageContainer}>
-          <img src={imgSrc} className={classes.image} alt="card-thumbnail" />
-        </CardMedia>
-        <CardContent className={classes.metadataContainer}>
+      <CardMedia className={classes.imageContainer}>
+        <img src={imgSrc} className={classes.image} alt="card-thumbnail" />
+      </CardMedia>
+      <div className={classes.cardRHS}>
+        <div>
           <Typography variant="h3">{title}</Typography>
-          <Typography variant="h6">{`Questions: ${questions.length}`}</Typography>
-          <Typography variant="h6">{`Game id: ${gId}`}</Typography>
-          <Typography variant="h6">{`Time needed: ${sum} seconds`}</Typography>
-        </CardContent>
+        </div>
+        <div className={classes.buttonDataPair}>
+          <div className={classes.metadataContainer}>
+            <Typography variant="h6">{`Questions: ${questions.length}`}</Typography>
+            <Typography variant="h6">{`Game id: ${gId}`}</Typography>
+            <Typography variant="h6">{`Time needed: ${sum} seconds`}</Typography>
+          </div>
+          <CardActions>
+            <Button variant="contained" color="secondary" onClick={remove}>Delete Game</Button>
+            <Button variant="contained" color="primary" onClick={linkEdit}>Edit Game</Button>
+            <Button variant="contained" color="primary" id="start-end" onClick={() => linkStartEnd()}>{code ? 'End Game' : 'Start Game'}</Button>
+            <Modal
+              open={startOpen}
+              onClose={handleStartClose}
+              aria-labelledby="start game"
+              aria-describedby="start game modal"
+              id="link-modal"
+            >
+              <div className={classes.paper}>
+                <Typography color="textPrimary" variant="h5">Link to the started game</Typography>
+                <Input inputRef={inputRef} type="text" value={`http://localhost:3000/join/${code}`} />
+                <br />
+                <Button variant="outlined" onClick={copy}>Copy text</Button>
+              </div>
+            </Modal>
+            <Modal
+              open={endOpen}
+              onClose={handleEndClose}
+              aria-labelledby="end game"
+              aria-describedby="end game modal"
+            >
+              <div className={classes.paper}>
+                <Typography color="textPrimary" variant="h5">Would you like to view the results?</Typography>
+                <Button id="yes" variant="outlined" onClick={() => viewResult()}>Yes</Button>
+                <Button id="no" variant="outlined" onClick={() => handleEndClose()}>No</Button>
+              </div>
+            </Modal>
+          </CardActions>
+        </div>
       </div>
-      <CardActions>
-        <Button variant="contained" color="secondary" onClick={remove}>Delete Game</Button>
-        <Button variant="contained" color="primary" onClick={linkEdit}>Edit Game</Button>
-        <Button variant="contained" color="primary" id="start-end" onClick={() => linkStartEnd()}>{code ? 'End Game' : 'Start Game'}</Button>
-        <Modal
-          open={startOpen}
-          onClose={handleStartClose}
-          aria-labelledby="start game"
-          aria-describedby="start game modal"
-          id="link-modal"
-        >
-          <div className={classes.paper}>
-            <Typography color="textPrimary" variant="h5">Link to the started game</Typography>
-            <Input inputRef={inputRef} type="text" value={`http://localhost:3000/join/${code}`} />
-            <br />
-            <Button variant="outlined" onClick={copy}>Copy text</Button>
-          </div>
-        </Modal>
-        <Modal
-          open={endOpen}
-          onClose={handleEndClose}
-          aria-labelledby="end game"
-          aria-describedby="end game modal"
-        >
-          <div className={classes.paper}>
-            <Typography color="textPrimary" variant="h5">Would you like to view the results?</Typography>
-            <Button id="yes" variant="outlined" onClick={() => viewResult()}>Yes</Button>
-            <Button id="no" variant="outlined" onClick={() => handleEndClose()}>No</Button>
-          </div>
-        </Modal>
-      </CardActions>
     </Card>
   );
 };
