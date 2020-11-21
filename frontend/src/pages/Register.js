@@ -37,7 +37,7 @@ function Register() {
     console.log(res);
     if (res.token) {
       localStorage.setItem('user_token', res.token);
-      history.push('/login');
+      history.push('/');
       console.log('registered');
       // handle this shit
     } else {
@@ -70,7 +70,7 @@ function Register() {
             {/* <TextField label="Confirm Password*" variant="outlined"
             name="confirm-password" type="password" id="confirm-password"
             onChange={(event) => setConfirmPassword(event.target.value)} /> */}
-            <Button type="onSubmit" variant="contained">Register</Button>
+            <Button id="submit" type="onSubmit" variant="contained">Register</Button>
             <Link to="/login">If you already have an account click hereeeeeeeee</Link>
           </form>
         </div>

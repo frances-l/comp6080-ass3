@@ -41,6 +41,8 @@ const EditQuiz = (props) => {
   const context = React.useContext(StoreContext);
   const [image, setImage] = React.useState();
   const [open, setOpen] = React.useState(false);
+  const [titleOpen, setTitleOpen] = React.useState(false);
+  const [title, setTitle] = React.useState('');
   const { edit: [, setEdit] } = context;
 
   React.useEffect(() => {
@@ -69,12 +71,16 @@ const EditQuiz = (props) => {
   };
 
   const displayModal = () => {
-    console.log(6767);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
+    setTitleOpen(false);
+  };
+
+  const displayChangeTitle = () => {
+    setTitleOpen(true);
   };
 
   const handleImage = async (event) => {
@@ -104,6 +110,28 @@ const EditQuiz = (props) => {
       console.log(res.error);
     }
     console.log(res);
+  };
+
+  const changeTitle = async () => {
+    const quiz = await api.get(`admin/quiz/${params.gid}`, {
+      headers: {
+        Authorization: getToken(),
+      },
+    });
+    const res = await api.put(`admin/quiz/${params.gid}`, {
+      headers: { 'Content-type': 'application/json', Authorization: getToken() },
+      body: JSON.stringify({
+        questions: quiz.questions,
+        name: title,
+        thumbnail: quiz.thumbnail,
+      }),
+    });
+    if (res.error) {
+      console.log(res.error);
+    }
+    console.log(res);
+    setQuizTitle(title);
+    setTitleOpen(false);
   };
 
   return (
@@ -155,6 +183,20 @@ const EditQuiz = (props) => {
                 <Button variant="outlined" onClick={() => submit()}>Submit thumbnail</Button>
               </main>
             </Modal>
+            <Button id="change-title" variant="contained" onClick={() => displayChangeTitle()}>Change the title of the game</Button>
+            <Modal
+              open={titleOpen}
+              onClose={handleClose}
+              aria-labelledby="change title"
+              aria-describedby="change title modal"
+            >
+              <main className={classes.paper}>
+                <Typography variant="h5">New title for the quiz</Typography>
+                <Input id="new-title" type="text" onChange={(event) => setTitle(event.target.value)} />
+                <Button id="submit-title" variant="outlined" onClick={() => changeTitle()}>Submit new title</Button>
+              </main>
+            </Modal>
+
           </Grid>
         </Grid>
       </Paper>
