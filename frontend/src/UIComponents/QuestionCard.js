@@ -59,7 +59,7 @@ const QuestionCard = ({ gid, questions }) => {
               </Grid>
             </CardContent>
             <CardActions>
-              <Button variant="contained" onClick={() => handleDelete()}>Delete Question</Button>
+              <Button variant="contained" onClick={() => handleDelete(question.id)}>Delete Question</Button>
               <Button variant="contained" onClick={() => handleRedirect(question.id)}>Edit Question</Button>
             </CardActions>
           </Card>

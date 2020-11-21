@@ -53,8 +53,7 @@ function JoinGame(props) {
       setPlayer(res.playerId);
       // seeing if the session is active.
       const result = await api.get(`admin/session/${joinid}/status`, { headers: { Authorization: getToken() } });
-      console.log('setting session from playJoin');
-      console.log(result);
+      console.log('setting session from joinGame', result);
       setSession(result);
       const quizId = await getQuizId(joinid);
       if (result.results.active) {
@@ -71,7 +70,6 @@ function JoinGame(props) {
     e.preventDefault();
 
     if (joinid && nickname) {
-      console.log('yayy');
       join();
     }
   };

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Typography, Container, Grid, CardMedia,
+  Typography, Grid, CardMedia,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import Timer from '../components/Timer';
@@ -26,21 +26,31 @@ const QuestionPage = ({ setStage, question }) => {
   return (
     <article>
       {/* Change this navBar to pause game, quit, etc */}
-      <Container>
-        <Typography color="textPrimary" variant="h1" align="center">{question.question}</Typography>
-        {(() => {
-          if (question.media !== '') {
-            return (
-              <Grid container item>
-                <CardMedia component="iframe" title="question-media" src={question.media} />
-              </Grid>
-            );
-          }
-          return (null);
-        })()}
-      </Container>
-      <Timer duration={Number(question.time)} onComplete={handleDurationExpire} />
-      <QuestionAnswers questionAnswers={question.answers} type={question.qType} />
+      <Grid container direction="column">
+        {/* <Container> */}
+        <Grid item xs={12}>
+          <Typography color="textPrimary" variant="h1" align="center">{question.question}</Typography>
+        </Grid>
+        <Grid container item direction="row">
+          <Grid item xs={4}>
+            <Timer duration={Number(question.time)} onComplete={handleDurationExpire} />
+          </Grid>
+          <Grid item xs={6}>
+            {(() => {
+              if (question.media.type === 'video') {
+                return <CardMedia component="iframe" title="question-preview-video" src={question.media.src} />;
+              } if (question.media.src) {
+                return <img src={question.media.src} alt="question-preview" />;
+              }
+              return null;
+            })()}
+          </Grid>
+          {/* </Container> */}
+        </Grid>
+        <Grid item>
+          <QuestionAnswers questionAnswers={question.answers} type={question.qType} />
+        </Grid>
+      </Grid>
     </article>
   );
 };

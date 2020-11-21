@@ -26,6 +26,7 @@ const PlayPage = (props) => {
   const context = React.useContext(StoreContext);
   const { player: [player] } = context;
   const { session: [session, setSession] } = context;
+  console.log('printing session in playGame', session);
   const { currQuestion: [currQuestion, setCurrQuestion] } = context;
   const { match: { params } } = props;
 
@@ -38,10 +39,8 @@ const PlayPage = (props) => {
       const results = await api.get(`admin/session/${params.sid}/status`, { headers: { Authorization: getToken() } });
       if (!results.error) {
         const currSession = results;
-        console.log('setting session from playPage');
-        console.log(currSession);
+        console.log('setting session from playPage', currSession);
         setSession(currSession);
-        console.log(currSession);
         // if the game has just began and position is still -1, load the first question
         if (currSession.results.position < currSession.results.questions.length) {
           setCurrQuestion(currSession.results.questions[currSession.results.position]);

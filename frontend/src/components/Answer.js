@@ -3,6 +3,7 @@ import {
   Grid, Card, CardActionArea, Typography, makeStyles,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
+import { StoreContext } from '../utils/store';
 
 const useStyles = makeStyles(() => ({
   selectedAnswer: {
@@ -17,18 +18,21 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Answer = ({
-  id, text, answers, setAnswers, type,
+  id, text, answers, setAnswers,
 }) => {
+  const context = React.useContext(StoreContext);
+  const { currQuestion: [currQuestion] } = context;
+
   const [selected, setSelected] = React.useState(false);
   const classes = useStyles();
 
   const handleSelect = async () => {
     let updatedAnswers;
     // if it was previously selected, we need to remove it out of the array
-    if (!selected && type === 'single') {
+    if (!selected && currQuestion.qType === 'single') {
       updatedAnswers = [id];
       console.log(`setting updated answers to ${updatedAnswers}`);
-    } else if (!selected && type === 'multi') {
+    } else if (!selected && currQuestion.qType === 'multi') {
       updatedAnswers = [...answers, id];
       console.log(`setting updated answers to ${updatedAnswers}`);
     } else {
@@ -45,11 +49,11 @@ const Answer = ({
     // if answers change and the type is single, we just need to set selected
     const isAnswer = () => answers.find((a) => a.id === id);
     console.log(isAnswer());
-    if (type === 'single' && !isAnswer()) {
+    if (currQuestion.qType === 'single' && !isAnswer()) {
       console.log('inside useeffect setting selected');
       // setSelected(false);
     }
-  }, [answers, id, selected, type]);
+  }, [answers, currQuestion.qType, id, selected]);
 
   return (
     <Grid item sm={6}>
@@ -71,7 +75,6 @@ Answer.propTypes = {
   text: PropTypes.string.isRequired,
   answers: PropTypes.arrayOf(PropTypes.number).isRequired,
   setAnswers: PropTypes.func.isRequired,
-  type: PropTypes.string.isRequired,
 };
 
 export default Answer;

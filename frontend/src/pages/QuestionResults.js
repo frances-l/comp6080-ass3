@@ -32,7 +32,7 @@ const QuestionResults = ({
   // console.log(question);
   const context = React.useContext(StoreContext);
   const { player: [player] } = context;
-  const { session: [session] } = context;
+  const { session: [session, setSession] } = context;
   const { currQuestion: [, setCurrQuestion] } = context;
   const [answers, setAnswers] = React.useState([]);
   const [open, setOpen] = React.useState(false);
@@ -43,9 +43,10 @@ const QuestionResults = ({
     // handle pressing next in results page
     // should advance the game, and set the question to the next one
     const results = await api.get(`admin/session/${sId}/status`, { headers: { Authorization: getToken() } });
+    console.log('printing session from questionResults', results);
+    setSession(results);
     const nextQuestion = results.results.questions[results.results.position + 1];
     if (!nextQuestion) {
-      console.log('hello');
       setOpen(true);
       // history.push(`/session/${sId}/results`);
     } else {
@@ -56,6 +57,7 @@ const QuestionResults = ({
 
   React.useEffect(() => {
     (async () => {
+      console.log('getting answers');
       console.log(session);
       const result = await api.get(`play/${player}/answer`, { headers: { Authorization: getToken() } });
       console.log(result);

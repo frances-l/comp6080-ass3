@@ -34,5 +34,5 @@ export const quizQuestionGetAnswers = question => {
  of the question once it starts. (Seconds)
 */
 export const quizQuestionGetDuration = question => {
-  return Number(question.time);
+  return Number(question.time) + Number(question.preview);
 };
