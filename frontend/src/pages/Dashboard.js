@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
+// import { Typography } from '@material-ui/core';
 import NavBar from '../UIComponents/NavBar';
 // import isLogin from '../utils';
 import API from '../utils/api';
@@ -46,7 +46,6 @@ function Dashboard() {
         <NavBar />
       </header>
       <section>
-        <Typography variant="h3">Welcome to your dashboard!</Typography>
         {/* {Note lint doesn't fucking allow object types so we have to do this} */}
         {games.map((quiz) => (
           <GameCard

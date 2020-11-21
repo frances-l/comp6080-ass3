@@ -10,11 +10,14 @@ import API from '../utils/api';
 
 const api = new API('http://localhost:5005');
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   formContainer: {
     paddingTop: '20vh',
+    [theme.breakpoints.down('sm')]: {
+      padding: '20vh 10vw',
+    },
   },
-});
+}));
 
 function Login() {
   const [userEmail, setEmail] = React.useState('');

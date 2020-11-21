@@ -1,5 +1,5 @@
 import {
-  Typography, Grid, Button, makeStyles, Modal, Input, Divider,
+  Typography, Grid, Button, makeStyles, Modal, Input, Divider, useTheme, useMediaQuery,
 } from '@material-ui/core';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -27,7 +27,11 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
     margin: 'auto',
-
+  },
+  editButtonGroup: {
+    [theme.breakpoints.down('sm')]: {
+      height: '6vh',
+    },
   },
 }));
 
@@ -134,13 +138,15 @@ const EditQuiz = (props) => {
     setTitleOpen(false);
   };
 
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <div className={classes.pageLayout}>
       <NavBar />
       <div className={classes.appBarSpacer} />
       <Grid container direction="column" alignItems="center">
         <Grid item>
-          <Typography color="textPrimary" variant="h1">{quizTitle}</Typography>
+          <Typography color="textPrimary" variant={matches ? 'h3' : 'h1'}>{quizTitle}</Typography>
         </Grid>
         <div className={classes.appBarSpacer} />
         <Grid container spacing={5}>
@@ -151,7 +157,7 @@ const EditQuiz = (props) => {
             {(() => {
               if (questions.length === 0) {
                 return (
-                  <Typography color="textPrimary" variant="h3" align="center">
+                  <Typography color="textPrimary" variant={matches ? 'h5' : 'h3'} align="center">
                     Heres a nice fresh
                     quiz for you! Click the button below to start adding some questions!
                   </Typography>
@@ -161,9 +167,11 @@ const EditQuiz = (props) => {
             })()}
           </Grid>
           <Divider />
-          <Grid container item direction="row" justify="center" spacing={5}>
+          <Grid container item direction={matches ? 'column' : 'row'} justify="center" spacing={5}>
             <Grid item>
               <Button
+                className={classes.editButtonGroup}
+                fullWidth={matches}
                 variant="contained"
                 color="primary"
                 onClick={() => handleNewQuestion()}
@@ -172,7 +180,16 @@ const EditQuiz = (props) => {
               </Button>
             </Grid>
             <Grid item>
-              <Button variant="contained" color="primary" onClick={() => displayModal()}>Add a thumbnail</Button>
+              <Button
+                className={classes.editButtonGroup}
+                fullWidth={matches}
+                variant="contained"
+                color="primary"
+                onClick={() => displayModal()}
+              >
+                Add a thumbnail
+
+              </Button>
               <Modal
                 open={open}
                 onClose={handleClose}
@@ -187,7 +204,17 @@ const EditQuiz = (props) => {
               </Modal>
             </Grid>
             <Grid item>
-              <Button id="change-title" variant="contained" color="primary" onClick={() => displayChangeTitle()}>Change the title of the game</Button>
+              <Button
+                className={classes.editButtonGroup}
+                fullWidth={matches}
+                id="change-title"
+                variant="contained"
+                color="primary"
+                onClick={() => displayChangeTitle()}
+              >
+                Change Quiz Title
+
+              </Button>
               <Modal
                 open={titleOpen}
                 onClose={handleClose}
@@ -202,7 +229,17 @@ const EditQuiz = (props) => {
               </Modal>
             </Grid>
             <Grid item>
-              <Button id="confirm" variant="contained" color="primary" onclick={() => { history.push('/'); }}>Go back</Button>
+              <Button
+                className={classes.editButtonGroup}
+                fullWidth={matches}
+                id="confirm"
+                variant="contained"
+                color="primary"
+                onclick={() => { history.push('/'); }}
+              >
+                Go back
+
+              </Button>
             </Grid>
           </Grid>
         </Grid>
