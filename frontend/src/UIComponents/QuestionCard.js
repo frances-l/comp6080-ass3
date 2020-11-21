@@ -1,5 +1,5 @@
 import {
-  Typography, Grid, CardContent, CardActions, Button, Card,
+  Typography, Grid, CardContent, CardActions, Button, Card, makeStyles,
 } from '@material-ui/core';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
@@ -10,6 +10,16 @@ import { getToken } from '../utils/helpers';
 import { StoreContext } from '../utils/store';
 
 const api = new API('http://localhost:5005');
+
+const useStyles = makeStyles(() => ({
+  cardImage: {
+    maxHeight: '42vh',
+    maxWidth: '40vw',
+  },
+  questionCard: {
+    minWidth: '40vw',
+  },
+}));
 
 const QuestionCard = ({ gid, questions }) => {
   // const handleMedia = (src) => {
@@ -43,13 +53,20 @@ const QuestionCard = ({ gid, questions }) => {
 
     console.log(res);
   };
-
+  const classes = useStyles();
   return (
     <Grid container spacing={5}>
       {questions.map((question) => (
-        <Grid item xs={4} key={`question-card-${question.id}`} id={`q-${question.id}`}>
-          <Card>
-            <img src={question.media.src && (question.media.type !== 'video') ? question.media.src : logo} alt="question Thumbnail" />
+        <Grid item xs={3} key={`question-card-${question.id}`} id={`q-${question.id}`}>
+          <Card className={classes.questionCard}>
+            <Grid item>
+              <img
+                className={classes.cardImage}
+                src={question.media.src && (question.media.type !== 'video') ? question.media.src : logo}
+                alt="question Thumbnail"
+
+              />
+            </Grid>
             <CardContent>
               <Typography variant="h5" align="center">{question.question}</Typography>
               <Grid container direction="row" spacing={10}>
@@ -62,8 +79,14 @@ const QuestionCard = ({ gid, questions }) => {
               </Grid>
             </CardContent>
             <CardActions>
-              <Button variant="contained" onClick={() => handleDelete(question.id)}>Delete Question</Button>
-              <Button variant="contained" onClick={() => handleRedirect(question.id)}>Edit Question</Button>
+              <Grid container item direction="row" justify="space-around">
+                <Grid item>
+                  <Button color="primary" variant="contained" onClick={() => handleDelete(question.id)}>Delete Question</Button>
+                </Grid>
+                <Grid item>
+                  <Button color="primary" variant="contained" onClick={() => handleRedirect(question.id)}>Edit Question</Button>
+                </Grid>
+              </Grid>
             </CardActions>
           </Card>
         </Grid>

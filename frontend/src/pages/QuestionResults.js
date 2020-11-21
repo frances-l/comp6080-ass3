@@ -64,6 +64,7 @@ const QuestionResults = ({
   React.useEffect(() => {
     (async () => {
       const result = await api.get(`play/${player.id}/answer`, { headers: { Authorization: getToken() } });
+      console.log(result);
       setAnswers(result.answerIds);
     })();
   }, [player, session]);

@@ -4,7 +4,7 @@ import {
   useHistory,
 } from 'react-router-dom';
 import {
-  makeStyles, Container, TextField, Button, Typography,
+  makeStyles, Grid, TextField, Button, Typography,
 } from '@material-ui/core';
 import API from '../utils/api';
 
@@ -12,9 +12,7 @@ const api = new API('http://localhost:5005');
 
 const useStyles = makeStyles({
   formContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    paddingTop: '20vh',
   },
 });
 
@@ -50,18 +48,45 @@ function Login() {
   }
 
   const classes = useStyles();
-
   return (
     <main>
-      <Container className={classes.formContainer}>
-        <Typography variant="h1">Sign In Bitch</Typography>
+      {/* <Container className={classes.formContainer}> */}
+      <Grid
+        className={classes.formContainer}
+        container
+        direction="column"
+        alignContent="center"
+        spacing={3}
+      >
+        <Grid item>
+          <Typography color="textPrimary" variant="h1">Sign In Bitch</Typography>
+        </Grid>
         <form>
-          <TextField label="Email*" variant="outlined" name="email" id="email" onChange={(event) => setEmail(event.target.value)} />
-          <TextField label="Password*" variant="outlined" type="password" name="password" id="password" onChange={(event) => setPassword(event.target.value)} />
-          <Button id="submit" onClick={() => { fetchLogin(); }} variant="contained">Sign In</Button>
-          <Link id="register" to="/register">Wanna participate in the best fucking game in the world? Register here</Link>
+          <Grid container item direction="column" spacing={2}>
+            <Grid item>
+              <TextField fullWidth label="Email*" variant="outlined" name="email" id="email" onChange={(event) => setEmail(event.target.value)} />
+            </Grid>
+            <Grid item>
+              <TextField fullWidth label="Password*" variant="outlined" type="password" name="password" id="password" onChange={(event) => setPassword(event.target.value)} />
+            </Grid>
+            <Grid item>
+              <Button fullWidth id="submit" onClick={() => { fetchLogin(); }} variant="contained">Sign In</Button>
+            </Grid>
+            <Grid item>
+              <Button
+                component={Link}
+                color="primary"
+                id="register"
+                to="/register"
+              >
+                Wanna participate in the best fucking game in the world? Register here
+
+              </Button>
+            </Grid>
+          </Grid>
         </form>
-      </Container>
+      </Grid>
+      {/* </Container> */}
     </main>
   );
 }

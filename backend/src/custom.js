@@ -4,10 +4,9 @@
  to return to a "player"
 */
 export const quizQuestionPublicReturn = question => {
-  console.log('See question: ', question);
   const parsedAnswers = question.answers.map((a) => {
     const answerNoCorrect = a;
-    delete answerNoCorrect.correct;
+    // delete answerNoCorrect.correct;
     return answerNoCorrect;
   });
   const retQuestion = {
@@ -27,8 +26,9 @@ export const quizQuestionPublicReturn = question => {
  the correct answers (minimum 1).
 */
 export const quizQuestionGetCorrectAnswers = question => {
+  console.log(question.answers.filter((a) => a.correct));
   const correctAnswers = question.answers.filter((a) => a.correct).map((a) => a.id);
-
+  console.log(correctAnswers);
   return correctAnswers; // For a single answer
 };
 

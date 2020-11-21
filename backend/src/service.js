@@ -372,6 +372,8 @@ export const getAnswers = playerId => sessionLock((resolve, reject) => {
   } else if (!session.answerAvailable) {
     reject(new InputError('Question time has not been completed'));
   } else {
+    console.log('question', session.questions[session.position]);
+    console.log('answers', quizQuestionGetCorrectAnswers(session.questions[session.position]));
     resolve(quizQuestionGetCorrectAnswers(session.questions[session.position]));
   }
 });
