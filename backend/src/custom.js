@@ -28,7 +28,7 @@ export const quizQuestionPublicReturn = question => {
 */
 export const quizQuestionGetCorrectAnswers = question => {
   const correctAnswers = question.answers.filter((a) => a.correct).map((a) => a.id);
-
+  console.log(correctAnswers);
   return correctAnswers; // For a single answer
 };
 

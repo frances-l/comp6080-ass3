@@ -62,7 +62,9 @@ const QuestionResults = ({
   // set the answers
   React.useEffect(() => {
     (async () => {
-      const result = await api.get(`play/${player.id}/answer`, { headers: { Authorization: getToken() } });
+      const result = await api.get(`play/${player.id}/answer`);
+      console.log(player.id);
+      console.log(2222, result);
       setAnswers(result.answerIds);
     })();
   }, [player, session]);
@@ -110,13 +112,18 @@ const QuestionResults = ({
     const chosen = playerAnswers.find((a) => a === answer.id);
     // if player chose this answer
     if (chosen) {
+      console.log(chosen);
       // check if answer is correct
+      console.log(answers);
       const correct = answers.find((a) => a === chosen);
+      console.log(correct);
       // if its correct then return correct answer
       if (correct) {
+        console.log('here');
         return 'correctAnswer';
       // otherweise its wrong
       }
+      console.log('yikes');
       return 'incorrectAnswer';
 
       // if player didnt choose this answer
