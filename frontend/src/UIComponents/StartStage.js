@@ -63,14 +63,6 @@ const StartStage = ({
             <Typography color="textPrimary" variant="h4">{sessionId}</Typography>
           </Grid>
           <Grid container item>
-            {/* {players.map((playerName, i) => {
-              const key = `${playerName}-${i}`;
-              return (
-                <Grid key={key} item xs={3}>
-                  <Typography color="textPrimary">{playerName}</Typography>
-                </Grid>
-              );
-            })} */}
             <Typography color="textPrimary">{`This is you! ${player.name}`}</Typography>
           </Grid>
           {player.isAdmin

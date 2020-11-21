@@ -25,9 +25,6 @@ const PlayPage = (props) => {
   const [stage, setStage] = React.useState(stages.START);
   const context = React.useContext(StoreContext);
   const { player: [player] } = context;
-  console.log(player);
-  // const { session: [session, setSession] } = context;
-  // console.log('printing session in playGame', session);
   const { currQuestion: [, setCurrQuestion] } = context;
   const { match: { params } } = props;
 
@@ -52,11 +49,9 @@ const PlayPage = (props) => {
         // otherwise return the results
         console.log(timeSinceStart);
         if (timeSinceStart > ((questionData.preview + questionData.time) * 1000)) {
-          console.log('going to result');
           setCurrQuestion(questionData);
           setStage(stage.RESULT);
         } else {
-          console.log('going to question');
           questionData.time = timeSinceStart;
           setCurrQuestion(questionData);
           setStage(stage.QUESTION);

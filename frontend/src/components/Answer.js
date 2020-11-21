@@ -36,6 +36,7 @@ const Answer = ({
 
   const handleMultipleAnswer = () => {
     // if the answer was previously selected then remove it from player Answers
+    if (className.includes('correct') || className.includes('neutral')) return;
     let updatedAnswers;
     if (selected) {
       updatedAnswers = playerAnswers.filter((a) => a.id !== id);
@@ -47,24 +48,29 @@ const Answer = ({
   };
 
   const handleSingleAnswer = () => {
+    if (className.includes('correct') || className.includes('neutral')) return;
+
     let updatedAnswers;
     // if its not selected, then we can highlight
+    console.log(playerAnswers);
     if (!playerAnswers) {
       updatedAnswers = [id];
     } else if (playerAnswers[0] === id) {
       updatedAnswers = [];
+    } else {
+      updatedAnswers = [id];
     }
     setPlayerAnswers(updatedAnswers);
+    setSelected(!selected);
   };
 
-  // React.useEffect(() => {
-  //   if (currQuestion.qType === 'single' && playerAnswers) {
-  //     if (playerAnswers[0] !== id) {
-  //       setSelected(false);
-  //       console.log('wowow');
-  //     }
-  //   }
-  // }, [currQuestion.qType, id, playerAnswers]);
+  React.useEffect(() => {
+    if (currQuestion.qType === 'single' && playerAnswers) {
+      if (playerAnswers[0] !== id) {
+        setSelected(false);
+      }
+    }
+  }, [currQuestion.qType, id, playerAnswers]);
 
   // React.useEffect(() => {
   //   // if answers change and the type is single, we just need to set selected
@@ -88,7 +94,7 @@ const Answer = ({
   };
   return (
     <Grid item sm={6}>
-      <CardActionArea onClick={currQuestion.qType === 'single' && !className.includes('correct')
+      <CardActionArea onClick={currQuestion.qType === 'single'
         ? () => handleSingleAnswer()
         : () => handleMultipleAnswer()}
       >
