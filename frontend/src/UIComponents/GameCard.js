@@ -111,13 +111,15 @@ const GameCard = ({
   const remove = async () => {
     console.log('removing');
     const res = await api.delete(`admin/quiz/${gId}`, { headers: { Authorization: getToken() } });
+    const card = document.getElementById('game-card');
+    card.style.display = 'none';
     console.log(res);
   };
 
   console.log(imgSrc);
 
   return (
-    <Card className={classes.container} key={gId}>
+    <Card id="game-card" className={classes.container} key={gId}>
       <div className={classes.imagePicturePair}>
         <CardMedia className={classes.imageContainer}>
           <img src={imgSrc} className={classes.image} alt="card-thumbnail" />

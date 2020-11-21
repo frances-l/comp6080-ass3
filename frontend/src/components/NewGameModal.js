@@ -37,7 +37,7 @@ const NewGameModal = ({ setOpen }) => {
         setOpen(false);
         setQuiz(res.quizId);
         setEdit({
-          id: 0, points: 10, time: 30, qType: 'single', answers: [],
+          id: 0, points: 10, time: 30, qType: 'single', answers: [], preview: 5,
         });
         console.log(`Setting quiz to ${res}`);
         history.push(`/edit/${res.quizId}`);
