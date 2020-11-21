@@ -74,7 +74,7 @@ const NewGameModal = ({ setOpen }) => {
                   </FormControl>
                 </Grid>
                 <Grid item>
-                  <Button type="submit" variant="contained" color="primary">Confirm</Button>
+                  <Button id="submit" type="submit" variant="contained" color="primary">Confirm</Button>
                 </Grid>
                 <Typography>
                   Wondering where to add your questions?

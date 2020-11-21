@@ -56,10 +56,10 @@ function Login() {
       <Container className={classes.formContainer}>
         <Typography variant="h1">Sign In Bitch</Typography>
         <form>
-          <TextField label="Email*" varient="outlined" name="email" id="email" onChange={(event) => setEmail(event.target.value)} />
-          <TextField label="Password*" varient="outlined" type="password" name="password" id="password" onChange={(event) => setPassword(event.target.value)} />
-          <Button onClick={() => { fetchLogin(); }} variant="contained">Sign In</Button>
-          <Link to="/register">Wanna participate in the best fucking game in the world? Register here</Link>
+          <TextField label="Email*" variant="outlined" name="email" id="email" onChange={(event) => setEmail(event.target.value)} />
+          <TextField label="Password*" variant="outlined" type="password" name="password" id="password" onChange={(event) => setPassword(event.target.value)} />
+          <Button id="submit" onClick={() => { fetchLogin(); }} variant="contained">Sign In</Button>
+          <Link id="register" to="/register">Wanna participate in the best fucking game in the world? Register here</Link>
         </form>
       </Container>
     </main>

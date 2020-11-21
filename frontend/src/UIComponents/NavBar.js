@@ -59,7 +59,7 @@ const NavBar = () => {
           >
             <Grid container item direction="row" xs={4}>
               <Grid item>
-                <IconButton onClick={redirectToDashBoard}>
+                <IconButton id="redirect-dashboard" onClick={redirectToDashBoard}>
                   <img src={logo} alt="BB-logo" className={classes.image} />
                 </IconButton>
               </Grid>
@@ -69,7 +69,7 @@ const NavBar = () => {
             </Grid>
             <Grid container item xs={6} spacing={2} justify="flex-end">
               <Grid item>
-                <Button variant="contained" color="primary" onClick={handleNewGameClick}>Create Quiz</Button>
+                <Button id="create-quiz" variant="contained" color="primary" onClick={handleNewGameClick}>Create Quiz</Button>
               </Grid>
               <Modal
                 open={open}
@@ -83,7 +83,7 @@ const NavBar = () => {
                 <Button variant="contained" color="primary" onClick={handleJoin}>Join Game</Button>
               </Grid>
               <Grid item>
-                <Button variant="contained" color="secondary" onClick={handleLogout}>Logout</Button>
+                <Button id="logout" variant="contained" color="secondary" onClick={handleLogout}>Logout</Button>
               </Grid>
             </Grid>
           </Grid>

@@ -140,6 +140,7 @@ const GameCard = ({
           onClose={handleStartClose}
           aria-labelledby="start game"
           aria-describedby="start game modal"
+          id="link-modal"
         >
           <div className={classes.paper}>
             <Typography color="textPrimary" variant="h5">Link to the started game</Typography>
@@ -156,8 +157,8 @@ const GameCard = ({
         >
           <div className={classes.paper}>
             <Typography color="textPrimary" variant="h5">Would you like to view the results?</Typography>
-            <Button variant="outlined" onClick={() => viewResult()}>Yes</Button>
-            <Button variant="outlined" onClick={() => handleEndClose()}>No</Button>
+            <Button id="yes" variant="outlined" onClick={() => viewResult()}>Yes</Button>
+            <Button id="no" variant="outlined" onClick={() => handleEndClose()}>No</Button>
           </div>
         </Modal>
       </CardActions>
