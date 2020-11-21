@@ -27,7 +27,7 @@ const QuestionPage = ({ setStage, question }) => {
     <article>
       {/* Change this navBar to pause game, quit, etc */}
       <Container>
-        <Typography variant="h1" align="center">{question.question}</Typography>
+        <Typography color="textPrimary" variant="h1" align="center">{question.question}</Typography>
         {(() => {
           if (question.media !== '') {
             return (

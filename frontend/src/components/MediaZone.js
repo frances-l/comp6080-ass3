@@ -4,20 +4,29 @@ import {
 } from '@material-ui/core';
 import { DropzoneArea } from 'material-ui-dropzone';
 import PropTypes from 'prop-types';
+import { fileToDataUrl } from '../utils/helpers';
 
 const media = {
   IMAGE: 'image',
   VIDEO: 'video',
+  NONE: 'none',
 };
 
 const MediaZone = ({ question, setQuestion }) => {
   const [link, setLink] = React.useState('');
   // const [image, setImage] = React.useState('');
   const [mediaType, setMediaType] = React.useState(media.IMAGE);
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleChange = (type, src) => {
+  const handleChange = async (type, file) => {
     const updatedQuestion = question;
-    console.log(2222222, src);
+    let src;
+    if (type === media.IMAGE && file.length > 0) {
+      src = await fileToDataUrl(file[0]);
+    } else if (type === media.VIDEO) {
+      src = file;
+    }
+
     updatedQuestion.media = { type, src };
     console.log(updatedQuestion);
     setQuestion(updatedQuestion);
@@ -34,6 +43,7 @@ const MediaZone = ({ question, setQuestion }) => {
       acceptedFiles={['image/*', 'video/*']}
       dropzoneText="Elevate your question! Click or drag and drop to upload a
   picture, audio clip, or video!"
+      initialFiles={[]}
       onChange={(file) => { handleChange('image', file); }}
       filesLimit={1}
     />
@@ -51,24 +61,24 @@ const MediaZone = ({ question, setQuestion }) => {
       allowFullScreen
     />
   );
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const handleAddLink = () => {
+    console.log(link);
+    handleClose();
     setMediaType(media.VIDEO);
+    handleChange('video', link);
   };
 
   const embedLink = (value) => {
     const embeddedLink = value.replace('watch?v=', 'embed/');
+    console.log(embeddedLink);
     setLink(embeddedLink);
-    handleChange('video', embeddedLink);
   };
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleYoutubeLink = (event) => {
     setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
   };
 
   const open = Boolean(anchorEl);
@@ -78,7 +88,7 @@ const MediaZone = ({ question, setQuestion }) => {
     <Grid container item xs={11}>
       {/* {handleLoad()} */}
       <Grid container item direction="row">
-        {mediaType === media.IMAGE ? imageArea : videoArea}
+        {mediaType === media.IMAGE || (media.NONE && !media.VIDEO) ? imageArea : videoArea}
         <Grid container item direction="row">
           <Grid item>
             <Button color="primary" variant="contained" onClick={() => { setMediaType(media.IMAGE); }}>Upload an Image</Button>

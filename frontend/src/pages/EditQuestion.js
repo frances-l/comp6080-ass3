@@ -66,6 +66,7 @@ const EditQuestion = (props) => {
   const setQtype = () => question.answers.filter((a) => a.correct).length === 1;
   const handleConfirm = async () => {
     if (!open) {
+      console.log(question);
       // check if the new question has more than one answer then change the type accordingly
       question.qType = setQtype() ? 'single' : 'multi';
       // first find all of the quizzes
@@ -75,7 +76,6 @@ const EditQuestion = (props) => {
       // if we're editting a question, then set the editted question
       if (qExist) {
         const quizQuestions = quiz.questions.map((q) => {
-          console.log(q);
           if (q.id === params.qid) {
             return question;
           }

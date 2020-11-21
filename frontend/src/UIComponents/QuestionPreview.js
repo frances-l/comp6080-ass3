@@ -1,5 +1,5 @@
 import {
-  Typography, LinearProgress, Container, Paper, CardMedia,
+  Typography, LinearProgress, Container, Paper, CardMedia, Card,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import Countdown from 'react-countdown';
@@ -28,9 +28,18 @@ const QuestionPreview = ({
     <section>
       <Container>
         <Paper>
-          <Typography variant="h1">{question.question}</Typography>
+          <Typography color="textPrimary" variant="h1">{question.question}</Typography>
         </Paper>
-        { question.media && <CardMedia component="iframe" title="question-media" src={question.media} />}
+        <Card>
+          {(() => {
+            if (question.media.type === 'video') {
+              return <CardMedia component="iframe" title="question-preview-video" src={question.media.src} />;
+            } if (question.media.src) {
+              return <img src={question.media.src} alt="question-preview" />;
+            }
+            return null;
+          })()}
+        </Card>
         <Countdown
           date={Date.now() + 5000}
           renderer={renderer}

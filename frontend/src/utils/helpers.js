@@ -23,6 +23,7 @@ export async function getQuizId(sid) {
 
 export function fileToDataUrl(file) {
   const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+  console.log(file.type);
   const valid = validFileTypes.find((type) => type === file.type);
   // Bad data, let's walk away.
   if (!valid) {

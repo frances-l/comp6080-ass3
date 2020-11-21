@@ -33,17 +33,17 @@ const StartStage = ({
       <Container>
         <Grid container direction="column">
           <Grid item>
-            <Typography variant="h1">So You think you have a BigBrain?</Typography>
+            <Typography color="textPrimary" variant="h1">So You think you have a BigBrain?</Typography>
           </Grid>
           <Grid item>
-            <Typography variant="h4">{sessionId}</Typography>
+            <Typography color="textPrimary" variant="h4">{sessionId}</Typography>
           </Grid>
           <Grid container item>
             {players.map((playerName, i) => {
               const key = `${playerName}-${i}`;
               return (
                 <Grid key={key} item xs={3}>
-                  <Typography>{playerName}</Typography>
+                  <Typography color="textPrimary">{playerName}</Typography>
                 </Grid>
               );
             })}

@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import {
-  CardContent, Typography, Card, CardMedia, Button, CardActions, makeStyles, Modal, Input,
+  CardContent, Typography, Card, CardMedia, Button,
+  CardActions, makeStyles, Modal, Input,
 } from '@material-ui/core';
 import API from '../utils/api';
 import { getToken } from '../utils/helpers';
@@ -14,14 +15,14 @@ const useStyles = makeStyles(() => ({
   container: {
     display: 'flex',
     flexDirection: 'row',
-    maxHeight: '40vh',
+    maxHeight: '30vh',
     maxWidth: '70vw',
     margin: '3vh 0',
     justifyContent: 'space-between',
   },
   image: {
     backgroundSize: 'cover',
-    maxHeight: '40vh',
+    maxHeight: '30vh',
   },
   imagePicturePair: {
     display: 'flex',
@@ -32,6 +33,14 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+  },
+  paper: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: '20vh 30vw',
+    padding: '2em',
+    borderRadius: '1em',
+    backgroundColor: 'grey',
   },
 }));
 
@@ -98,8 +107,10 @@ const GameCard = ({
     document.execCommand('copy');
   };
 
-  const remove = () => {
-    api.delete(`admin/quiz/${gId}`, { headers: { Authorization: getToken() } });
+  const remove = async () => {
+    console.log('removing');
+    const res = await api.delete(`admin/quiz/${gId}`, { headers: { Authorization: getToken() } });
+    console.log(res);
   };
 
   console.log(imgSrc);
@@ -128,7 +139,7 @@ const GameCard = ({
           aria-describedby="start game modal"
         >
           <div className={classes.paper}>
-            <Typography variant="h5">Link to the started game</Typography>
+            <Typography color="textPrimary" variant="h5">Link to the started game</Typography>
             <Input inputRef={inputRef} type="text" value={`http://localhost:3000/join/${code}`} />
             <br />
             <Button variant="outlined" onClick={copy}>Copy text</Button>
@@ -141,7 +152,7 @@ const GameCard = ({
           aria-describedby="end game modal"
         >
           <div className={classes.paper}>
-            <Typography variant="h5">Would you like to view the results?</Typography>
+            <Typography color="textPrimary" variant="h5">Would you like to view the results?</Typography>
             <Button variant="outlined" onClick={() => viewResult()}>Yes</Button>
             <Button variant="outlined" onClick={() => handleEndClose()}>No</Button>
           </div>

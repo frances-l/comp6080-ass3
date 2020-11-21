@@ -8,9 +8,10 @@ const useStyles = makeStyles(() => ({
   selectedAnswer: {
     backgroundColor: 'rgb(186,225,255)',
     height: '10vh',
+    color: 'black',
   },
   nonSelectedAnswer: {
-    backgroundColor: 'white',
+    backgroundColor: 'rgb(61,61,61)',
     height: '10vh',
   },
 }));
@@ -54,10 +55,14 @@ const Answer = ({
     <Grid item sm={6}>
       <CardActionArea onClick={() => handleSelect()}>
         <Card className={selected ? classes.selectedAnswer : classes.nonSelectedAnswer}>
-          <Typography>{text}</Typography>
+          <Typography
+            className={selected ? classes.selectedAnswer : classes.nonSelectedAnswer}
+          >
+            {text}
+
+          </Typography>
         </Card>
       </CardActionArea>
-
     </Grid>
   );
 };

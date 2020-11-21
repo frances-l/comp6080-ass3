@@ -73,8 +73,8 @@ const QuestionResults = ({
 
   return (
     <main>
-      <Typography variant="h1">How did you do?</Typography>
-      <Typography variant="h5">The correct Answer(s) are..</Typography>
+      <Typography color="textPrimary" variant="h1">How did you do?</Typography>
+      <Typography color="textPrimary" variant="h5">The correct Answer(s) are..</Typography>
       {answers.map((a) => (
         <Answer
           key={`answer-${a.id}`}
@@ -85,7 +85,7 @@ const QuestionResults = ({
           className={`answer-${a.id}`}
         />
       ))}
-      <Button onClick={() => { handleClick(); }}>Next Question</Button>
+      <Button color="primary" onClick={() => { handleClick(); }}>Next Question</Button>
       <Modal
         open={open}
         onClose={handleClose}
@@ -93,8 +93,8 @@ const QuestionResults = ({
         aria-describedby="redirect to homepage modal"
       >
         <main className={classes.paper}>
-          <Typography variant="h4">The game has ended! Click on the button to return back to the dashboard to view results.</Typography>
-          <Button variant="outlined" onClick={() => dashboard()}>Go back to dashboard</Button>
+          <Typography color="textPrimary" variant="h4">The game has ended! Click on the button to return back to the dashboard to view results.</Typography>
+          <Button color="primary" variant="outlined" onClick={() => dashboard()}>Go back to dashboard</Button>
         </main>
       </Modal>
     </main>

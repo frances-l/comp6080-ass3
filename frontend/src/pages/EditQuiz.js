@@ -63,7 +63,7 @@ const EditQuiz = (props) => {
     console.log(questions.length);
     console.log('handleNewQuestion');
     setEdit({
-      id: 0, points: 10, timer: 30, qType: 'single', answers: [],
+      id: questions.length, points: 10, timer: 30, qType: 'single', answers: [],
     });
     history.push(`/edit/${params.gid}/${questions.length}`);
   };

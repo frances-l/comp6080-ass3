@@ -12,12 +12,12 @@ import { StoreContext } from '../utils/store';
 const api = new API('http://localhost:5005');
 
 const QuestionCard = ({ gid, questions }) => {
-//   const handleMedia = (file) => {
-//     if (file === '') {
-//       return logo;
-//     }
-//     return file;
-//   };
+  // const handleMedia = (src) => {
+  //   if (src === '') {
+  //     return logo;
+  //   }
+  //   return src;
+  // };
   const history = useHistory();
   const context = React.useContext(StoreContext);
   const { edit: [, setEdit] } = context;
@@ -46,7 +46,7 @@ const QuestionCard = ({ gid, questions }) => {
       {questions.map((question) => (
         <Grid item xs={4} key={`question-card-${question.id}`}>
           <Card>
-            <img src={logo} alt="question Thumbnail" />
+            <img src={question.media.src && (question.media.type !== 'video') ? question.media.src : logo} alt="question Thumbnail" />
             <CardContent>
               <Typography variant="h5" align="center">{question.question}</Typography>
               <Grid container direction="row" spacing={10}>
