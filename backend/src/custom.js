@@ -27,7 +27,8 @@ export const quizQuestionPublicReturn = question => {
  the correct answers (minimum 1).
 */
 export const quizQuestionGetCorrectAnswers = question => {
-  const correctAnswers = question.answers.filter((a) => a.correct);
+  const correctAnswers = question.answers.filter((a) => a.correct).map((a) => a.id);
+
   return correctAnswers; // For a single answer
 };
 

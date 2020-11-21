@@ -111,7 +111,7 @@ const QuestionResults = ({
     // if player chose this answer
     if (chosen) {
       // check if answer is correct
-      const correct = answers.find((a) => a.id === chosen);
+      const correct = answers.find((a) => a === chosen);
       // if its correct then return correct answer
       if (correct) {
         return 'correctAnswer';
@@ -122,8 +122,8 @@ const QuestionResults = ({
       // if player didnt choose this answer
     }
     // check if the non chosen answer is correct
-    if (answers.find((a) => a.id === answer.id)) {
-      return 'incorrectAnswer';
+    if (answers.find((a) => a === answer.id)) {
+      return 'correctAnswer';
     }
     // otherwise its just neutral
     return 'neutralAnswer';
