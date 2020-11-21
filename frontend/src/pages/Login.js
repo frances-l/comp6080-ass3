@@ -4,8 +4,9 @@ import {
   useHistory,
 } from 'react-router-dom';
 import {
-  makeStyles, Grid, TextField, Button, Typography,
+  makeStyles, Grid, TextField, Button, Typography, Snackbar,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import API from '../utils/api';
 
 const api = new API('http://localhost:5005');
@@ -22,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
 function Login() {
   const [userEmail, setEmail] = React.useState('');
   const [userPassword, setPassword] = React.useState('');
+  const [invalidDetails, setInvalidDetails] = React.useState(false);
 
   const history = useHistory();
   async function fetchLogin() {
@@ -40,15 +42,18 @@ function Login() {
             localStorage.setItem('user_token', res.token);
             history.push('/');
           } else {
-            // shits fucked
-            // console.log(`hello ${res.error}`);
+            setInvalidDetails(true);
           }
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          setInvalidDetails(true);
         });
     }
   }
+
+  const handleClose = () => {
+    setInvalidDetails(false);
+  };
 
   const classes = useStyles();
   return (
@@ -62,7 +67,7 @@ function Login() {
         spacing={3}
       >
         <Grid item>
-          <Typography color="textPrimary" variant="h1">Sign In Bitch</Typography>
+          <Typography color="textPrimary" variant="h1">Sign In</Typography>
         </Grid>
         <form>
           <Grid container item direction="column" spacing={2}>
@@ -82,13 +87,18 @@ function Login() {
                 id="register"
                 to="/register"
               >
-                Wanna participate in the best fucking game in the world? Register here
+                If you don&apos;t have an account, click here to register
 
               </Button>
             </Grid>
           </Grid>
         </form>
       </Grid>
+      <Snackbar open={invalidDetails} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          Invalid details. Please check your email and password again.
+        </Alert>
+      </Snackbar>
       {/* </Container> */}
     </main>
   );

@@ -112,13 +112,18 @@ const QuestionResults = ({
     const chosen = playerAnswers.find((a) => a === answer.id);
     // if player chose this answer
     if (chosen) {
+      console.log(chosen);
       // check if answer is correct
+      console.log(answers);
       const correct = answers.find((a) => a === chosen);
+      console.log(correct);
       // if its correct then return correct answer
       if (correct) {
+        console.log('here');
         return 'correctAnswer';
       // otherweise its wrong
       }
+      console.log('yikes');
       return 'incorrectAnswer';
 
       // if player didnt choose this answer
