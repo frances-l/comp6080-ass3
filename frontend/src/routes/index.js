@@ -22,7 +22,7 @@ const routes = [
   <PrivateRoute component={EditQuiz} path="/edit/:gid" exact />,
   <PrivateRoute component={JoinGame} path="/join/:sid" exact />,
   <PrivateRoute component={JoinGame} path="/join/" exact />,
-  <PrivateRoute component={PlayPage} path="/play/:gid/:sid" exact />,
+  <PrivateRoute component={PlayPage} path="/play/:sid" exact />,
   <PrivateRoute component={Results} path="/session/:sid/results" exact />,
 ];
 

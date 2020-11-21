@@ -17,7 +17,7 @@ const QuestionAnswers = ({ questionAnswers }) => {
   const [answers, setAnswers] = React.useState([]);
   React.useEffect(() => {
     (async () => {
-      const res = await api.put(`play/${player}/answer`, {
+      const res = await api.put(`play/${player.id}/answer`, {
         headers: { 'Content-type': 'application/json', Authorization: getToken() },
         body: JSON.stringify({
           answerIds: answers,

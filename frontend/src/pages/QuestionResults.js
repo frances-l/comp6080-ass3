@@ -57,10 +57,7 @@ const QuestionResults = ({
 
   React.useEffect(() => {
     (async () => {
-      console.log('getting answers');
-      console.log(session);
       const result = await api.get(`play/${player}/answer`, { headers: { Authorization: getToken() } });
-      console.log(result);
       setAnswers(result.answerIds);
     })();
   }, [player, session]);
@@ -87,6 +84,9 @@ const QuestionResults = ({
           className={`answer-${a.id}`}
         />
       ))}
+      {player.isAdmin
+        ? <Button color="primary" onClick={() => { handleClick(); }}>Next Question</Button>
+        : <Typography color="textPrimary">Waiting for host to proceed...</Typography>}
       <Button color="primary" onClick={() => { handleClick(); }}>Next Question</Button>
       <Modal
         open={open}

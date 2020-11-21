@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import NavBar from '../UIComponents/NavBar';
 import API from '../utils/api';
 import { StoreContext } from '../utils/store';
-import { getQuizId, getToken } from '../utils/helpers';
+import { getToken } from '../utils/helpers';
 
 const api = new API('http://localhost:5005');
 
@@ -23,7 +23,7 @@ const BackgroundTile = styled(Paper)({
 
 function JoinGame(props) {
   const context = React.useContext(StoreContext);
-  const { player: [, setPlayer] } = context;
+  const { player: [player, setPlayer] } = context;
   const { session: [, setSession] } = context;
   const [joinid, setJoinID] = React.useState('');
   const [nickname, setNickname] = React.useState('');
@@ -50,24 +50,23 @@ function JoinGame(props) {
     const res = await api.post(path, options);
     console.log(res);
     if (res.playerId) {
-
-
-        const result = await api.get(`admin/session/${joinid}/status`, { headers: { Authorization: getToken() } });
-        setPlayer({ id: res.playerId, isAdmin: true });
-        console.log('setting session from joinGame', result);
-        setSession(result);
-        const quizId = await getQuizId(joinid);
-        if (result.results.active) {
-          // history.push(`/play/${quizId}/${joinid}`);
-          history.push(`/play/${joinid}`);
-        } else {
-          // print that the session isnt active.
-        }
-
-        setError(true);
-        setPlayer({ id: res.playerId, isAdmin: false });
-
-      // seeing if the session is active.
+      // let admin = -1;
+      const result = await api.get(`admin/session/${joinid}/status`, { headers: { Authorization: getToken() } });
+      if (result.error) {
+        setPlayer({ name: nickname, id: res.playerId, isAdmin: false });
+        console.log(player);
+      } else {
+        setPlayer({ name: nickname, id: res.playerId, isAdmin: true });
+        console.log(player);
+      }
+      console.log('setting session from joinGame', result);
+      setSession(result);
+      // const quizId = await getQuizId(joinid);
+      history.push(`/play/${joinid}`);
+    } else {
+      setError(true);
+    }
+    // seeing if the session is active.
   };
 
   const handleClick = (e) => {

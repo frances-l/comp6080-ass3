@@ -4,31 +4,21 @@ import {
 import PropTypes from 'prop-types';
 import Countdown from 'react-countdown';
 import React from 'react';
-import { StoreContext } from '../utils/store';
-import API from '../utils/api';
-import { getToken } from '../utils/helpers';
+// import { StoreContext } from '../utils/store';
+// import API from '../utils/api';
+// import { getToken } from '../utils/helpers';
 
-const api = new API('http://localhost:5005');
+// const api = new API('http://localhost:5005');
 const QuestionPreview = ({
-  question, setStage, quizId, sId,
+  question, setStage,
 }) => {
-  const context = React.useContext(StoreContext);
-  const { session: [, setSession] } = context;
+  // const context = React.useContext(StoreContext);
+  // const { session: [, setSession] } = context;
   const renderer = ({ seconds }) => <LinearProgress variant="determinate" value={seconds * 20} />;
 
   const handleComplete = async () => {
     setStage('question');
   };
-
-  React.useEffect(() => {
-    (async () => {
-      console.log('advancing Quiz');
-      await api.post(`admin/quiz/${quizId}/advance`, { headers: { Authorization: getToken() } });
-      const res = await api.get(`admin/session/${sId}/status`, { headers: { Authorization: getToken() } });
-      console.log('setting session in preview', res);
-      setSession(res);
-    })();
-  }, [quizId, sId, setSession]);
 
   return (
     <section>
@@ -57,8 +47,6 @@ const QuestionPreview = ({
 QuestionPreview.propTypes = {
   question: PropTypes.objectOf(PropTypes.any).isRequired,
   setStage: PropTypes.func.isRequired,
-  quizId: PropTypes.number.isRequired,
-  sId: PropTypes.number.isRequired,
 };
 
 export default QuestionPreview;

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {
   Typography, Container, Grid, Button,
 } from '@material-ui/core';
-import { getToken } from '../utils/helpers';
+import { getQuizId, getToken } from '../utils/helpers';
 import { StoreContext } from '../utils/store';
 import API from '../utils/api';
 
@@ -13,16 +13,18 @@ const StartStage = ({
   setStage, sessionId,
 }) => {
   const context = React.useContext(StoreContext);
-  const { session: [session] } = context;
   const { currQuestion: [, setCurrQuestion] } = context;
-  const [players, setPlayers] = React.useState(session.results.players);
+  // const [players, setPlayers] = React.useState(session.results.players);
   const { player: [player] } = context;
+
   const handleStart = async () => {
-    if (session.results.position === -1) {
-      setCurrQuestion(session.results.questions[0]);
-    }
     const results = await api.get(`admin/session/${sessionId}/status`, { headers: { Authorization: getToken() } });
-    console.log(results);
+    if (results.results.position === -1) {
+      setCurrQuestion(results.results.questions[0]);
+    }
+    console.log('advancing Quiz');
+    const quizId = await getQuizId(sessionId);
+    await api.post(`admin/quiz/${quizId}/advance`, { headers: { Authorization: getToken() } });
     setStage('preview');
   };
   // poll the server to check if the game has started
@@ -45,15 +47,6 @@ const StartStage = ({
     return () => clearInterval(interval);
   }, [player.id, player.isAdmin, setStage]);
 
-  // poll the server to see if anyone else has joined the game
-  React.useEffect(() => {
-    const checkJoined = async () => {
-      const results = await api.get(`admin/session/${sessionId}/status`, { headers: { Authorization: getToken() } });
-      setPlayers(results.results.players);
-    };
-    const interval = setInterval(() => checkJoined(), 1000);
-    return () => clearInterval(interval);
-  }, [sessionId]);
   return (
     <div>
       <Container>
@@ -65,16 +58,19 @@ const StartStage = ({
             <Typography color="textPrimary" variant="h4">{sessionId}</Typography>
           </Grid>
           <Grid container item>
-            {players.map((playerName, i) => {
+            {/* {players.map((playerName, i) => {
               const key = `${playerName}-${i}`;
               return (
                 <Grid key={key} item xs={3}>
                   <Typography color="textPrimary">{playerName}</Typography>
                 </Grid>
               );
-            })}
+            })} */}
+            <Typography color="textPrimary">{`This is you! ${player.name}`}</Typography>
           </Grid>
-          <Button onClick={() => { handleStart(); }}>Start the Game!</Button>
+          {player.isAdmin
+            ? <Button onClick={() => { handleStart(); }}>Start the Game!</Button>
+            : <Typography color="textPrimary"> Waiting for the host to start...</Typography>}
         </Grid>
       </Container>
     </div>
