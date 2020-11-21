@@ -1,5 +1,5 @@
 import {
-  Typography, Button, Modal, makeStyles, Grid,
+  Typography, Button, Modal, makeStyles, Grid, Divider,
 } from '@material-ui/core';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -8,6 +8,7 @@ import API from '../utils/api';
 import { StoreContext } from '../utils/store';
 import Answer from '../components/Answer';
 import { getQuizId, getToken } from '../utils/helpers';
+import NavBar from '../UIComponents/NavBar';
 
 const api = new API('http://localhost:5005');
 
@@ -138,8 +139,11 @@ const QuestionResults = ({
 
   return (
     <main>
+      <NavBar />
       <Typography color="textPrimary" variant="h1">How did you do?</Typography>
+      <Divider />
       <Typography color="textPrimary" variant="h5">The correct Answer(s) are..</Typography>
+      <Divider />
       <Grid container direction="row" spacing={1}>
         {currQuestion.answers.map((a) => (
           <Answer
