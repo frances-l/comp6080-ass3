@@ -27,7 +27,7 @@ const NewGameModal = ({ setOpen }) => {
   const [title, setTitle] = React.useState('');
   const [titleError, setTitleError] = React.useState('');
   const [errorToggle, setErrorToggle] = React.useState(false);
-  const [file, setFile] = React.useState();
+  const [file, setFile] = React.useState({});
   const [invalidFile, setInvalidFile] = React.useState(false);
   const history = useHistory();
   const context = React.useContext(StoreContext);
@@ -63,47 +63,14 @@ const NewGameModal = ({ setOpen }) => {
       setErrorToggle(true);
       setTitleError('JSON file does not have a name for the quiz');
     } else {
-      const res = await api.post('admin/quiz/new', {
+      await api.post('admin/quiz/new', {
         headers: {
           'content-type': 'application/json',
           Authorization: getToken(),
         },
         body: JSON.stringify({ name: file.name }),
       });
-      console.log(res);
-      console.log(file.questions);
     }
-  };
-
-  const answers = {
-    id: '/answers',
-    type: 'object',
-    properties: {
-      id: { type: 'number' },
-      answer: { type: 'string' },
-      correct: { type: 'boolean' },
-    },
-    required: ['id', 'answer', 'correct'],
-
-  };
-
-  const question = {
-    id: '/question',
-    type: 'object',
-    properties: {
-
-      id: { type: 'number' },
-      media: { type: 'object' },
-      points: { type: 'number' },
-      preview: { type: 'number' },
-      qType: { type: 'string' },
-      time: { type: 'number' },
-      answers: {
-        type: 'array',
-        items: { $ref: '/answers' },
-      },
-    },
-    required: ['id', 'media', 'points', 'preview', 'qType', 'time', 'answers'],
   };
 
   const quiz = {
@@ -112,29 +79,58 @@ const NewGameModal = ({ setOpen }) => {
       name: { type: 'string' },
       questions: {
         type: 'array',
-        items: { $ref: '/question' },
+        items: {
+          type: 'object',
+          properties: {
+            id: { type: 'number' },
+            media: {
+              type: 'object',
+              properties: {
+                type: 'string',
+              },
+              required: ['type'],
+            },
+            points: { type: 'number' },
+            preview: { type: 'number' },
+            qType: { type: 'string' },
+            question: { type: 'string' },
+            time: { type: 'number' },
+            answers: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  id: { type: 'number' },
+                  answer: { type: 'string' },
+                  correct: { type: 'boolean' },
+                },
+                required: ['id', 'answer', 'correct'],
+              },
+            },
+          },
+          required: ['id', 'question', 'media', 'points', 'preview', 'qType', 'time', 'answers'],
+        },
       },
     },
-    required: ['name'],
+    required: ['name', 'questions'],
   };
+  // };
 
   const validJSON = () => {
     const v = new Validator();
-    v.addSchema(answers, '/answers');
-    v.addSchema(question, '/question');
+
     const res = v.validate(file, quiz, { required: true });
-    console.log(res.valid);
+
     return res.valid
-      ? parseJSON() : setInvalidFile(true);
+      ? parseJSON(file) : setInvalidFile(true);
   };
 
   const handleChange = (event) => {
     const fileReader = new FileReader();
     fileReader.readAsText(event.target.files[0], 'UTF-8');
     fileReader.onload = (e) => {
-      console.log('e.target.result', e.target.result);
-      setFile(JSON.parse(e.target.result));
-      console.log(file);
+      const res = JSON.parse(e.target.result);
+      setFile(res);
     };
     validJSON();
   };
