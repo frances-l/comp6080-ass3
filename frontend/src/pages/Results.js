@@ -33,12 +33,8 @@ const Results = (props) => {
   React.useEffect(() => {
     (async () => {
       const qid = await getQuizId(params.sid);
-      console.log(qid);
       const results = await api.get(`admin/session/${params.sid}/results`, { headers: { Authorization: getToken() } });
-      console.log(results);
-
       const response = await api.get(`admin/quiz/${qid}`, { headers: { Authorization: getToken() } });
-      console.log(response);
 
       const points = [];
       for (let i = 0; i < response.questions.length; i += 1) {
