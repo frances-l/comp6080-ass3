@@ -57,7 +57,7 @@ const NewGameModal = ({ setOpen }) => {
         <Paper>
           <ModalGrid container spacing={3}>
             <Grid item>
-              <Typography variant="h4">Create a Quiz!</Typography>
+              <Typography id="title" variant="h4">Create a Quiz!</Typography>
             </Grid>
             <Divider />
             <form onSubmit={(event) => handleSubmit(event)}>

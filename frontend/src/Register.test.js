@@ -54,4 +54,31 @@ describe('Register', () => {
     const submit = wrapper.find('#submit');
     expect(submit.text()).toEqual('Register');
   });
+
+  it('takes a snapshot of submit button', () => {
+    const submit = wrapper.find('#submit');
+    expect(submit).toMatchSnapshot();
+  });
+
+  it('simulate submit click', () => {
+    const submit = wrapper.find('#submit');
+    submit.simulate('click');
+    const email = wrapper.find('#email');
+    expect(email.props().error).toEqual(false);
+  });
+
+  it('redirect to login page button has aria-label', () => {
+    const button = wrapper.find('#login');
+    expect(button.props()['aria-label']).toEqual('login');
+  });
+
+  it('redirect to login page button text should be "If you already have an account click here to log in" ', () => {
+    const button = wrapper.find('#login');
+    expect(button.text()).toEqual('If you already have an account click here to log in');
+  });
+
+  it('takes snapshot of redirect button', () => {
+    const button = wrapper.find('#login');
+    expect(button).toMatchSnapshot();
+  });
 });

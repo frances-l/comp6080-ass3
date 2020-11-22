@@ -101,7 +101,7 @@ function Register() {
             </Grid>
 
             <Grid item>
-              <Button aria-label="login" component={Link} color="primary" to="/login">If you already have an account click here to log in</Button>
+              <Button id="login" aria-label="login" component={Link} color="primary" to="/login">If you already have an account click here to log in</Button>
 
             </Grid>
           </Grid>

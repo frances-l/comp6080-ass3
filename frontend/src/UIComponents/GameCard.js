@@ -148,13 +148,13 @@ const GameCard = ({
       </CardMedia>
       <div className={classes.cardRHS}>
         <div>
-          <Typography variant={matches ? 'h5' : 'h3'}>{title}</Typography>
+          <Typography id="title" variant={matches ? 'h5' : 'h3'}>{title}</Typography>
         </div>
         <div className={classes.buttonDataPair}>
           <div className={classes.metadataContainer}>
-            <Typography variant="h6">{`Questions: ${questions.length}`}</Typography>
-            <Typography variant="h6">{`Game id: ${gId}`}</Typography>
-            <Typography variant="h6">{`Time needed: ${sum} seconds`}</Typography>
+            <Typography id="length" variant="h6">{`Questions: ${questions.length}`}</Typography>
+            <Typography id="id-info" variant="h6">{`Game id: ${gId}`}</Typography>
+            <Typography id="time" variant="h6">{`Time needed: ${sum} seconds`}</Typography>
           </div>
           <CardActions>
             <Button variant="contained" color="secondary" onClick={remove}>Delete Game</Button>
