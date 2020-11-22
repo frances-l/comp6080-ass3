@@ -10,6 +10,7 @@ import { fileToDataUrl, getQuiz, getToken } from '../utils/helpers';
 import { StoreContext } from '../utils/store';
 import API from '../utils/api';
 import AppBarSpacer from '../utils/styles';
+import ErrorHandler from '../components/ErrorHandler';
 
 const api = new API('http://localhost:5005');
 
@@ -41,6 +42,7 @@ const EditQuiz = (props) => {
   const { match: { params } } = props;
   const history = useHistory();
   const context = React.useContext(StoreContext);
+  const { apiError: [, setApiError] } = context;
   const [image, setImage] = React.useState();
   const [open, setOpen] = React.useState(false);
   const [titleOpen, setTitleOpen] = React.useState(false);
@@ -50,16 +52,15 @@ const EditQuiz = (props) => {
   React.useEffect(() => {
     (async () => {
       const res = await getQuiz(params.gid);
-      console.log(res);
+      if (res.error) {
+        setApiError({ error: true, message: res.error });
+      }
       setQuizTitle(res.name);
-      console.log('setting quiz');
       if (res.questions.length >= 1) {
-        console.log('setting pre-existing');
         setQuestions(res.questions);
       }
     })();
-    console.log('useeffect');
-  }, [params.gid]);
+  }, [params.gid, setApiError]);
 
   const classes = useStyles();
 
@@ -88,10 +89,10 @@ const EditQuiz = (props) => {
   const handleImage = async (event) => {
     console.log(event);
     const info = await fileToDataUrl(event.target.files[0]);
-    console.log(info);
+    if (info.error) {
+      setApiError({ error: true, message: info.error });
+    }
     setImage(info);
-
-    // console.log(fileToDataUrl(file));
   };
 
   const submit = async () => {
@@ -108,10 +109,9 @@ const EditQuiz = (props) => {
         thumbnail: image,
       }),
     });
-    if (res.error) {
-      console.log(res.error);
+    if (res.error || quiz.error) {
+      setApiError({ error: true, message: res.error ? res.error : quiz.error });
     }
-    console.log(res);
   };
 
   const changeTitle = async () => {
@@ -129,15 +129,13 @@ const EditQuiz = (props) => {
       }),
     });
     if (res.error) {
-      console.log(res.error);
+      setApiError({ error: true, message: res.error });
     }
-    console.log(res);
     setQuizTitle(title);
     setTitleOpen(false);
   };
 
   const handleGoBack = () => {
-    console.log('going back');
     history.push('/');
   };
 
@@ -248,6 +246,7 @@ const EditQuiz = (props) => {
           </Grid>
         </Grid>
       </Grid>
+      <ErrorHandler />
     </div>
   );
 };

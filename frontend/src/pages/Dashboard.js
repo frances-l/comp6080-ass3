@@ -8,12 +8,15 @@ import GameCard from '../components/GameCard';
 import logo from '../assets/BBLogo.jpg';
 import '../styles/styles.css';
 import AppBarSpacer from '../utils/styles';
+import ErrorHandler from '../components/ErrorHandler';
+import { StoreContext } from '../utils/store';
 
 const api = new API('http://localhost:5005');
 
 function Dashboard() {
   const [games, setGames] = React.useState([]);
-
+  const context = React.useContext(StoreContext);
+  const { apiError: [, setApiError] } = context;
   React.useEffect(() => {
     (async () => {
       const quizzes = await api.get('admin/quiz', {
@@ -27,6 +30,9 @@ function Dashboard() {
       if (quizzes.quizzes) {
         const allQuizzes = await Promise.all(quizzes.quizzes.map(async (quiz) => {
           const res = await api.get(`admin/quiz/${quiz.id}`, { headers: { Authorization: getToken() } });
+          if (res.error) {
+            setApiError({ error: true, message: res.error });
+          }
           let { thumbnail } = res;
           if (thumbnail === null) {
             thumbnail = logo;
@@ -39,7 +45,7 @@ function Dashboard() {
         setGames(allQuizzes);
       }
     })();
-  }, []);
+  }, [setApiError]);
 
   return (
     <main id="dashboard" className="page-layout">
@@ -64,6 +70,7 @@ function Dashboard() {
             </Grid>
           ))}
         </Grid>
+        <ErrorHandler />
       </section>
     </main>
   );

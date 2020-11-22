@@ -110,6 +110,6 @@ const EditQuestionSideBar = ({ handleChange, handleConfirm, gId }) => {
 EditQuestionSideBar.propTypes = {
   handleChange: PropTypes.func.isRequired,
   handleConfirm: PropTypes.func.isRequired,
-  gId: PropTypes.number.isRequired,
+  gId: PropTypes.string.isRequired,
 };
 export default EditQuestionSideBar;

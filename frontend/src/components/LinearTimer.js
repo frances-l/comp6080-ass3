@@ -22,12 +22,10 @@ const BorderLinearProgress = withStyles((theme) => ({
 }))(LinearProgress);
 
 const LinearTimer = ({ time, handleComplete }) => {
+  // to make sure that the timer displays the correct progression
   let progress = 100;
-  console.log(time);
   const renderer = () => {
-    // progress -= Math.floor((100 / time));
     progress -= (100 / time) / 2;
-    console.log(progress);
     return <BorderLinearProgress variant="determinate" value={progress} />;
   };
 

@@ -9,6 +9,7 @@ import { getQuizId, getToken } from '../utils/helpers';
 import { StoreContext } from '../utils/store';
 import API from '../utils/api';
 import NavBar from '../components/NavBar';
+import ErrorHandler from '../components/ErrorHandler';
 
 const useStyles = makeStyles((theme) => ({
   appbarSpacer: {
@@ -22,18 +23,19 @@ const StartStage = ({
 }) => {
   const context = React.useContext(StoreContext);
   const { currQuestion: [, setCurrQuestion] } = context;
-  // const [players, setPlayers] = React.useState(session.results.players);
   const { player: [player] } = context;
+  const { apiError: [, setApiError] } = context;
 
   const handleStart = async () => {
     const results = await api.get(`admin/session/${sessionId}/status`, { headers: { Authorization: getToken() } });
-    console.log(results.results.questions[0]);
     if (results.results.position === -1) {
       setCurrQuestion(results.results.questions[0]);
     }
-    console.log('advancing Quiz');
     const quizId = await getQuizId(sessionId);
     await api.post(`admin/quiz/${quizId}/advance`, { headers: { Authorization: getToken() } });
+    if (results.error || quizId.error) {
+      setApiError({ error: true, message: results.error ? results.error : quizId.error });
+    }
     setStage('preview');
   };
   // poll the server to check if the game has started
@@ -43,6 +45,9 @@ const StartStage = ({
     // player will only ever get to start stage if the game hasnt started already
     const checkIfGameStart = async () => {
       const started = await api.get(`play/${player.id}/status`);
+      if (started.error) {
+        setApiError({ error: true, message: started.error });
+      }
       if (started.started) {
         // once the game starts, we can start the game here
         const question = await api.get(`play/${player.id}/question`);
@@ -57,7 +62,7 @@ const StartStage = ({
     }
 
     return () => clearInterval(interval);
-  }, [player.id, player.isAdmin, setCurrQuestion, setStage]);
+  }, [player.id, player.isAdmin, setApiError, setCurrQuestion, setStage]);
   const classes = useStyles();
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down('sm'));
@@ -90,6 +95,7 @@ const StartStage = ({
           </Grid>
         </Grid>
       </Container>
+      <ErrorHandler />
     </div>
   );
 };

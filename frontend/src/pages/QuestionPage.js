@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
 const QuestionPage = ({ setStage }) => {
   const context = React.useContext(StoreContext);
   const { currQuestion: [currQuestion] } = context;
-  console.log(currQuestion);
   const handleDurationExpire = () => {
     setStage('results');
   };
@@ -83,20 +82,3 @@ QuestionPage.propTypes = {
 };
 
 export default QuestionPage;
-
-// this will help with timer
-// import { CountdownCircleTimer } from 'react-countdown-circle-timer';
-/*
-  return (
-    <div>
-      <CountdownCircleTimer
-        isPlaying
-        duration={5}
-        colors={[['#004777', 0.33], ['#F7B801', 0.33], ['#A30000']]}
-        onComplete={() => handleTimerExpire()}
-      >
-        {renderer}
-      </CountdownCircleTimer>
-    </div>
-  );
-*/

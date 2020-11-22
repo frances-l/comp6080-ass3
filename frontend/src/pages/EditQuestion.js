@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  TextField, Grid, makeStyles, Button,
+  TextField, Grid, makeStyles, Button, Typography,
   Snackbar, Paper, useTheme, useMediaQuery,
 } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -42,6 +42,10 @@ const useStyles = makeStyles((theme) => ({
   buttonGroup: {
     height: '5em',
   },
+  errorContainer: {
+    marginTop: '0.2em',
+    border: '1px solid red',
+  },
 }));
 
 const EditQuestion = (props) => {
@@ -50,7 +54,11 @@ const EditQuestion = (props) => {
   const [question, setQuestion] = React.useState(edit);
   const [open, setOpen] = React.useState(false);
   const { match: { params } } = props;
+  // const [errorMsg, setErrorMsg] = React.useState('');
+  const [questionError, setQuestionError] = React.useState(false);
+  const [answerError, setAnswerError] = React.useState(false);
   const history = useHistory();
+  const [apiError, setApiError] = React.useState('');
 
   const handleChange = (attr, value) => {
     const updatedQuestion = question;
@@ -62,13 +70,32 @@ const EditQuestion = (props) => {
     setOpen(false);
   };
 
-  // const handleCancel = () => {
-  //   history.push(`/edit/${params.gid}`);
-  // };
+  const errorHandler = () => {
+    // check if theres a question
+    let foundError = false;
+    if (!question.question) {
+      setQuestionError(true);
+      foundError = true;
+    }
+    if (question.answers.length === 0) {
+      console.log('yo');
+      setAnswerError(true);
+      foundError = true;
+    } else if (question.answers) {
+      const foundCorrect = question.answers.filter((a) => a.correct);
+      if (!foundCorrect) {
+        setAnswerError(true);
+        foundError = true;
+      }
+    }
+    return foundError;
+  };
 
   const setQtype = () => question.answers.filter((a) => a.correct).length === 1;
   const handleConfirm = async () => {
-    if (!open) {
+    const foundError = errorHandler();
+    console.log(foundError);
+    if (!foundError) {
       // check if the new question has more than one answer then change the type accordingly
       question.qType = setQtype() ? 'single' : 'multi';
       // first find all of the quizzes
@@ -78,7 +105,7 @@ const EditQuestion = (props) => {
       // if we're editting a question, then set the editted question
       if (qExist) {
         const quizQuestions = quiz.questions.map((q) => {
-          if (q.id === params.qid) {
+          if (q.id === Number(params.qid)) {
             return question;
           }
           return q;
@@ -88,7 +115,6 @@ const EditQuestion = (props) => {
       } else {
         quiz.questions = [...quiz.questions, question];
       }
-
       const res = await api.put(`admin/quiz/${params.gid}`, {
         headers: { 'Content-type': 'application/json', Authorization: getToken() },
         body: JSON.stringify({
@@ -98,9 +124,12 @@ const EditQuestion = (props) => {
         }),
       });
       if (res.error) {
+        setApiError(res.error);
         setOpen(true);
       }
       history.push(`/edit/${params.gid}/`);
+    } else {
+      setOpen(true);
     }
   };
   const classes = useStyles();
@@ -120,6 +149,8 @@ const EditQuestion = (props) => {
               label="Whats your Question?"
               onBlur={(event) => { handleChange('question', event.target.value); }}
               defaultValue={edit.question}
+              error={questionError}
+              helperText={questionError ? 'Question cannot be left blank' : ''}
             />
           </Grid>
           <Grid item>
@@ -143,7 +174,8 @@ const EditQuestion = (props) => {
           )}
       </Grid>
       <Paper className={classes.answersContainer}>
-        <Grid container direction="row" spacing={2}>
+        {answerError && <Typography color="error">Answer must not be empty and must have a correct choice</Typography>}
+        <Grid container direction="row" spacing={2} className={answerError ? classes.errorContainer : ''}>
           <EditAnswers aId={1} question={question} setQuestion={setQuestion} />
           <EditAnswers aId={2} question={question} setQuestion={setQuestion} />
           <EditAnswers aId={3} question={question} setQuestion={setQuestion} />
@@ -182,10 +214,9 @@ const EditQuestion = (props) => {
         </Grid>
       </Grid>
       ) }
-
       <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
         <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity="error">
-          Please Confirm your question before Continuing
+          {apiError}
         </MuiAlert>
       </Snackbar>
     </section>

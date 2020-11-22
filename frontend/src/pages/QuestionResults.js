@@ -10,6 +10,7 @@ import Answer from '../components/Answer';
 import { getQuizId, getToken } from '../utils/helpers';
 import NavBar from '../components/NavBar';
 import AppBarSpacer from '../utils/styles';
+import ErrorHandler from '../components/ErrorHandler';
 
 const api = new API('http://localhost:5005');
 
@@ -36,25 +37,29 @@ const QuestionResults = ({
   const { session: [session, setSession] } = context;
   const { currQuestion: [currQuestion, setCurrQuestion] } = context;
   const { playerAnswers: [playerAnswers, setPlayerAnswers] } = context;
-
   const [answers, setAnswers] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
   const history = useHistory();
+  const { apiError: [, setApiError] } = context;
   // make this only visible/possible from admin
   const handleClick = async () => {
     // handle pressing next in results page
     // should advance the game, and set the question to the next one
     const results = await api.get(`admin/session/${sId}/status`, { headers: { Authorization: getToken() } });
-    console.log('printing session from questionResults', results);
+    if (results.error) {
+      setApiError({ error: true, message: results.error });
+    }
     setSession(results);
     const nextQuestion = results.results.questions[results.results.position + 1];
     if (!nextQuestion) {
       setOpen(true);
-      // history.push(`/session/${sId}/results`);
     } else {
       const quizId = await getQuizId(sId);
-      await api.post(`admin/quiz/${quizId}/advance`, { headers: { Authorization: getToken() } });
+      const res = await api.post(`admin/quiz/${quizId}/advance`, { headers: { Authorization: getToken() } });
+      if (quizId.error || res.error) {
+        setApiError({ error: true, message: res.error ? res.error : quizId.error });
+      }
       setCurrQuestion(nextQuestion);
       setPlayerAnswers([]);
       setStage('preview');
@@ -64,10 +69,12 @@ const QuestionResults = ({
   React.useEffect(() => {
     (async () => {
       const result = await api.get(`play/${player.id}/answer`, { headers: { Authorization: getToken() } });
-      console.log(result);
+      if (result.error) {
+        setApiError({ error: true, message: result.error });
+      }
       setAnswers(result.answerIds);
     })();
-  }, [player, session]);
+  }, [player, session, setApiError]);
 
   React.useEffect(() => {
     // function to check if the game has started or not
@@ -76,6 +83,9 @@ const QuestionResults = ({
     const checkIfGameStart = async () => {
       const question = await api.get(`play/${player.id}/question`);
       const status = await api.get(`play/${player.id}/status`);
+      if (status.error || question.error) {
+        setApiError({ error: true, message: status.error ? status.error : question.error });
+      }
       if (!status.started) {
         setOpen(true);
       } else if (question.question.id !== currQuestion.id) {
@@ -92,7 +102,7 @@ const QuestionResults = ({
 
     return () => clearInterval(interval);
   }, [currQuestion, currQuestion.position, player.id,
-    player.isAdmin, setCurrQuestion, setPlayerAnswers, setStage]);
+    player.isAdmin, setApiError, setCurrQuestion, setPlayerAnswers, setStage]);
 
   const handleClose = () => {
     setOpen(false);
@@ -108,7 +118,6 @@ const QuestionResults = ({
     // answers contains the correct answers for the question
     // first we check if the player answered correctly
     // extract the answer first
-    console.log(playerAnswers);
     if (playerAnswers.length === 0) {
       const isCorrect = answers.find((a) => a === answer.id);
       if (isCorrect) {
@@ -120,18 +129,13 @@ const QuestionResults = ({
     const chosen = playerAnswers.find((a) => a === answer.id);
     // if player chose this answer
     if (chosen) {
-      console.log(chosen);
       // check if answer is correct
-      console.log(answers);
       const correct = answers.find((a) => a === chosen);
-      console.log(correct);
       // if its correct then return correct answer
       if (correct) {
-        console.log('here');
         return 'correctAnswer';
       // otherweise its wrong
       }
-      console.log('yikes');
       return 'incorrectAnswer';
 
       // if player didnt choose this answer
@@ -200,16 +204,14 @@ const QuestionResults = ({
             </main>
           </Modal>
         </Grid>
+        <ErrorHandler />
       </main>
     </div>
   );
 };
 
 QuestionResults.propTypes = {
-  // question: PropTypes.objectOf(PropTypes.any).isRequired,
   setStage: PropTypes.func.isRequired,
-  // setNextQuestion: PropTypes.func.isRequired,
   sId: PropTypes.number.isRequired,
-  // gId: PropTypes.number.isRequired,
 };
 export default QuestionResults;
