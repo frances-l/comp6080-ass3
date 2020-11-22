@@ -1,0 +1,51 @@
+{
+    "name": "cool quiz",
+    "questions": [
+        {
+            "id": 0,
+            "media": {
+                "type": "image"
+            },
+            "points": 5,
+            "preview": 5,
+            "qType": "single",
+            "question": "Question 1",
+            "time": 5,
+            "answers": [
+                {
+                    "id": 1,
+                    "answer": "Yes",
+                    "correct": true
+                },
+                {
+                    "id": 2,
+                    "answer": "No",
+                    "correct": false
+                }
+            ]
+        },
+        {
+            "id": 0,
+            "media": {
+                "type": "image"
+            },
+            "points": 5,
+            "preview": 5,
+            "qType": "single",
+            "question": "Do I like this course?",
+            "time": 5,
+            "answers": [
+                {
+                    "id": 1,
+                    "answer": "Yes",
+                    "correct": true
+                },
+                {
+                    "id": 2,
+                    "answer": "No",
+                    "correct": false
+                }
+            ]
+        }
+    ]
+}

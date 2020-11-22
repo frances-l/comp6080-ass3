@@ -1,8 +1,9 @@
 import React from 'react';
 import {
   Typography, Button, InputLabel, Input,
-  Container, FormControl, Paper, Grid, Divider, styled,
+  Container, FormControl, Paper, Grid, Divider, styled, makeStyles, Snackbar,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { getToken } from '../utils/helpers';
@@ -15,10 +16,19 @@ const ModalGrid = styled(Grid)({
   padding: '2em',
 });
 
+const useStyles = makeStyles(() => ({
+  upload: {
+    display: 'none',
+  },
+}));
+const { Validator } = require('jsonschema');
+
 const NewGameModal = ({ setOpen }) => {
   const [title, setTitle] = React.useState('');
   const [titleError, setTitleError] = React.useState('');
   const [errorToggle, setErrorToggle] = React.useState(false);
+  const [file, setFile] = React.useState();
+  const [invalidFile, setInvalidFile] = React.useState(false);
   const history = useHistory();
   const context = React.useContext(StoreContext);
   const { edit: [, setEdit] } = context;
@@ -44,6 +54,95 @@ const NewGameModal = ({ setOpen }) => {
         // handle errors
       }
     }
+  };
+  const classes = useStyles();
+
+  const upload = () => {
+    document.getElementById('imgupload').click();
+  };
+  const parseJSON = async () => {
+    if (file.name === '') {
+      setErrorToggle(true);
+      setTitleError('JSON file does not have a name for the quiz');
+    } else {
+      const res = await api.post('admin/quiz/new', {
+        headers: {
+          'content-type': 'application/json',
+          Authorization: getToken(),
+        },
+        body: JSON.stringify({ name: file.name }),
+      });
+      console.log(res);
+      console.log(file.questions);
+    }
+  };
+
+  const answers = {
+    id: '/answers',
+    type: 'object',
+    properties: {
+      id: { type: 'number' },
+      answer: { type: 'string' },
+      correct: { type: 'boolean' },
+    },
+    required: ['id', 'answer', 'correct'],
+
+  };
+
+  const question = {
+    id: '/question',
+    type: 'object',
+    properties: {
+
+      id: { type: 'number' },
+      media: { type: 'object' },
+      points: { type: 'number' },
+      preview: { type: 'number' },
+      qType: { type: 'string' },
+      time: { type: 'number' },
+      answers: {
+        type: 'array',
+        items: { $ref: '/answers' },
+      },
+    },
+    required: ['id', 'media', 'points', 'preview', 'qType', 'time', 'answers'],
+  };
+
+  const quiz = {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      questions: {
+        type: 'array',
+        items: { $ref: '/question' },
+      },
+    },
+    required: ['name'],
+  };
+
+  const validJSON = () => {
+    const v = new Validator();
+    v.addSchema(answers, '/answers');
+    v.addSchema(question, '/question');
+    const res = v.validate(file, quiz, { required: true });
+    console.log(res.valid);
+    return res.valid
+      ? parseJSON() : setInvalidFile(true);
+  };
+
+  const handleChange = (event) => {
+    const fileReader = new FileReader();
+    fileReader.readAsText(event.target.files[0], 'UTF-8');
+    fileReader.onload = (e) => {
+      console.log('e.target.result', e.target.result);
+      setFile(JSON.parse(e.target.result));
+      console.log(file);
+    };
+    validJSON();
+  };
+
+  const handleClose = () => {
+    setInvalidFile(false);
   };
 
   return (
@@ -94,11 +193,26 @@ const NewGameModal = ({ setOpen }) => {
                   Don&apos;t worry, once you press confirm it&apos;ll
                   direct you to a page where you can get going!
                 </Typography>
+                <input type="file" accept=".json" id="imgupload" className={classes.upload} onChange={handleChange} />
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={upload}
+                >
+                  Upload a JSON file for your questions
+                </Button>
+
               </Grid>
             </form>
           </ModalGrid>
         </Paper>
       </Container>
+      <Snackbar open={invalidFile} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          This file is an invalid JSON file.
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };

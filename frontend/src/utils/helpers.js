@@ -13,6 +13,7 @@ export async function getQuiz(id) {
 export async function getQuizId(sid) {
   const res = await api.get('admin/quiz', { headers: { Authorization: getToken() } });
   const retQuiz = res.quizzes.find((quiz) => {
+    console.log(quiz);
     if (quiz.active) {
       return Number(quiz.active) === Number(sid);
     }

@@ -74,7 +74,7 @@ function Register() {
   return (
     <main>
       <Grid
-        classNane={classes.formContainer}
+        className={classes.formContainer}
         container
         direction="column"
         alignContent="center"

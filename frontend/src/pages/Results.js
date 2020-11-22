@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import NavBar from '../UIComponents/NavBar';
 import API from '../utils/api';
-import { getToken } from '../utils/helpers';
-// import { StoreContext } from '../utils/store';
+import { getToken, getQuizId } from '../utils/helpers';
+import AppBarSpacer from '../utils/styles';
 
 const api = new API('http://localhost:5005');
 const Results = (props) => {
@@ -12,16 +12,28 @@ const Results = (props) => {
 
   console.log(params.sid);
   (async () => {
-    // await api.post(`admin/quiz/${quiz}/end`, { headers: { Authorization: getToken() } });
+    const qid = getQuizId(params.sid);
+    console.log(qid);
     const res = await api.get(`admin/session/${params.sid}/results`, { headers: { Authorization: getToken() } });
     console.log(res);
+    // const response = await api.get(`/admin/quiz/${qid}`);
+    // console.log(response);
   })();
 
   //   const res = api;
   return (
     <header>
       <NavBar />
-      <Typography variant="h1">Results!</Typography>
+      <AppBarSpacer />
+      <Grid
+        container
+        direction="column"
+        alignContent="center"
+        spacing={2}
+      >
+
+        <Typography color="primary" variant="h1">Results!</Typography>
+      </Grid>
     </header>
 
   );
