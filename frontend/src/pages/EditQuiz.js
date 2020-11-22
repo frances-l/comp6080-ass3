@@ -9,13 +9,11 @@ import NavBar from '../components/NavBar';
 import { fileToDataUrl, getQuiz, getToken } from '../utils/helpers';
 import { StoreContext } from '../utils/store';
 import API from '../utils/api';
+import AppBarSpacer from '../utils/styles';
 
 const api = new API('http://localhost:5005');
 
 const useStyles = makeStyles((theme) => ({
-  appBarSpacer: {
-    height: '15vh',
-  },
   pageLayout: {
     margin: '0 10vw',
   },
@@ -138,18 +136,24 @@ const EditQuiz = (props) => {
     setTitleOpen(false);
   };
 
+  const handleGoBack = () => {
+    console.log('going back');
+    history.push('/');
+  };
+
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <div className={classes.pageLayout}>
-      <NavBar />
-      <div className={classes.appBarSpacer} />
-      <Grid container direction="column" alignItems="center">
+      <header>
+        <NavBar />
+      </header>
+      <AppBarSpacer />
+      <Grid container direction="column" alignItems="center" spacing={3}>
         <Grid item>
           <Typography color="textPrimary" variant={matches ? 'h3' : 'h1'}>{quizTitle}</Typography>
         </Grid>
-        <div className={classes.appBarSpacer} />
-        <Grid container spacing={5}>
+        <Grid container>
           <QuestionCard gid={Number(params.gid)} questions={questions} />
         </Grid>
         <Grid direction="column" container spacing={10} alignItems="center">
@@ -235,7 +239,7 @@ const EditQuiz = (props) => {
                 id="confirm"
                 variant="contained"
                 color="primary"
-                onclick={() => { history.push('/'); }}
+                onClick={() => handleGoBack()}
               >
                 Go back
 

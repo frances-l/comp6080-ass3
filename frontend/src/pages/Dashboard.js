@@ -50,7 +50,7 @@ function Dashboard() {
       <div />
       <section>
         {/* {Note lint doesn't fucking allow object types so we have to do this} */}
-        <Grid container alignItems="center" spacing={3}>
+        <Grid container alignItems="center" justify="center" spacing={3}>
           {games.map((quiz) => (
             <Grid item>
               <GameCard

@@ -1,46 +1,68 @@
 import {
-  Typography, LinearProgress, Container, Paper, CardMedia,
+  Typography, Grid, Paper, CardMedia,
+  makeStyles, useTheme, useMediaQuery,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import Countdown from 'react-countdown';
 import React from 'react';
 import { StoreContext } from '../utils/store';
-// import API from '../utils/api';
-// import { getToken } from '../utils/helpers' {currQuestion: [currQuestion]} = context;
-// const api = new API('http://localhost:5005');
+import NavBar from '../components/NavBar';
+import AppBarSpacer from '../utils/styles';
+import LinearTimer from '../components/LinearTimer';
+
+const useStyles = makeStyles((theme) => ({
+  questionContainer: {
+    padding: '1em 3em',
+    borderRadius: '1em',
+  },
+  pageLayout: {
+    padding: '0 5em',
+    [theme.breakpoints.down('sm')]: {
+      padding: '0 1em',
+    },
+  },
+}));
 const QuestionPreview = ({ setStage }) => {
   const context = React.useContext(StoreContext);
-  // const { session: [, setSession] } = context;
   const { currQuestion: [currQuestion] } = context;
-
-  const renderer = ({ seconds }) => <LinearProgress variant="determinate" value={seconds} />;
 
   const handleComplete = async () => {
     setStage('question');
   };
 
+  const classes = useStyles();
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
   return (
-    <section>
-      <Container>
-        <Paper>
-          <Typography color="textPrimary" variant="h1">{currQuestion.question}</Typography>
-        </Paper>
-        {(() => {
-          if (currQuestion.media.type === 'video') {
-            return <CardMedia component="iframe" title="question-preview-video" src={currQuestion.media.src} />;
-          } if (currQuestion.media.src) {
-            return <img src={currQuestion.media.src} alt="question-preview" />;
-          }
-          return null;
-        })()}
-        <Countdown
-          autoStart
-          date={Date.now() + (currQuestion.preview * 1000)}
-          renderer={renderer}
-          onComplete={() => handleComplete()}
-        />
-      </Container>
-    </section>
+    <div>
+      <header>
+        <NavBar />
+      </header>
+      <AppBarSpacer />
+      <section className={classes.pageLayout}>
+        <Grid container direction="column" spacing={3} alignContent="center" justify="center">
+          <Grid item>
+            <Paper className={classes.questionContainer}>
+              <Typography color="textPrimary" variant={matches ? 'h3' : 'h1'}>{currQuestion.question}</Typography>
+            </Paper>
+          </Grid>
+          <Grid container item alignItems="center" justify="center">
+            <Grid item>
+              {(() => {
+                if (currQuestion.media.type === 'video') {
+                  return <CardMedia component="iframe" title="question-preview-video" src={currQuestion.media.src} />;
+                } if (currQuestion.media.src) {
+                  return <img src={currQuestion.media.src} alt="question-preview" />;
+                }
+                return null;
+              })()}
+            </Grid>
+          </Grid>
+          <Grid item>
+            <LinearTimer handleComplete={handleComplete} time={currQuestion.preview} />
+          </Grid>
+        </Grid>
+      </section>
+    </div>
   );
 };
 

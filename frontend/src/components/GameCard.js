@@ -66,11 +66,17 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'space-around',
     paddingLeft: '2vw',
   },
   cardContent: {
     display: 'flex',
     flexDirect: 'row',
+  },
+  buttonGroup: {
+
+    height: '5em',
+
   },
 }));
 
@@ -157,9 +163,34 @@ const GameCard = ({
             <Typography variant="h6">{`Time needed: ${sum} seconds`}</Typography>
           </div>
           <CardActions>
-            <Button variant="contained" color="secondary" onClick={remove}>Delete Game</Button>
-            <Button variant="contained" color="primary" onClick={linkEdit}>Edit Game</Button>
-            <Button variant="contained" color="primary" id="start-end" onClick={() => linkStartEnd()}>{code ? 'End Game' : 'Start Game'}</Button>
+            <Button
+              className={classes.buttonGroup}
+              variant="contained"
+              color="secondary"
+              onClick={remove}
+            >
+              Delete Game
+
+            </Button>
+            <Button
+              className={classes.buttonGroup}
+              variant="contained"
+              color="primary"
+              onClick={linkEdit}
+            >
+              Edit Game
+
+            </Button>
+            <Button
+              className={classes.buttonGroup}
+              variant="contained"
+              color="primary"
+              id="start-end"
+              onClick={() => linkStartEnd()}
+            >
+              {code ? 'End Game' : 'Start Game'}
+
+            </Button>
             <Modal
               open={startOpen}
               onClose={handleStartClose}
@@ -180,7 +211,7 @@ const GameCard = ({
               aria-labelledby="end game"
               aria-describedby="end game modal"
             >
-              <div className={classes.paper}>
+              <div className={classes.modalPopup}>
                 <Typography color="textPrimary" variant="h5">Would you like to view the results?</Typography>
                 <Button id="yes" variant="outlined" onClick={() => viewResult()}>Yes</Button>
                 <Button id="no" variant="outlined" onClick={() => handleEndClose()}>No</Button>

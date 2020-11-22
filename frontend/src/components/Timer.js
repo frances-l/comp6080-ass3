@@ -1,21 +1,22 @@
 import React from 'react';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import PropTypes from 'prop-types';
+import { Grid, Typography } from '@material-ui/core';
 
 const Timer = ({ duration, onComplete }) => {
   const render = ({ remainingTime }) => (
-    <div className="timer">
-      <div className="text">Remaining</div>
-      <div className="value">{remainingTime}</div>
-      <div className="text">seconds</div>
-    </div>
+    <Grid container direction="column" justify="center" alignContent="center" className="timer">
+      <Typography color="textPrimary" className="text">Remaining</Typography>
+      <Typography variant="h4" className="value">{remainingTime}</Typography>
+      <Typography color="textPrimary" className="text">seconds</Typography>
+    </Grid>
   );
   return (
     <CountdownCircleTimer
       onComplete={() => { onComplete(); }}
       isPlaying
       duration={duration}
-      colors="#A30000"
+      colors={[['#0080FF', 0.66], ['#FF4500', 0.33]]}
     >
       {render}
     </CountdownCircleTimer>
