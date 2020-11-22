@@ -17,6 +17,9 @@ export async function getQuizId(sid) {
     if (quiz.active) {
       return Number(quiz.active) === Number(sid);
     }
+
+    if (quiz.oldSessions.find((id) => Number(id) === Number(sid))) return true;
+
     return false;
   });
   return retQuiz.id;
