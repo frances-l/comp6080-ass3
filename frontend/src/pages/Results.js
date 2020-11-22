@@ -76,11 +76,11 @@ const Results = (props) => {
       </Grid>
     </header>
 
-  );
-};
+//   );
+// };
 
-Results.propTypes = {
-  match: PropTypes.objectOf(PropTypes.any).isRequired,
-};
+// Results.propTypes = {
+//   match: PropTypes.objectOf(PropTypes.any).isRequired,
+// };
 
-export default Results;
+// export default Results;
