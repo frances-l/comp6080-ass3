@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import {
   Typography, Card, CardMedia, Button,
-  CardActions, makeStyles, Modal, Input,
+  CardActions, makeStyles, Modal, Input, useTheme, useMediaQuery,
 } from '@material-ui/core';
 import API from '../utils/api';
 import { getToken } from '../utils/helpers';
@@ -11,23 +11,39 @@ import { getToken } from '../utils/helpers';
 const api = new API('http://localhost:5005');
 // TODO handle deleting the quiz
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'row',
     maxHeight: '30vh',
     maxWidth: '70vw',
-    margin: '3vh 0',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      maxHeight: '70vh',
+      minWidth: '80vw',
+    },
   },
   image: {
     backgroundSize: 'cover',
     height: '30vh',
     minWidth: '20vh',
+    [theme.breakpoints.down('sm')]: {
+      minWidth: '80',
+    },
+  },
+  imageContainer: {
+    display: 'flex',
+    [theme.breakpoints.down('sm')]: {
+      justifyContent: 'center',
+    },
   },
   buttonDataPair: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
   },
   metadataContainer: {
     display: 'flex',
@@ -35,13 +51,16 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'space-between',
     paddingRight: '3em',
   },
-  paper: {
+  modalPopup: {
     display: 'flex',
     flexDirection: 'column',
     margin: '20vh 30vw',
     padding: '2em',
     borderRadius: '1em',
     backgroundColor: 'grey',
+    [theme.breakpoints.down('sm')]: {
+      margin: '20vh 5vw',
+    },
   },
   cardRHS: {
     display: 'flex',
@@ -86,15 +105,10 @@ const GameCard = ({
       await api.post(`admin/quiz/${gId}/start`, { headers: { Authorization: getToken() } });
       const res = await api.get(`admin/quiz/${gId}`, { headers: { Authorization: getToken() } });
       setCode(res.active);
-      console.log(111111, code);
 
       setStartOpen(true);
     } else { // end game
-      console.log('hello');
-      console.log(87878, code);
-      const end = await api.post(`admin/quiz/${gId}/end`, { headers: { Authorization: getToken() } });
-      console.log(end);
-
+      await api.post(`admin/quiz/${gId}/end`, { headers: { Authorization: getToken() } });
       setEndOpen(true);
     }
   };
@@ -119,14 +133,13 @@ const GameCard = ({
   };
 
   const remove = async () => {
-    console.log('removing');
-    const res = await api.delete(`admin/quiz/${gId}`, { headers: { Authorization: getToken() } });
+    await api.delete(`admin/quiz/${gId}`, { headers: { Authorization: getToken() } });
     const card = document.getElementById('game-card');
     card.style.display = 'none';
-    console.log(res);
   };
 
-  console.log(imgSrc);
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <Card id="game-card" className={classes.container} key={gId}>
@@ -135,7 +148,7 @@ const GameCard = ({
       </CardMedia>
       <div className={classes.cardRHS}>
         <div>
-          <Typography variant="h3">{title}</Typography>
+          <Typography variant={matches ? 'h5' : 'h3'}>{title}</Typography>
         </div>
         <div className={classes.buttonDataPair}>
           <div className={classes.metadataContainer}>
@@ -154,7 +167,7 @@ const GameCard = ({
               aria-describedby="start game modal"
               id="link-modal"
             >
-              <div className={classes.paper}>
+              <div className={classes.modalPopup}>
                 <Typography color="textPrimary" variant="h5">Link to the started game</Typography>
                 <Input inputRef={inputRef} type="text" value={`http://localhost:3000/join/${code}`} />
                 <br />
