@@ -81,7 +81,7 @@ function Register() {
         spacing={3}
       >
         <Grid item>
-          <Typography color="textPrimary" variant="h1">Register</Typography>
+          <Typography id="title" color="textPrimary" variant="h1">Register</Typography>
         </Grid>
         <form onSubmit={(event) => handleClick(event)}>
           <Grid container item direction="column" spacing={2}>
@@ -97,11 +97,11 @@ function Register() {
               <TextField fullWidth label="Password*" variant="outlined" name="password" type="password" id="password" onChange={(event) => setPassword(event.target.value)} />
             </Grid>
             <Grid item>
-              <Button fullWidth id="submit" type="onSubmit" variant="contained">Register</Button>
+              <Button aria-label="register" fullWidth id="submit" type="onSubmit" variant="contained">Register</Button>
             </Grid>
 
             <Grid item>
-              <Button component={Link} color="primary" to="/login">If you already have an account click here to log in</Button>
+              <Button aria-label="login" component={Link} color="primary" to="/login">If you already have an account click here to log in</Button>
 
             </Grid>
           </Grid>

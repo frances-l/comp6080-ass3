@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Register takes a snapshot of email 1`] = `ShallowWrapper {}`;
+
+exports[`Register takes a snapshot of name 1`] = `ShallowWrapper {}`;
+
+exports[`Register takes a snapshot of password 1`] = `ShallowWrapper {}`;
+
+exports[`Register takes a snapshot of register title 1`] = `ShallowWrapper {}`;

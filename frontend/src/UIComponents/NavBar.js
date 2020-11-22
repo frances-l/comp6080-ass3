@@ -73,7 +73,7 @@ const NavBar = () => {
                 </IconButton>
               </Grid>
               <Grid item>
-                <Typography variant="h4">{matches ? '' : 'BigBrain'}</Typography>
+                <Typography id="title" variant="h4">{matches ? '' : 'BigBrain'}</Typography>
               </Grid>
             </Grid>
             <Grid
@@ -85,7 +85,7 @@ const NavBar = () => {
               justify="flex-end"
             >
               <Grid item>
-                <Button id="create-quiz" variant="contained" color="primary" onClick={handleNewGameClick}>{matches ? 'Create' : 'Create Quiz'}</Button>
+                <Button aria-label="create a quiz" id="create-quiz" variant="contained" color="primary" onClick={handleNewGameClick}>{matches ? 'Create' : 'Create Quiz'}</Button>
               </Grid>
               <Modal
                 className={classes.createModal}
@@ -93,14 +93,15 @@ const NavBar = () => {
                 onClose={handleNewGameClose}
                 aria-labelledby="new-game"
                 aria-describedby="new-game-popup"
+                id="new-game"
               >
                 <NewGameModal setOpen={setOpen} />
               </Modal>
               <Grid item>
-                <Button variant="contained" color="primary" onClick={handleJoin}>{matches ? 'Join' : 'join Game'}</Button>
+                <Button id="join" aria-label="join a game" variant="contained" color="primary" onClick={handleJoin}>{matches ? 'Join' : 'Join Game'}</Button>
               </Grid>
               <Grid item>
-                <Button id="logout" variant="contained" color="secondary" onClick={handleLogout}>Logout</Button>
+                <Button aria-label="logout" id="logout" variant="contained" color="secondary" onClick={handleLogout}>Logout</Button>
               </Grid>
             </Grid>
           </Grid>

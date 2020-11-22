@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NavBar check if the join game button matches snapshot 1`] = `ShallowWrapper {}`;
+
+exports[`NavBar check if the join game button text is right and has aria-label 1`] = `ShallowWrapper {}`;
+
+exports[`NavBar check if the logout button matches the snapshot 1`] = `ShallowWrapper {}`;
+
+exports[`NavBar check if the logout button text is right and has an aria-label 1`] = `ShallowWrapper {}`;
+
+exports[`NavBar check that the create a quiz button triggers modal 1`] = `ShallowWrapper {}`;
+
+exports[`NavBar check that the create a quiz button triggers modal 2`] = `ShallowWrapper {}`;
+
+exports[`NavBar check that the create a quiz button triggers modal and has aria-label 1`] = `ShallowWrapper {}`;
+
+exports[`NavBar check that the create a quiz button triggers modal and has aria-label 2`] = `ShallowWrapper {}`;
+
+exports[`NavBar check that the image matches the snapshot 1`] = `ShallowWrapper {}`;
+
+exports[`NavBar check that the logo has alt tag 1`] = `ShallowWrapper {}`;
+
+exports[`NavBar check the title matches the snapshot 1`] = `ShallowWrapper {}`;
+
+exports[`NavBar check the title of the nav bar is present 1`] = `ShallowWrapper {}`;

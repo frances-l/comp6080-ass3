@@ -8,25 +8,37 @@ describe('UI Test', () => {
 
     // submits register form
 
-    cy.get('#name').type('aaaaaaaa')
+    cy.get('#name')
+      .focus()
+      .type('aaaaaaaa')
       .should('have.value', 'aaaaaaaa');
-    cy.get('#email').type('sss@email.com')
-      .should('have.value', 'sss@email.com');
-    cy.get('#password').type('b')
+    cy.get('#email')
+      .focus()
+      .type('sssssss@email.com')
+      .should('have.value', 'sssssss@email.com');
+    cy.get('#password')
+      .focus()
+      .type('b')
       .should('have.value', 'b');
     cy.get('#submit').click();
 
     // create a quiz
 
-    cy.get('#create-quiz').click();
-    cy.get('#quiz-title').type('My Quiz')
+    cy.get('#create-quiz')
+      .click();
+    cy.get('#quiz-title')
+      .focus()
+      .type('My Quiz')
       .should('have.value', 'My Quiz');
-    cy.get('#submit').click();
+    cy.get('#submit')
+      .click();
 
     // change the title of the quiz
 
     cy.get('#change-title').click();
-    cy.get('#new-title').type('My Cool Quiz')
+    cy.get('#new-title')
+      .focus()
+      .type('My Cool Quiz')
       .should('have.value', 'My Cool Quiz');
     cy.get('#submit-title').click();
 
@@ -44,9 +56,13 @@ describe('UI Test', () => {
     // logout and log back in again
 
     cy.get('#logout').click();
-    cy.get('#email').type('sss@email.com')
-      .should('have.value', 'sss@email.com');
-    cy.get('#password').type('b')
+    cy.get('#email')
+      .focus()
+      .type('sssssss@email.com')
+      .should('have.value', 'sssssss@email.com');
+    cy.get('#password')
+      .focus()
+      .type('b')
       .should('have.value', 'b');
     cy.get('#submit').click();
   });
