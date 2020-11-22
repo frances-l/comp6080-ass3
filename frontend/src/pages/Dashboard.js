@@ -1,10 +1,10 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
-import NavBar from '../UIComponents/NavBar';
+import NavBar from '../components/NavBar';
 // import isLogin from '../utils';
 import API from '../utils/api';
 import { getToken } from '../utils/helpers';
-import GameCard from '../UIComponents/GameCard';
+import GameCard from '../components/GameCard';
 import logo from '../assets/BBLogo.jpg';
 import '../styles/styles.css';
 

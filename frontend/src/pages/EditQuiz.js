@@ -4,8 +4,8 @@ import {
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
-import QuestionCard from '../UIComponents/QuestionCard';
-import NavBar from '../UIComponents/NavBar';
+import QuestionCard from '../components/QuestionCard';
+import NavBar from '../components/NavBar';
 import { fileToDataUrl, getQuiz, getToken } from '../utils/helpers';
 import { StoreContext } from '../utils/store';
 import API from '../utils/api';

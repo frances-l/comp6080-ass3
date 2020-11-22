@@ -4,7 +4,7 @@ import {
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import NavBar from '../UIComponents/NavBar';
+import NavBar from '../components/NavBar';
 import API from '../utils/api';
 import { StoreContext } from '../utils/store';
 import { getToken } from '../utils/helpers';

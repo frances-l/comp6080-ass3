@@ -4,7 +4,7 @@ import {
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 // import Popup from './Popup';
-import NewGameModal from '../components/NewGameModal';
+import NewGameModal from './NewGameModal';
 import logo from '../assets/BBlogo.png';
 import '../styles/styles.css';
 

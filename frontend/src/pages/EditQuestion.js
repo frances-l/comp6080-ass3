@@ -7,7 +7,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { getQuiz, getToken } from '../utils/helpers';
-import NavBar from '../UIComponents/NavBar';
+import NavBar from '../components/NavBar';
 import AppBarSpacer from '../utils/styles';
 import API from '../utils/api';
 import EditAnswers from '../components/EditAnswers';

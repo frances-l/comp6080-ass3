@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import NavBar from '../UIComponents/NavBar';
+// import NavBar from '../components/NavBar';
 import { StoreContext } from '../utils/store';
-import StartStage from '../UIComponents/StartStage';
+import StartStage from '../components/StartStage';
 import QuestionResults from './QuestionResults';
 import QuestionPage from './QuestionPage';
 import API from '../utils/api';
-import QuestionPreview from '../UIComponents/QuestionPreview';
+import QuestionPreview from '../components/QuestionPreview';
 // import { getToken } from '../utils/helpers';
 
 const api = new API('http://localhost:5005');
