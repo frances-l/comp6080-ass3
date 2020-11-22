@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 // import NavBar from '../components/NavBar';
 import { StoreContext } from '../utils/store';
-import StartStage from '../components/StartStage';
+import StartStage from './StartStage';
 import QuestionResults from './QuestionResults';
 import QuestionPage from './QuestionPage';
 import API from '../utils/api';
-import QuestionPreview from '../components/QuestionPreview';
+import QuestionPreview from './QuestionPreview';
 // import { getToken } from '../utils/helpers';
 
 const api = new API('http://localhost:5005');

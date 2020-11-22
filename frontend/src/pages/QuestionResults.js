@@ -8,7 +8,7 @@ import API from '../utils/api';
 import { StoreContext } from '../utils/store';
 import Answer from '../components/Answer';
 import { getQuizId, getToken } from '../utils/helpers';
-import NavBar from '../UIComponents/NavBar';
+import NavBar from '../components/NavBar';
 
 const api = new API('http://localhost:5005');
 

@@ -81,7 +81,7 @@ const QuestionCard = ({ gid, questions }) => {
             <CardActions>
               <Grid container item direction="row" justify="space-around">
                 <Grid item>
-                  <Button color="primary" variant="contained" onClick={() => handleDelete(question.id)}>Delete Question</Button>
+                  <Button color="secondary" variant="contained" onClick={() => handleDelete(question.id)}>Delete Question</Button>
                 </Grid>
                 <Grid item>
                   <Button color="primary" variant="contained" onClick={() => handleRedirect(question.id)}>Edit Question</Button>

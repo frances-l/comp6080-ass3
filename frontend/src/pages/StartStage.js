@@ -8,7 +8,7 @@ import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import { getQuizId, getToken } from '../utils/helpers';
 import { StoreContext } from '../utils/store';
 import API from '../utils/api';
-import NavBar from './NavBar';
+import NavBar from '../components/NavBar';
 
 const useStyles = makeStyles((theme) => ({
   appbarSpacer: {
