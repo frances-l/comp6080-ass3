@@ -20,10 +20,9 @@ const NewGameModal = ({ setOpen }) => {
   const [titleError, setTitleError] = React.useState('');
   const [errorToggle, setErrorToggle] = React.useState(false);
   const history = useHistory();
-  const { quiz } = React.useContext(StoreContext);
-  const setQuiz = quiz[1];
   const context = React.useContext(StoreContext);
   const { edit: [, setEdit] } = context;
+  const { quiz: [, setQuiz] } = context;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -61,28 +60,42 @@ const NewGameModal = ({ setOpen }) => {
               <Typography variant="h4">Create a Quiz!</Typography>
             </Grid>
             <Divider />
-            <Grid>
-              <form onSubmit={(event) => handleSubmit(event)}>
+            <form onSubmit={(event) => handleSubmit(event)}>
+              <Grid container direction="column" spacing={3}>
                 <Grid item>
                   <FormControl
                     variant="filled"
                     error={errorToggle}
+                    fullWidth
                   >
                     <InputLabel htmlFor="quiz-title">Give your quiz a name!</InputLabel>
-                    <Input id="quiz-title" placeholder="Name" onBlur={(event) => setTitle(event.target.value)} />
+                    <Input
+                      id="quiz-title"
+                      placeholder="Name"
+                      onBlur={(event) => setTitle(event.target.value)}
+                    />
                     {titleError}
                   </FormControl>
                 </Grid>
                 <Grid item>
-                  <Button type="submit" variant="contained" color="primary">Confirm</Button>
+                  <Button
+                    fullWidth
+                    id="submit"
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                  >
+                    Confirm
+
+                  </Button>
                 </Grid>
                 <Typography>
                   Wondering where to add your questions?
                   Don&apos;t worry, once you press confirm it&apos;ll
                   direct you to a page where you can get going!
                 </Typography>
-              </form>
-            </Grid>
+              </Grid>
+            </form>
           </ModalGrid>
         </Paper>
       </Container>

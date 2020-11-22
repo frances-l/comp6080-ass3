@@ -4,8 +4,21 @@
  to return to a "player"
 */
 export const quizQuestionPublicReturn = question => {
-  console.log('See question: ', question);
-  return question;
+  const parsedAnswers = question.answers.map((a) => {
+    const answerNoCorrect = a;
+    // delete answerNoCorrect.correct;
+    return answerNoCorrect;
+  });
+  const retQuestion = {
+    id: question.id,
+    question: question.question,
+    answers: parsedAnswers,
+    time: question.time,
+    media: question.media,
+    preview: question.preview,
+    qType: question.qType,
+  };
+  return retQuestion;
 };
 
 /*
@@ -13,7 +26,9 @@ export const quizQuestionPublicReturn = question => {
  the correct answers (minimum 1).
 */
 export const quizQuestionGetCorrectAnswers = question => {
-  const correctAnswers = question.answers.filter((a) => a.correct);
+  console.log(question.answers.filter((a) => a.correct));
+  const correctAnswers = question.answers.filter((a) => a.correct).map((a) => a.id);
+  console.log(correctAnswers);
   return correctAnswers; // For a single answer
 };
 

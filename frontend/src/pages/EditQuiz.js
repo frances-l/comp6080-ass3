@@ -1,5 +1,5 @@
 import {
-  Typography, Grid, Button, makeStyles, Modal, Input, Paper,
+  Typography, Grid, Button, makeStyles, Modal, Input, Divider, useTheme, useMediaQuery,
 } from '@material-ui/core';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -27,7 +27,11 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
     margin: 'auto',
-
+  },
+  editButtonGroup: {
+    [theme.breakpoints.down('sm')]: {
+      height: '6vh',
+    },
   },
 }));
 
@@ -41,6 +45,8 @@ const EditQuiz = (props) => {
   const context = React.useContext(StoreContext);
   const [image, setImage] = React.useState();
   const [open, setOpen] = React.useState(false);
+  const [titleOpen, setTitleOpen] = React.useState(false);
+  const [title, setTitle] = React.useState('');
   const { edit: [, setEdit] } = context;
 
   React.useEffect(() => {
@@ -63,18 +69,22 @@ const EditQuiz = (props) => {
     console.log(questions.length);
     console.log('handleNewQuestion');
     setEdit({
-      id: questions.length, points: 10, timer: 30, qType: 'single', answers: [], preview: 5,
+      id: questions.length, points: 10, time: 30, qType: 'single', answers: [], preview: 5,
     });
     history.push(`/edit/${params.gid}/${questions.length}`);
   };
 
   const displayModal = () => {
-    console.log(6767);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
+    setTitleOpen(false);
+  };
+
+  const displayChangeTitle = () => {
+    setTitleOpen(true);
   };
 
   const handleImage = async (event) => {
@@ -106,26 +116,48 @@ const EditQuiz = (props) => {
     console.log(res);
   };
 
+  const changeTitle = async () => {
+    const quiz = await api.get(`admin/quiz/${params.gid}`, {
+      headers: {
+        Authorization: getToken(),
+      },
+    });
+    const res = await api.put(`admin/quiz/${params.gid}`, {
+      headers: { 'Content-type': 'application/json', Authorization: getToken() },
+      body: JSON.stringify({
+        questions: quiz.questions,
+        name: title,
+        thumbnail: quiz.thumbnail,
+      }),
+    });
+    if (res.error) {
+      console.log(res.error);
+    }
+    console.log(res);
+    setQuizTitle(title);
+    setTitleOpen(false);
+  };
+
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <div className={classes.pageLayout}>
       <NavBar />
       <div className={classes.appBarSpacer} />
-      <Paper>
-        <Grid container direction="column" alignItems="center">
-          <Grid item>
-            <Typography color="textPrimary" variant="h1">{quizTitle}</Typography>
-          </Grid>
+      <Grid container direction="column" alignItems="center">
+        <Grid item>
+          <Typography color="textPrimary" variant={matches ? 'h3' : 'h1'}>{quizTitle}</Typography>
         </Grid>
         <div className={classes.appBarSpacer} />
         <Grid container spacing={5}>
           <QuestionCard gid={Number(params.gid)} questions={questions} />
         </Grid>
-        <Grid direction="column" container spacing={3} alignItems="center">
+        <Grid direction="column" container spacing={10} alignItems="center">
           <Grid item>
             {(() => {
               if (questions.length === 0) {
                 return (
-                  <Typography color="textPrimary" variant="h3" align="center">
+                  <Typography color="textPrimary" variant={matches ? 'h5' : 'h3'} align="center">
                     Heres a nice fresh
                     quiz for you! Click the button below to start adding some questions!
                   </Typography>
@@ -134,30 +166,84 @@ const EditQuiz = (props) => {
               return <Typography variant="h3"> </Typography>;
             })()}
           </Grid>
-          <Grid item>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleNewQuestion()}
-            >
-              Add a new Question!
-            </Button>
-            <Button variant="contained" onClick={() => displayModal()}>Add a thumbnail</Button>
-            <Modal
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="upload photo"
-              aria-describedby="upload photo modal"
-            >
-              <main className={classes.paper}>
-                <Typography variant="h5">Upload photo here!</Typography>
-                <Input type="file" onChange={(e) => handleImage(e)} />
-                <Button variant="outlined" onClick={() => submit()}>Submit thumbnail</Button>
-              </main>
-            </Modal>
+          <Divider />
+          <Grid container item direction={matches ? 'column' : 'row'} justify="center" spacing={5}>
+            <Grid item>
+              <Button
+                className={classes.editButtonGroup}
+                fullWidth={matches}
+                variant="contained"
+                color="primary"
+                onClick={() => handleNewQuestion()}
+              >
+                Add a new Question!
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                className={classes.editButtonGroup}
+                fullWidth={matches}
+                variant="contained"
+                color="primary"
+                onClick={() => displayModal()}
+              >
+                Add a thumbnail
+
+              </Button>
+              <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="upload photo"
+                aria-describedby="upload photo modal"
+              >
+                <main className={classes.paper}>
+                  <Typography variant="h5">Upload photo here!</Typography>
+                  <Input type="file" onChange={(e) => handleImage(e)} />
+                  <Button variant="outlined" onClick={() => submit()}>Submit thumbnail</Button>
+                </main>
+              </Modal>
+            </Grid>
+            <Grid item>
+              <Button
+                className={classes.editButtonGroup}
+                fullWidth={matches}
+                id="change-title"
+                variant="contained"
+                color="primary"
+                onClick={() => displayChangeTitle()}
+              >
+                Change Quiz Title
+
+              </Button>
+              <Modal
+                open={titleOpen}
+                onClose={handleClose}
+                aria-labelledby="change title"
+                aria-describedby="change title modal"
+              >
+                <main className={classes.paper}>
+                  <Typography variant="h5">New title for the quiz</Typography>
+                  <Input id="new-title" type="text" onChange={(event) => setTitle(event.target.value)} />
+                  <Button id="submit-title" variant="outlined" onClick={() => changeTitle()}>Submit new title</Button>
+                </main>
+              </Modal>
+            </Grid>
+            <Grid item>
+              <Button
+                className={classes.editButtonGroup}
+                fullWidth={matches}
+                id="confirm"
+                variant="contained"
+                color="primary"
+                onclick={() => { history.push('/'); }}
+              >
+                Go back
+
+              </Button>
+            </Grid>
           </Grid>
         </Grid>
-      </Paper>
+      </Grid>
     </div>
   );
 };

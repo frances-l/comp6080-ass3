@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  AppBar, Typography, Button, makeStyles, Modal, IconButton, Grid, Paper,
+  AppBar, Typography, Button, makeStyles, Modal, IconButton, Grid, Paper, useMediaQuery, useTheme,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 // import Popup from './Popup';
@@ -13,10 +13,19 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     maxHeight: '5vh',
+    [theme.breakpoints.down('sm')]: {
+      maxHeight: '8vh',
+    },
     ...theme.mixins.toolbar,
   },
   image: {
     maxHeight: '5vh',
+    [theme.breakpoints.down('sm')]: {
+      maxHeight: '7vh',
+    },
+  },
+  createModal: {
+    paddingTop: '30vh',
   },
 }));
 
@@ -44,9 +53,9 @@ const NavBar = () => {
   const handleJoin = () => {
     history.push('/join');
   };
-
   const classes = useStyles();
-
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <header>
       <Paper>
@@ -55,23 +64,31 @@ const NavBar = () => {
             container
             direction="row"
             alignItems="center"
-            justify="space-between"
+            justify="space-around"
           >
-            <Grid container item direction="row" xs={4}>
+            <Grid container item direction="row" xs={matches ? 1 : 4}>
               <Grid item>
-                <IconButton onClick={redirectToDashBoard}>
+                <IconButton id="redirect-dashboard" onClick={redirectToDashBoard}>
                   <img src={logo} alt="BB-logo" className={classes.image} />
                 </IconButton>
               </Grid>
               <Grid item>
-                <Typography variant="h4">BigBrain</Typography>
+                <Typography variant="h4">{matches ? '' : 'BigBrain'}</Typography>
               </Grid>
             </Grid>
-            <Grid container item xs={6} spacing={2} justify="flex-end">
+            <Grid
+              className={classes.navButtonGroup}
+              container
+              item
+              xs={matches ? 10 : 8}
+              spacing={2}
+              justify="flex-end"
+            >
               <Grid item>
-                <Button variant="contained" color="primary" onClick={handleNewGameClick}>Create Quiz</Button>
+                <Button id="create-quiz" variant="contained" color="primary" onClick={handleNewGameClick}>{matches ? 'Create' : 'Create Quiz'}</Button>
               </Grid>
               <Modal
+                className={classes.createModal}
                 open={open}
                 onClose={handleNewGameClose}
                 aria-labelledby="new-game"
@@ -80,10 +97,10 @@ const NavBar = () => {
                 <NewGameModal setOpen={setOpen} />
               </Modal>
               <Grid item>
-                <Button variant="contained" color="primary" onClick={handleJoin}>Join Game</Button>
+                <Button variant="contained" color="primary" onClick={handleJoin}>{matches ? 'Join' : 'join Game'}</Button>
               </Grid>
               <Grid item>
-                <Button variant="contained" color="secondary" onClick={handleLogout}>Logout</Button>
+                <Button id="logout" variant="contained" color="secondary" onClick={handleLogout}>Logout</Button>
               </Grid>
             </Grid>
           </Grid>

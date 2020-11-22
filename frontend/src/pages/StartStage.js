@@ -2,11 +2,19 @@ import React from 'react';
 // import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import PropTypes from 'prop-types';
 import {
-  Typography, Container, Grid, Button,
+  Typography, Container, Grid, Button, makeStyles, Divider,
 } from '@material-ui/core';
+import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import { getQuizId, getToken } from '../utils/helpers';
 import { StoreContext } from '../utils/store';
 import API from '../utils/api';
+import NavBar from './NavBar';
+
+const useStyles = makeStyles((theme) => ({
+  appbarSpacer: {
+    ...theme.mixins.toolbar,
+  },
+}));
 
 const api = new API('http://localhost:5005');
 const StartStage = ({
@@ -19,6 +27,7 @@ const StartStage = ({
 
   const handleStart = async () => {
     const results = await api.get(`admin/session/${sessionId}/status`, { headers: { Authorization: getToken() } });
+    console.log(results.results.questions[0]);
     if (results.results.position === -1) {
       setCurrQuestion(results.results.questions[0]);
     }
@@ -35,6 +44,9 @@ const StartStage = ({
     const checkIfGameStart = async () => {
       const started = await api.get(`play/${player.id}/status`);
       if (started.started) {
+        // once the game starts, we can start the game here
+        const question = await api.get(`play/${player.id}/question`);
+        setCurrQuestion(question.question);
         setStage('preview');
       }
     };
@@ -45,32 +57,34 @@ const StartStage = ({
     }
 
     return () => clearInterval(interval);
-  }, [player.id, player.isAdmin, setStage]);
-
+  }, [player.id, player.isAdmin, setCurrQuestion, setStage]);
+  const classes = useStyles();
   return (
     <div>
-      <Container>
-        <Grid container direction="column">
+      <NavBar />
+      <div className={classes.appbarSpacer} />
+      <Container className={classes.hello}>
+        <Grid container direction="column" spacing={3}>
           <Grid item>
             <Typography color="textPrimary" variant="h1">So You think you have a BigBrain?</Typography>
           </Grid>
+          <Divider />
           <Grid item>
-            <Typography color="textPrimary" variant="h4">{sessionId}</Typography>
+            <Typography color="textPrimary" variant="h4">
+              Want to invite some friends? Use this session id:
+              {sessionId}
+            </Typography>
           </Grid>
+          <Divider />
           <Grid container item>
-            {/* {players.map((playerName, i) => {
-              const key = `${playerName}-${i}`;
-              return (
-                <Grid key={key} item xs={3}>
-                  <Typography color="textPrimary">{playerName}</Typography>
-                </Grid>
-              );
-            })} */}
-            <Typography color="textPrimary">{`This is you! ${player.name}`}</Typography>
+            <Typography variant="h5" color="textPrimary">{`This is you! ${player.name}`}</Typography>
+            <EmojiPeopleIcon fontSize="large" color="primary" />
           </Grid>
-          {player.isAdmin
-            ? <Button onClick={() => { handleStart(); }}>Start the Game!</Button>
-            : <Typography color="textPrimary"> Waiting for the host to start...</Typography>}
+          <Grid item>
+            {player.isAdmin
+              ? <Button color="primary" variant="contained" onClick={() => handleStart()}>Start the Game!</Button>
+              : <Typography color="textPrimary"> Waiting for the host to start...</Typography>}
+          </Grid>
         </Grid>
       </Container>
     </div>

@@ -1,5 +1,5 @@
 import {
-  Typography, Button, Modal, makeStyles,
+  Typography, Button, Modal, makeStyles, Grid, Divider,
 } from '@material-ui/core';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -7,7 +7,8 @@ import { useHistory } from 'react-router-dom';
 import API from '../utils/api';
 import { StoreContext } from '../utils/store';
 import Answer from '../components/Answer';
-import { getToken } from '../utils/helpers';
+import { getQuizId, getToken } from '../utils/helpers';
+import NavBar from '../UIComponents/NavBar';
 
 const api = new API('http://localhost:5005');
 
@@ -33,7 +34,9 @@ const QuestionResults = ({
   const context = React.useContext(StoreContext);
   const { player: [player] } = context;
   const { session: [session, setSession] } = context;
-  const { currQuestion: [, setCurrQuestion] } = context;
+  const { currQuestion: [currQuestion, setCurrQuestion] } = context;
+  const { playerAnswers: [playerAnswers, setPlayerAnswers] } = context;
+
   const [answers, setAnswers] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
@@ -50,17 +53,46 @@ const QuestionResults = ({
       setOpen(true);
       // history.push(`/session/${sId}/results`);
     } else {
+      const quizId = await getQuizId(sId);
+      await api.post(`admin/quiz/${quizId}/advance`, { headers: { Authorization: getToken() } });
       setCurrQuestion(nextQuestion);
+      setPlayerAnswers([]);
       setStage('preview');
     }
   };
-
+  // set the answers
   React.useEffect(() => {
     (async () => {
-      const result = await api.get(`play/${player}/answer`, { headers: { Authorization: getToken() } });
+      const result = await api.get(`play/${player.id}/answer`, { headers: { Authorization: getToken() } });
+      console.log(result);
       setAnswers(result.answerIds);
     })();
   }, [player, session]);
+
+  React.useEffect(() => {
+    // function to check if the game has started or not
+    // if it has then set the stage to preview
+    // player will only ever get to start stage if the game hasnt started already
+    const checkIfGameStart = async () => {
+      const question = await api.get(`play/${player.id}/question`);
+      const status = await api.get(`play/${player.id}/status`);
+      if (!status.started) {
+        setOpen(true);
+      } else if (question.question.id !== currQuestion.id) {
+        setPlayerAnswers([]);
+        setCurrQuestion(question.question);
+        setStage('preview');
+      }
+    };
+      // we only need to poll the server if the user isnt an admin
+    let interval;
+    if (!player.isAdmin) {
+      interval = setInterval(() => checkIfGameStart(), 500);
+    }
+
+    return () => clearInterval(interval);
+  }, [currQuestion, currQuestion.position, player.id,
+    player.isAdmin, setCurrQuestion, setPlayerAnswers, setStage]);
 
   const handleClose = () => {
     setOpen(false);
@@ -70,24 +102,60 @@ const QuestionResults = ({
     history.push('/');
   };
 
+  const handleAnswers = (answer) => {
+    // answer is every choice of answer for the question
+    // playerAnswers is the answers that the player chose
+    // answers contains the correct answers for the question
+    // first we check if the player answered correctly
+    // extract the answer first
+    console.log(playerAnswers);
+    const chosen = playerAnswers.find((a) => a === answer.id);
+    // if player chose this answer
+    if (chosen) {
+      console.log(chosen);
+      // check if answer is correct
+      console.log(answers);
+      const correct = answers.find((a) => a === chosen);
+      console.log(correct);
+      // if its correct then return correct answer
+      if (correct) {
+        console.log('here');
+        return 'correctAnswer';
+      // otherweise its wrong
+      }
+      console.log('yikes');
+      return 'incorrectAnswer';
+
+      // if player didnt choose this answer
+    }
+    // check if the non chosen answer is correct
+    if (answers.find((a) => a === answer.id)) {
+      return 'correctAnswer';
+    }
+    // otherwise its just neutral
+    return 'neutralAnswer';
+  };
+
   return (
     <main>
+      <NavBar />
       <Typography color="textPrimary" variant="h1">How did you do?</Typography>
+      <Divider />
       <Typography color="textPrimary" variant="h5">The correct Answer(s) are..</Typography>
-      {answers.map((a) => (
-        <Answer
-          key={`answer-${a.id}`}
-          id={a.id}
-          text={a.answer}
-          answers={[]}
-          setAnswers={setAnswers}
-          className={`answer-${a.id}`}
-        />
-      ))}
+      <Divider />
+      <Grid container direction="row" spacing={1}>
+        {currQuestion.answers.map((a) => (
+          <Answer
+            key={`answer-${a.id}`}
+            id={a.id}
+            text={a.answer}
+            className={(() => handleAnswers(a))()}
+          />
+        ))}
+      </Grid>
       {player.isAdmin
         ? <Button color="primary" onClick={() => { handleClick(); }}>Next Question</Button>
         : <Typography color="textPrimary">Waiting for host to proceed...</Typography>}
-      <Button color="primary" onClick={() => { handleClick(); }}>Next Question</Button>
       <Modal
         open={open}
         onClose={handleClose}

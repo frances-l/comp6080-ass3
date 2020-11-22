@@ -10,14 +10,14 @@ export default ({ children }) => {
   const [quiz, setQuiz] = React.useState(0);
   const [session, setSession] = React.useState({});
   const [currQuestion, setCurrQuestion] = React.useState({});
-  const [questionConfirmed, setQuestionConfirmed] = React.useState(false);
+  const [playerAnswers, setPlayerAnswers] = React.useState([]);
   const [player, setPlayer] = React.useState({});
   const store = {
     questions: [questions, setQuestions],
     edit: [edit, setEdit],
     quiz: [quiz, setQuiz],
     session: [session, setSession],
-    questionConfirmed: [questionConfirmed, setQuestionConfirmed],
+    playerAnswers: [playerAnswers, setPlayerAnswers],
     player: [player, setPlayer],
     currQuestion: [currQuestion, setCurrQuestion],
   };

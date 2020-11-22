@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import NavBar from '../components/NavBar';
 // import isLogin from '../utils';
 import API from '../utils/api';
@@ -7,6 +7,7 @@ import { getToken } from '../utils/helpers';
 import GameCard from '../components/GameCard';
 import logo from '../assets/BBLogo.jpg';
 import '../styles/styles.css';
+import AppBarSpacer from '../utils/styles';
 
 const api = new API('http://localhost:5005');
 
@@ -45,19 +46,24 @@ function Dashboard() {
       <header>
         <NavBar />
       </header>
+      <AppBarSpacer />
+      <div />
       <section>
-        <Typography variant="h3">Welcome to your dashboard!</Typography>
         {/* {Note lint doesn't fucking allow object types so we have to do this} */}
-        {games.map((quiz) => (
-          <GameCard
-            key={`quiz-${quiz.id}`}
-            gId={quiz.id}
-            questions={quiz.questions}
-            title={quiz.title}
-            imgSrc={quiz.thumbnail}
-            active={quiz.active}
-          />
-        ))}
+        <Grid container alignItems="center" spacing={3}>
+          {games.map((quiz) => (
+            <Grid item>
+              <GameCard
+                key={`quiz-${quiz.id}`}
+                gId={quiz.id}
+                questions={quiz.questions}
+                title={quiz.title}
+                imgSrc={quiz.thumbnail}
+                active={quiz.active}
+              />
+            </Grid>
+          ))}
+        </Grid>
       </section>
     </main>
   );

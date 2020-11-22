@@ -25,10 +25,7 @@ const PlayPage = (props) => {
   const [stage, setStage] = React.useState(stages.START);
   const context = React.useContext(StoreContext);
   const { player: [player] } = context;
-  console.log(player);
-  // const { session: [session, setSession] } = context;
-  // console.log('printing session in playGame', session);
-  const { currQuestion: [currQuestion, setCurrQuestion] } = context;
+  const { currQuestion: [, setCurrQuestion] } = context;
   const { match: { params } } = props;
 
   // play page is entry point for join game
@@ -42,38 +39,46 @@ const PlayPage = (props) => {
       if (status.status) {
         // get the question that is currently happening and set the relevant information
         const question = await api.get(`play/${player.id}/question`);
-        setCurrQuestion(question);
-        setStage(QuestionPage);
+        const questionData = question.question;
+        // get total time since the question started, to see where to redirect
+        let timeSinceStart = new Date(questionData.isoTimeLastQuestionStarted);
+        timeSinceStart = Date.now().getTime() - timeSinceStart.getTime();
+        // if the time since start is more than the question time +
+        // preview, then the question is still happening
+        // set the current question with the updated time so user can still answer
+        // otherwise return the results
+        console.log(timeSinceStart);
+        if (timeSinceStart > ((questionData.preview + questionData.time) * 1000)) {
+          setCurrQuestion(questionData);
+          setStage(stage.RESULT);
+        } else {
+          questionData.time = timeSinceStart;
+          setCurrQuestion(questionData);
+          setStage(stage.QUESTION);
+        }
       }
     })();
-  }, [player.id, setCurrQuestion]);
+  }, [player.id, setCurrQuestion, stage.QUESTION, stage.RESULT]);
 
   const loadPage = () => {
     switch (stage) {
       case stages.PREVIEW:
         return (
           <QuestionPreview
-            question={currQuestion}
             setStage={setStage}
-            // quizId={Number(params.gid)}
-            // sId={Number(params.sid)}
           />
         );
       case stages.QUESTION:
         return (
           <QuestionPage
             setStage={setStage}
-            question={currQuestion}
           />
         );
       case stages.RESULT:
         return (
           <QuestionResults
-            setNextQuestion={setCurrQuestion}
             setStage={setStage}
-            question={currQuestion}
-            // gId={Number(params.gid)}
-            // sId={Number(params.sid)}
+            sId={Number(params.sid)}
           />
         );
       default:
@@ -81,7 +86,7 @@ const PlayPage = (props) => {
           <StartStage
             setStage={setStage}
             sessionId={Number(params.sid)}
-            // quizId={Number(params.gid)}
+
           />
         );
     }
@@ -100,46 +105,3 @@ PlayPage.propTypes = {
   match: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 export default PlayPage;
-
-// This function will handle what stage the quiz should be at
-// either not started, in-progress, question, results, etc.
-// React.useEffect(() => {
-//   // we need to set the current question before preview
-//   // preview only happens before start stage, and questionResults
-//   (async () => {
-//     const results = await api.get(`admin/session/${params.sid}/status`,
-// { headers: { Authorization: getToken() } });
-//     if (!results.error) {
-//       const currSession = results;
-//       console.log('setting session from playPage', currSession);
-//       setSession(currSession);
-//       // if the game has just began and position is still -1, load the first question
-//       if (currSession.results.position < currSession.results.questions.length) {
-//         setCurrQuestion(currSession.results.questions[currSession.results.position]);
-//       // if the position is greater than the length of questions, then the game is finished
-//       // redirect to the end results.
-//       } else {
-//         setStage(stages.END);
-//       }
-//     }
-//   })();
-// }, [params.sid, setCurrQuestion, setSession]);
-
-// React.useEffect(() => {
-//   (async () => {
-//     const started = await api.get(`play/${player}/status`,
-// { headers: { Authorization: getToken() } });
-//     console.log(started);
-//     // if the game has started
-//     console.log(Date.now());
-//     if (started.started) {
-//       // set the stage depending if they're still answering the question
-//       // or if they're looking at the results from the questions
-//       if (session.results.answerAvailable) {
-//         setStage(stages.RESULT);
-//       } else {
-//         setStage(stages.QUESTION);
-//       }
-//     }
-//   })();
-// }, [player, session.results.answerAvailable]);
