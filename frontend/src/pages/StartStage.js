@@ -2,13 +2,13 @@ import React from 'react';
 // import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import PropTypes from 'prop-types';
 import {
-  Typography, Container, Grid, Button, makeStyles, Divider,
+  Typography, Container, Grid, Button, makeStyles, Divider, useTheme, useMediaQuery,
 } from '@material-ui/core';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import { getQuizId, getToken } from '../utils/helpers';
 import { StoreContext } from '../utils/store';
 import API from '../utils/api';
-import NavBar from './NavBar';
+import NavBar from '../components/NavBar';
 
 const useStyles = makeStyles((theme) => ({
   appbarSpacer: {
@@ -59,18 +59,21 @@ const StartStage = ({
     return () => clearInterval(interval);
   }, [player.id, player.isAdmin, setCurrQuestion, setStage]);
   const classes = useStyles();
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
+
   return (
     <div>
       <NavBar />
       <div className={classes.appbarSpacer} />
       <Container className={classes.hello}>
-        <Grid container direction="column" spacing={3}>
+        <Grid container direction="column" spacing={10}>
           <Grid item>
-            <Typography color="textPrimary" variant="h1">So You think you have a BigBrain?</Typography>
+            <Typography color="textPrimary" variant={matches ? 'h3' : 'h1'}>So You think you have a BigBrain?</Typography>
           </Grid>
           <Divider />
           <Grid item>
-            <Typography color="textPrimary" variant="h4">
+            <Typography color="textPrimary" variant={matches ? 'h5' : 'h4'}>
               Want to invite some friends? Use this session id:
               {sessionId}
             </Typography>

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
-import NavBar from '../UIComponents/NavBar';
+import NavBar from '../components/NavBar';
 // import isLogin from '../utils';
 import API from '../utils/api';
 import { getToken } from '../utils/helpers';
-import GameCard from '../UIComponents/GameCard';
+import GameCard from '../components/GameCard';
 import logo from '../assets/BBLogo.jpg';
 import '../styles/styles.css';
 import AppBarSpacer from '../utils/styles';
@@ -50,7 +50,7 @@ function Dashboard() {
       <div />
       <section>
         {/* {Note lint doesn't fucking allow object types so we have to do this} */}
-        <Grid container alignItems="center" spacing={3}>
+        <Grid container alignItems="center" justify="center" spacing={3}>
           {games.map((quiz) => (
             <Grid item>
               <GameCard

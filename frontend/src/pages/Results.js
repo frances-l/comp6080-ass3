@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Typography } from '@material-ui/core';
-import NavBar from '../UIComponents/NavBar';
+import NavBar from '../components/NavBar';
 import API from '../utils/api';
 import { getToken } from '../utils/helpers';
 // import { StoreContext } from '../utils/store';

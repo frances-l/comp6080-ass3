@@ -1,5 +1,5 @@
 import {
-  Typography, Button, Modal, makeStyles, Grid, Divider,
+  Typography, Button, Modal, makeStyles, Grid, useTheme, useMediaQuery,
 } from '@material-ui/core';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -8,7 +8,8 @@ import API from '../utils/api';
 import { StoreContext } from '../utils/store';
 import Answer from '../components/Answer';
 import { getQuizId, getToken } from '../utils/helpers';
-import NavBar from '../UIComponents/NavBar';
+import NavBar from '../components/NavBar';
+import AppBarSpacer from '../utils/styles';
 
 const api = new API('http://localhost:5005');
 
@@ -21,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
     margin: 'auto',
-
   },
 }));
 
@@ -109,6 +109,14 @@ const QuestionResults = ({
     // first we check if the player answered correctly
     // extract the answer first
     console.log(playerAnswers);
+    if (playerAnswers.length === 0) {
+      const isCorrect = answers.find((a) => a === answer.id);
+      if (isCorrect) {
+        return 'correctAnswer';
+      }
+      return 'neutralAnswer';
+    }
+
     const chosen = playerAnswers.find((a) => a === answer.id);
     // if player chose this answer
     if (chosen) {
@@ -136,38 +144,64 @@ const QuestionResults = ({
     return 'neutralAnswer';
   };
 
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
+
   return (
-    <main>
-      <NavBar />
-      <Typography color="textPrimary" variant="h1">How did you do?</Typography>
-      <Divider />
-      <Typography color="textPrimary" variant="h5">The correct Answer(s) are..</Typography>
-      <Divider />
-      <Grid container direction="row" spacing={1}>
-        {currQuestion.answers.map((a) => (
-          <Answer
-            key={`answer-${a.id}`}
-            id={a.id}
-            text={a.answer}
-            className={(() => handleAnswers(a))()}
-          />
-        ))}
-      </Grid>
-      {player.isAdmin
-        ? <Button color="primary" onClick={() => { handleClick(); }}>Next Question</Button>
-        : <Typography color="textPrimary">Waiting for host to proceed...</Typography>}
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="redirect to homepage"
-        aria-describedby="redirect to homepage modal"
-      >
-        <main className={classes.paper}>
-          <Typography color="textPrimary" variant="h4">The game has ended! Click on the button to return back to the dashboard to view results.</Typography>
-          <Button color="primary" variant="outlined" onClick={() => dashboard()}>Go back to dashboard</Button>
-        </main>
-      </Modal>
-    </main>
+    <div>
+      <header>
+        <NavBar />
+      </header>
+      <AppBarSpacer />
+      <main className={classes.pageLayout}>
+        <Grid container direction="column" alignContent="center" spacing={5}>
+          <Grid item>
+            <Typography color="textPrimary" variant={matches ? 'h3' : 'h1'}>How did you do?</Typography>
+          </Grid>
+          <Grid item>
+            <Typography color="textPrimary" variant="h5">The correct Answer(s) are..</Typography>
+          </Grid>
+          <Grid item>
+            <Grid container direction="row" spacing={1}>
+              {currQuestion.answers.map((a) => (
+                <Answer
+                  key={`answer-${a.id}`}
+                  id={a.id}
+                  text={a.answer}
+                  className={(() => handleAnswers(a))()}
+                />
+              ))}
+            </Grid>
+          </Grid>
+          <Grid item>
+            {player.isAdmin
+              ? (
+                <Button
+                  color="primary"
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  onClick={() => { handleClick(); }}
+                >
+                  Next Question
+                </Button>
+              )
+              : <Typography color="textPrimary">Waiting for host to proceed...</Typography>}
+          </Grid>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="redirect to homepage"
+            aria-describedby="redirect to homepage modal"
+          >
+            <main className={classes.paper}>
+              <Typography color="textPrimary" variant="h4">The game has ended! Click on the button to return back to the dashboard to view results.</Typography>
+              <Button color="primary" variant="outlined" onClick={() => dashboard()}>Go back to dashboard</Button>
+            </main>
+          </Modal>
+        </Grid>
+      </main>
+    </div>
   );
 };
 

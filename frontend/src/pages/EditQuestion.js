@@ -1,33 +1,26 @@
 import React from 'react';
 import {
-  TextField, Grid, Button, FormControl, Box, makeStyles,
-  InputLabel, Select, MenuItem, Snackbar, styled, Paper,
+  TextField, Grid, makeStyles, Button,
+  Snackbar, Paper, useTheme, useMediaQuery,
 } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { getQuiz, getToken } from '../utils/helpers';
-import NavBar from '../UIComponents/NavBar';
+import NavBar from '../components/NavBar';
 import AppBarSpacer from '../utils/styles';
 import API from '../utils/api';
 import EditAnswers from '../components/EditAnswers';
 import { StoreContext } from '../utils/store';
 import MediaZone from '../components/MediaZone';
+import EditQuestionSideBar from '../components/EditQuestionSideBar';
+import EditQuestionBarDrawer from '../components/EditQuestionBarDrawer';
 
 const api = new API('http://localhost:5005');
-const FormLayout = styled(Box)({
-  display: 'flex',
-  flexDirection: 'row',
-});
 
-const SecondaryButton = styled(Button)({
-  background: 'red',
-  color: 'white',
-});
-
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   pageLayout: {
-    margin: '0 10vw',
+    margin: '0 10vw 3vh 10vw',
   },
   sidebar: {
     backgroundColor: 'rgb(62,62,66)',
@@ -38,6 +31,16 @@ const useStyles = makeStyles(() => ({
     backgroundColor: 'rgb(24,25,26)',
     padding: '1em',
     marginTop: '1em',
+  },
+  formLayout: {
+    display: 'flex',
+    flexDirection: 'row',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
+  },
+  buttonGroup: {
+    height: '5em',
   },
 }));
 
@@ -59,14 +62,13 @@ const EditQuestion = (props) => {
     setOpen(false);
   };
 
-  const handleCancel = () => {
-    history.push(`/edit/${params.gid}`);
-  };
+  // const handleCancel = () => {
+  //   history.push(`/edit/${params.gid}`);
+  // };
 
   const setQtype = () => question.answers.filter((a) => a.correct).length === 1;
   const handleConfirm = async () => {
     if (!open) {
-      console.log(question);
       // check if the new question has more than one answer then change the type accordingly
       question.qType = setQtype() ? 'single' : 'multi';
       // first find all of the quizzes
@@ -95,7 +97,6 @@ const EditQuestion = (props) => {
           thumbnail: quiz.thumbnail,
         }),
       });
-      console.log(7777, res);
       if (res.error) {
         setOpen(true);
       }
@@ -103,14 +104,16 @@ const EditQuestion = (props) => {
     }
   };
   const classes = useStyles();
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
   // if we're editting a previous question
   return (
     <section className={classes.pageLayout}>
       <NavBar />
       <AppBarSpacer />
-      <FormLayout container direction="row">
-        <Grid container item direction="column" spacing={2}>
-          <Grid item xs={8}>
+      <Grid container direction={matches ? 'column' : 'row'} spacing={2}>
+        <Grid container item direction="column" spacing={2} xs={matches ? 12 : 8}>
+          <Grid item xs={12}>
             <TextField
               variant="filled"
               fullWidth
@@ -123,28 +126,22 @@ const EditQuestion = (props) => {
             <MediaZone question={question} setQuestion={setQuestion} />
           </Grid>
         </Grid>
-        <Grid container item direction="column" xs={4} justify="space-between" className={classes.sidebar}>
-          <FormControl>
-            <InputLabel id="question-type-label">Question Type</InputLabel>
-            <Select displayEmpty labelId="question-type-label" id="question-type-select" defaultValue={question.qType} onChange={(event) => handleChange('qType', event.target.value)}>
-              <MenuItem value="single">Single Choice</MenuItem>
-              <MenuItem value="multi">Multiple Choice</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField defaultValue={edit.score} id="points" onChange={(event) => handleChange('points', event.target.value)} label="Points?" />
-          <TextField defaultValue={edit.time} id="timer" onChange={(event) => handleChange('time', Number(event.target.value))} label="Question Duration" />
-          <TextField defaultValue={edit.preview} id="preview" onChange={(event) => handleChange('preview', Number(event.target.value))} label="Preview Duration" />
-          <Grid item>
-            <SecondaryButton onClick={handleCancel} variant="contained">Cancel</SecondaryButton>
-          </Grid>
-          <Button color="primary" variant="contained" onClick={handleConfirm}>Confirm Question</Button>
-          <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
-            <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity="error">
-              Please Confirm your question before Continuing
-            </MuiAlert>
-          </Snackbar>
-        </Grid>
-      </FormLayout>
+        {matches
+          ? (
+            <EditQuestionBarDrawer
+              handleChange={handleChange}
+              handleConfirm={handleConfirm}
+              gId={params.gid}
+            />
+          )
+          : (
+            <EditQuestionSideBar
+              handleChange={handleChange}
+              handleConfirm={handleConfirm}
+              gId={params.gid}
+            />
+          )}
+      </Grid>
       <Paper className={classes.answersContainer}>
         <Grid container direction="row" spacing={2}>
           <EditAnswers aId={1} question={question} setQuestion={setQuestion} />
@@ -155,7 +152,42 @@ const EditQuestion = (props) => {
           <EditAnswers aId={6} question={question} setQuestion={setQuestion} />
         </Grid>
       </Paper>
+      { matches && (
+      <Grid container direction="row" spacing={1}>
+        <Grid item xs={6}>
+          <Button
+            className={classes.buttonGroup}
+            fullWidth
+            onClick={() => { history.push(`/edit/${params.gid}`); }}
+            size="large"
+            variant="contained"
+            color="secondary"
+          >
+            Cancel
 
+          </Button>
+        </Grid>
+        <Grid item xs={6}>
+          <Button
+            className={classes.buttonGroup}
+            fullWidth
+            color="primary"
+            variant="contained"
+            onClick={handleConfirm}
+            size="large"
+          >
+            Confirm
+
+          </Button>
+        </Grid>
+      </Grid>
+      ) }
+
+      <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+        <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity="error">
+          Please Confirm your question before Continuing
+        </MuiAlert>
+      </Snackbar>
     </section>
   );
 };

@@ -1,5 +1,5 @@
 import {
-  Typography, Grid, CardContent, CardActions, Button, Card, makeStyles,
+  Typography, Grid, CardContent, CardActions, Button, Card, makeStyles, useTheme, useMediaQuery,
 } from '@material-ui/core';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
@@ -11,13 +11,28 @@ import { StoreContext } from '../utils/store';
 
 const api = new API('http://localhost:5005');
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   cardImage: {
-    maxHeight: '42vh',
-    maxWidth: '40vw',
+    maxHeight: '35vh',
+    maxWidth: '50vw',
+    [theme.breakpoints.down('sm')]: {
+      // minWidth: '90',
+      minheight: '90vh',
+    },
   },
   questionCard: {
-    minWidth: '40vw',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    maxWidth: '50vw',
+    [theme.breakpoints.down('sm')]: {
+      minWidth: '90vw',
+    },
+  },
+  buttonGroup: {
+    [theme.breakpoints.down('sm')]: {
+      height: '5em',
+    },
   },
 }));
 
@@ -54,22 +69,33 @@ const QuestionCard = ({ gid, questions }) => {
     console.log(res);
   };
   const classes = useStyles();
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
+  console.log(matches);
   return (
-    <Grid container spacing={5}>
+    <Grid container direction={matches ? 'column' : 'row'} spacing={5}>
       {questions.map((question) => (
-        <Grid item xs={3} key={`question-card-${question.id}`} id={`q-${question.id}`}>
+        <Grid
+          key={`question-card-${question.id}`}
+          id={`q-${question.id}`}
+          container
+          item
+          justify="center"
+          xs={matches ? 12 : 4}
+        >
           <Card className={classes.questionCard}>
-            <Grid item>
-              <img
-                className={classes.cardImage}
-                src={question.media.src && (question.media.type !== 'video') ? question.media.src : logo}
-                alt="question Thumbnail"
-
-              />
+            <Grid container item justify="center">
+              <Grid item>
+                <img
+                  className={classes.cardImage}
+                  src={question.media.src && (question.media.type !== 'video') ? question.media.src : logo}
+                  alt="question Thumbnail"
+                />
+              </Grid>
             </Grid>
             <CardContent>
               <Typography variant="h5" align="center">{question.question}</Typography>
-              <Grid container direction="row" spacing={10}>
+              <Grid container direction="row" justify="space-around">
                 <Grid item>
                   <Typography variant="body1">{`Points: ${question.points}`}</Typography>
                 </Grid>
@@ -79,12 +105,32 @@ const QuestionCard = ({ gid, questions }) => {
               </Grid>
             </CardContent>
             <CardActions>
-              <Grid container item direction="row" justify="space-around">
-                <Grid item>
-                  <Button color="primary" variant="contained" onClick={() => handleDelete(question.id)}>Delete Question</Button>
+              <Grid container item direction="row" spacing={2}>
+                <Grid item xs={6}>
+                  <Button
+                    className={classes.buttonGroup}
+                    fullWidth
+                    color="secondary"
+                    variant="contained"
+                    onClick={() => handleDelete(question.id)}
+                    size="large"
+                  >
+                    Delete Question
+
+                  </Button>
                 </Grid>
-                <Grid item>
-                  <Button color="primary" variant="contained" onClick={() => handleRedirect(question.id)}>Edit Question</Button>
+                <Grid item xs={6}>
+                  <Button
+                    className={classes.buttonGroup}
+                    fullWidth
+                    color="primary"
+                    variant="contained"
+                    onClick={() => handleRedirect(question.id)}
+                    size="large"
+                  >
+                    Edit Question
+
+                  </Button>
                 </Grid>
               </Grid>
             </CardActions>

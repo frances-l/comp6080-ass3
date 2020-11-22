@@ -63,25 +63,26 @@ const EditAnswers = ({ aId, question, setQuestion }) => {
   const classes = useStyles();
   return (
     <Grid item xs={6}>
-      <Paper className={classes.answerContainer}>
-        <InputBase
-          onChange={(event) => handleAnswerTextChange(event.target.value)}
-          variant="filled"
-          required
-          defaultValue={handlePresets() ? handlePresets().answer : ''}
-          placeholder={(() => {
-            if (aId > 2) {
-              return `Answer ${aId} (Optional)`;
-            }
-            return `Answer ${aId}`;
-          })()}
-        />
-        <FormControlLabel
-          onChange={(event) => handleAnswerCorrectChange(event.target.checked)}
-          control={<Checkbox />}
-          checked={checked}
-
-        />
+      <Paper>
+        <Grid container item justify="center" alignContent="center" className={classes.answerContainer}>
+          <InputBase
+            onChange={(event) => handleAnswerTextChange(event.target.value)}
+            variant="filled"
+            required
+            defaultValue={handlePresets() ? handlePresets().answer : ''}
+            placeholder={(() => {
+              if (aId > 2) {
+                return `Answer ${aId} (Optional)`;
+              }
+              return `Answer ${aId}`;
+            })()}
+          />
+          <FormControlLabel
+            onChange={(event) => handleAnswerCorrectChange(event.target.checked)}
+            control={<Checkbox />}
+            checked={checked}
+          />
+        </Grid>
       </Paper>
     </Grid>
   );
