@@ -8,6 +8,7 @@ import logo from '../assets/BBLogo.jpg';
 import API from '../utils/api';
 import { getToken } from '../utils/helpers';
 import { StoreContext } from '../utils/store';
+import ErrorHandler from './ErrorHandler';
 
 const api = new API('http://localhost:5005');
 
@@ -37,18 +38,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const QuestionCard = ({ gid, questions }) => {
-  // const handleMedia = (src) => {
-  //   if (src === '') {
-  //     return logo;
-  //   }
-  //   return src;
-  // };
   const history = useHistory();
   const context = React.useContext(StoreContext);
   const { edit: [, setEdit] } = context;
-
+  const { apiError: [, setApiError] } = context;
   const handleRedirect = (qId) => {
-    console.log(questions.find((q) => q.id === qId));
     setEdit(questions.find((q) => q.id === qId));
     history.push(`/edit/${gid}/${qId}`);
   };
@@ -65,13 +59,13 @@ const QuestionCard = ({ gid, questions }) => {
     });
     const elem = document.getElementById(`q-${qId}`);
     elem.style.display = 'none';
-
-    console.log(res);
+    if (res.error) {
+      setApiError({ error: true, message: res.error });
+    }
   };
   const classes = useStyles();
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down('sm'));
-  console.log(matches);
   return (
     <Grid container direction={matches ? 'column' : 'row'} spacing={5}>
       {questions.map((question) => (
@@ -137,6 +131,7 @@ const QuestionCard = ({ gid, questions }) => {
           </Card>
         </Grid>
       ))}
+      <ErrorHandler />
     </Grid>
   );
 };

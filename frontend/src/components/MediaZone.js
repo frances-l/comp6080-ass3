@@ -28,7 +28,6 @@ const MediaZone = ({ question, setQuestion }) => {
     }
 
     updatedQuestion.media = { type, src };
-    console.log(updatedQuestion);
     setQuestion(updatedQuestion);
   };
   const handleRemove = () => {
@@ -65,7 +64,6 @@ const MediaZone = ({ question, setQuestion }) => {
     setAnchorEl(null);
   };
   const handleAddLink = () => {
-    console.log(link);
     handleClose();
     setMediaType(media.VIDEO);
     handleChange('video', link);
@@ -73,7 +71,6 @@ const MediaZone = ({ question, setQuestion }) => {
 
   const embedLink = (value) => {
     const embeddedLink = value.replace('watch?v=', 'embed/');
-    console.log(embeddedLink);
     setLink(embeddedLink);
   };
 

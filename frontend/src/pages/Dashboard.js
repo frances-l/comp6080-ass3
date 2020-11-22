@@ -41,7 +41,6 @@ function Dashboard() {
             id: quiz.id, questions: res.questions, title: res.name, thumbnail, active: quiz.active,
           };
         }));
-        console.log(allQuizzes);
         setGames(allQuizzes);
       }
     })();

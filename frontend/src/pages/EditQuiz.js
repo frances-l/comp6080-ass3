@@ -19,13 +19,17 @@ const useStyles = makeStyles((theme) => ({
     margin: '0 10vw',
   },
   paper: {
-    // position: 'absolute',
+    display: 'flex',
+    flexDirection: 'column',
     width: 400,
     backgroundColor: theme.palette.background.paper,
     border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
     margin: 'auto',
+    [theme.breakpoints.down('sm')]: {
+      width: '80vw',
+    },
   },
   editButtonGroup: {
     [theme.breakpoints.down('sm')]: {
@@ -65,8 +69,6 @@ const EditQuiz = (props) => {
   const classes = useStyles();
 
   const handleNewQuestion = () => {
-    console.log(questions.length);
-    console.log('handleNewQuestion');
     setEdit({
       id: questions.length, points: 10, time: 30, qType: 'single', answers: [], preview: 5,
     });
@@ -87,7 +89,6 @@ const EditQuiz = (props) => {
   };
 
   const handleImage = async (event) => {
-    console.log(event);
     const info = await fileToDataUrl(event.target.files[0]);
     if (info.error) {
       setApiError({ error: true, message: info.error });
@@ -199,7 +200,7 @@ const EditQuiz = (props) => {
                 aria-describedby="upload photo modal"
               >
                 <main className={classes.paper}>
-                  <Typography variant="h5">Upload photo here!</Typography>
+                  <Typography color="textPrimary" variant="h5">Upload photo here!</Typography>
                   <Input type="file" onChange={(e) => handleImage(e)} />
                   <Button variant="outlined" onClick={() => submit()}>Submit thumbnail</Button>
                 </main>
@@ -224,7 +225,7 @@ const EditQuiz = (props) => {
                 aria-describedby="change title modal"
               >
                 <main className={classes.paper}>
-                  <Typography variant="h5">New title for the quiz</Typography>
+                  <Typography color="textPrimary" variant="h5">New title for the quiz</Typography>
                   <Input id="new-title" type="text" onChange={(event) => setTitle(event.target.value)} />
                   <Button id="submit-title" variant="outlined" onClick={() => changeTitle()}>Submit new title</Button>
                 </main>

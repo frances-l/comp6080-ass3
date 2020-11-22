@@ -26,7 +26,6 @@ const NewGameModal = ({ setOpen }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(title);
     if (title === '') {
       setErrorToggle(true);
       setTitleError('Please enter a name');
@@ -38,7 +37,6 @@ const NewGameModal = ({ setOpen }) => {
         setEdit({
           id: 0, points: 10, time: 30, qType: 'single', answers: [], preview: 5,
         });
-        console.log(`Setting quiz to ${res}`);
         history.push(`/edit/${res.quizId}`);
       } else {
         // handle errors
