@@ -4,10 +4,11 @@ import {
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import NavBar from '../UIComponents/NavBar';
+import NavBar from '../components/NavBar';
 import API from '../utils/api';
 import { StoreContext } from '../utils/store';
 import { getToken } from '../utils/helpers';
+import ErrorHandler from '../components/ErrorHandler';
 
 const api = new API('http://localhost:5005');
 
@@ -23,15 +24,15 @@ const BackgroundTile = styled(Paper)({
 
 function JoinGame(props) {
   const context = React.useContext(StoreContext);
-  const { player: [player, setPlayer] } = context;
+  const { player: [, setPlayer] } = context;
   const { session: [, setSession] } = context;
   const [joinid, setJoinID] = React.useState('');
   const [nickname, setNickname] = React.useState('');
+  const { apiError: [, setApiError] } = context;
   const [error, setError] = React.useState(false);
   const history = useHistory();
   const { match: { params } } = props;
 
-  console.log(params.sid);
   React.useEffect(() => {
     if (params.sid) {
       setJoinID(params.sid);
@@ -39,7 +40,6 @@ function JoinGame(props) {
   }, [params.sid]);
 
   const join = async () => {
-    console.log(nickname);
     const path = `play/join/${joinid}`; // will need to change path later so it has id of session
     const options = {
       headers: { 'Content-type': 'application/json' },
@@ -48,25 +48,23 @@ function JoinGame(props) {
       }),
     };
     const res = await api.post(path, options);
-    console.log(res);
+    if (res.error) {
+      setApiError({ error: true, message: res.error });
+    }
+    // depending on result from this api call we can determine whether the player is admin or not
     if (res.playerId) {
       // let admin = -1;
       const result = await api.get(`admin/session/${joinid}/status`, { headers: { Authorization: getToken() } });
       if (result.error) {
         setPlayer({ name: nickname, id: res.playerId, isAdmin: false });
-        console.log(player);
       } else {
         setPlayer({ name: nickname, id: res.playerId, isAdmin: true });
-        console.log(player);
       }
-      console.log('setting session from joinGame', result);
       setSession(result);
-      // const quizId = await getQuizId(joinid);
       history.push(`/play/${joinid}`);
     } else {
       setError(true);
     }
-    // seeing if the session is active.
   };
 
   const handleClick = (e) => {
@@ -114,6 +112,7 @@ function JoinGame(props) {
             </Grid>
           </BackgroundTile>
         </PageLayout>
+        <ErrorHandler />
       </section>
     </main>
   );

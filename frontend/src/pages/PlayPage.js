@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import NavBar from '../UIComponents/NavBar';
+// import NavBar from '../components/NavBar';
 import { StoreContext } from '../utils/store';
-import StartStage from '../UIComponents/StartStage';
+import StartStage from './StartStage';
 import QuestionResults from './QuestionResults';
 import QuestionPage from './QuestionPage';
 import API from '../utils/api';
-import QuestionPreview from '../UIComponents/QuestionPreview';
+import QuestionPreview from './QuestionPreview';
+import ErrorHandler from '../components/ErrorHandler';
 // import { getToken } from '../utils/helpers';
 
 const api = new API('http://localhost:5005');
@@ -27,7 +28,7 @@ const PlayPage = (props) => {
   const { player: [player] } = context;
   const { currQuestion: [, setCurrQuestion] } = context;
   const { match: { params } } = props;
-
+  const { apiError: [, setApiError] } = context;
   // play page is entry point for join game
   // the default value is start, so if the game hasnt started, itll automatically redirect
   // to start page.
@@ -35,10 +36,16 @@ const PlayPage = (props) => {
     (async () => {
       // get the status of the quiz
       const status = await api.get(`play/${player.id}/status`);
+      if (status.error) {
+        setApiError({ error: true, message: status.error });
+      }
       // if the quiz has started
       if (status.status) {
         // get the question that is currently happening and set the relevant information
         const question = await api.get(`play/${player.id}/question`);
+        if (question.error) {
+          setApiError({ error: true, message: question.error });
+        }
         const questionData = question.question;
         // get total time since the question started, to see where to redirect
         let timeSinceStart = new Date(questionData.isoTimeLastQuestionStarted);
@@ -58,7 +65,7 @@ const PlayPage = (props) => {
         }
       }
     })();
-  }, [player.id, setCurrQuestion, stage.QUESTION, stage.RESULT]);
+  }, [player.id, setApiError, setCurrQuestion, stage.QUESTION, stage.RESULT]);
 
   const loadPage = () => {
     switch (stage) {
@@ -97,6 +104,7 @@ const PlayPage = (props) => {
       {/* <NavBar /> */}
       <br />
       {loadPage()}
+      <ErrorHandler />
     </main>
   );
 };

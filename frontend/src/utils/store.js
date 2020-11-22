@@ -12,6 +12,7 @@ export default ({ children }) => {
   const [currQuestion, setCurrQuestion] = React.useState({});
   const [playerAnswers, setPlayerAnswers] = React.useState([]);
   const [player, setPlayer] = React.useState({});
+  const [apiError, setApiError] = React.useState({ error: false, message: '' });
   const store = {
     questions: [questions, setQuestions],
     edit: [edit, setEdit],
@@ -20,6 +21,7 @@ export default ({ children }) => {
     playerAnswers: [playerAnswers, setPlayerAnswers],
     player: [player, setPlayer],
     currQuestion: [currQuestion, setCurrQuestion],
+    apiError: [apiError, setApiError],
   };
 
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Grid, Button, TextField, Popover,
+  Grid, Button, TextField, Popover, ButtonGroup,
 } from '@material-ui/core';
 import { DropzoneArea } from 'material-ui-dropzone';
 import PropTypes from 'prop-types';
@@ -28,7 +28,6 @@ const MediaZone = ({ question, setQuestion }) => {
     }
 
     updatedQuestion.media = { type, src };
-    console.log(updatedQuestion);
     setQuestion(updatedQuestion);
   };
   const handleRemove = () => {
@@ -65,7 +64,6 @@ const MediaZone = ({ question, setQuestion }) => {
     setAnchorEl(null);
   };
   const handleAddLink = () => {
-    console.log(link);
     handleClose();
     setMediaType(media.VIDEO);
     handleChange('video', link);
@@ -73,7 +71,6 @@ const MediaZone = ({ question, setQuestion }) => {
 
   const embedLink = (value) => {
     const embeddedLink = value.replace('watch?v=', 'embed/');
-    console.log(embeddedLink);
     setLink(embeddedLink);
   };
 
@@ -85,42 +82,36 @@ const MediaZone = ({ question, setQuestion }) => {
   const id = open ? 'simple-popover' : undefined;
 
   return (
-    <Grid container item xs={11}>
+    <Grid container item xs={12}>
       {/* {handleLoad()} */}
-      <Grid container item direction="row">
-        {mediaType === media.IMAGE || (media.NONE && !media.VIDEO) ? imageArea : videoArea}
-        <Grid container item direction="row">
-          <Grid item>
-            <Button color="primary" variant="contained" onClick={() => { setMediaType(media.IMAGE); }}>Upload an Image</Button>
-          </Grid>
-          <Grid item>
-            <Button color="primary" variant="contained" onClick={handleYoutubeLink}>Link a YouTube Video</Button>
-            <Popover
-              id={id}
-              open={open}
-              anchorEl={anchorEl}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'center',
-              }}
-            >
-              <TextField
-                onChange={(event) => embedLink(event.target.value)}
-                label="Insert Your link here"
-              />
-              <Button color="primary" variant="contained" onClick={handleClose}>Cancel</Button>
-              <Button color="primary" variant="contained" onClick={handleAddLink}>Add</Button>
-            </Popover>
-          </Grid>
-          <Grid item>
-            <Button color="primary" variant="contained" onClick={handleRemove}>Remove</Button>
-          </Grid>
-        </Grid>
+      {mediaType === media.IMAGE || (media.NONE && !media.VIDEO) ? imageArea : videoArea}
+      <Grid container item justify="center">
+        <ButtonGroup color="primary" aria-label="mediazone-button-group">
+          <Button color="primary" variant="contained" onClick={() => { setMediaType(media.IMAGE); }}>Upload an Image</Button>
+          <Button color="primary" variant="contained" onClick={handleYoutubeLink}>Link a YouTube Video</Button>
+          <Popover
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+          >
+            <TextField
+              onChange={(event) => embedLink(event.target.value)}
+              label="Insert Your link here"
+            />
+            <Button color="primary" variant="contained" onClick={handleClose}>Cancel</Button>
+            <Button color="primary" variant="contained" onClick={handleAddLink}>Add</Button>
+          </Popover>
+          <Button color="primary" variant="contained" onClick={handleRemove}>Remove</Button>
+        </ButtonGroup>
       </Grid>
     </Grid>
   );

@@ -1,27 +1,47 @@
 import React from 'react';
 import {
-  Grid, Card, CardActionArea, Typography, makeStyles,
+  Grid, CardActionArea, Typography, makeStyles, useTheme, useMediaQuery,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
+import CancelPresentationIcon from '@material-ui/icons/CancelPresentation';
+import CheckBoxOutlinedIcon from '@material-ui/icons/CheckBoxOutlined';
 import { StoreContext } from '../utils/store';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   selectedAnswer: {
     backgroundColor: 'rgb(186,225,255)',
-    height: '20vh',
+    borderRadius: '1em',
     color: 'black',
+    height: '20vh',
+    [theme.breakpoints.down('sm')]: {
+      height: '10vh',
+    },
   },
   nonSelectedAnswer: {
     backgroundColor: 'rgb(61,61,61)',
+    borderRadius: '1em',
     height: '20vh',
+    color: 'white',
+    [theme.breakpoints.down('sm')]: {
+      height: '10vh',
+    },
   },
   correctAnswer: {
     backgroundColor: 'rgb(37, 208, 32)',
+    borderRadius: '1em',
     height: '20vh',
+    color: 'black',
+    [theme.breakpoints.down('sm')]: {
+      height: '10vh',
+    },
   },
   incorrectAnswer: {
-    backgroundColor: 'rgb(239,81,133)',
+    backgroundColor: '#ff0033',
+    borderRadius: '1em',
     height: '20vh',
+    [theme.breakpoints.down('sm')]: {
+      height: '10vh',
+    },
   },
 }));
 
@@ -72,15 +92,8 @@ const Answer = ({
     }
   }, [currQuestion.qType, id, playerAnswers]);
 
-  // React.useEffect(() => {
-  //   // if answers change and the type is single, we just need to set selected
-  //   const isAnswer = () => playerAnswers.find((a) => a.id === id);
-  //   console.log(isAnswer());
-  //   if (currQuestion.qType === 'single' && !isAnswer()) {
-  //     console.log('inside useeffect setting selected');
-  //     // setSelected(false);
-  //   }
-  // }, [playerAnswers, currQuestion.qType, id, selected]);
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleClass = () => {
     if (className === 'incorrectAnswer') {
@@ -93,18 +106,31 @@ const Answer = ({
     return classes.nonSelectedAnswer;
   };
   return (
-    <Grid item sm={6}>
+    <Grid container item xs={6}>
       <CardActionArea onClick={currQuestion.qType === 'single'
         ? () => handleSingleAnswer()
         : () => handleMultipleAnswer()}
       >
-        <Card className={handleClass()}>
-          <Typography
-            className={handleClass()}
-          >
-            {text}
-          </Typography>
-        </Card>
+        <Grid
+          className={handleClass()}
+          container
+          item
+          direction="row"
+          justify="center"
+          alignContent="center"
+        >
+          <Grid item>
+            <Typography
+              variant={matches ? 'h6' : 'h5'}
+              color="inherit"
+            >
+              {text}
+            </Typography>
+          </Grid>
+          <Grid item />
+          {className === 'correctAnswer' && <CheckBoxOutlinedIcon fontSize="large" />}
+          {className === 'incorrectAnswer' && <CancelPresentationIcon fontSize="large" />}
+        </Grid>
       </CardActionArea>
     </Grid>
   );

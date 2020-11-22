@@ -1,33 +1,26 @@
 import React from 'react';
 import {
-  TextField, Grid, Button, FormControl, Box, makeStyles,
-  InputLabel, Select, MenuItem, Snackbar, styled, Paper,
+  TextField, Grid, makeStyles, Button, Typography,
+  Snackbar, Paper, useTheme, useMediaQuery,
 } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { getQuiz, getToken } from '../utils/helpers';
-import NavBar from '../UIComponents/NavBar';
+import NavBar from '../components/NavBar';
 import AppBarSpacer from '../utils/styles';
 import API from '../utils/api';
 import EditAnswers from '../components/EditAnswers';
 import { StoreContext } from '../utils/store';
 import MediaZone from '../components/MediaZone';
+import EditQuestionSideBar from '../components/EditQuestionSideBar';
+import EditQuestionBarDrawer from '../components/EditQuestionBarDrawer';
 
 const api = new API('http://localhost:5005');
-const FormLayout = styled(Box)({
-  display: 'flex',
-  flexDirection: 'row',
-});
 
-const SecondaryButton = styled(Button)({
-  background: 'red',
-  color: 'white',
-});
-
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   pageLayout: {
-    margin: '0 10vw',
+    margin: '0 10vw 3vh 10vw',
   },
   sidebar: {
     backgroundColor: 'rgb(62,62,66)',
@@ -39,6 +32,20 @@ const useStyles = makeStyles(() => ({
     padding: '1em',
     marginTop: '1em',
   },
+  formLayout: {
+    display: 'flex',
+    flexDirection: 'row',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
+  },
+  buttonGroup: {
+    height: '5em',
+  },
+  errorContainer: {
+    marginTop: '0.2em',
+    border: '1px solid red',
+  },
 }));
 
 const EditQuestion = (props) => {
@@ -47,7 +54,11 @@ const EditQuestion = (props) => {
   const [question, setQuestion] = React.useState(edit);
   const [open, setOpen] = React.useState(false);
   const { match: { params } } = props;
+  // const [errorMsg, setErrorMsg] = React.useState('');
+  const [questionError, setQuestionError] = React.useState(false);
+  const [answerError, setAnswerError] = React.useState(false);
   const history = useHistory();
+  const [apiError, setApiError] = React.useState('');
 
   const handleChange = (attr, value) => {
     const updatedQuestion = question;
@@ -59,14 +70,32 @@ const EditQuestion = (props) => {
     setOpen(false);
   };
 
-  const handleCancel = () => {
-    history.push(`/edit/${params.gid}`);
+  const errorHandler = () => {
+    // check if theres a question
+    let foundError = false;
+    if (!question.question) {
+      setQuestionError(true);
+      foundError = true;
+    }
+    if (question.answers.length === 0) {
+      console.log('yo');
+      setAnswerError(true);
+      foundError = true;
+    } else if (question.answers) {
+      const foundCorrect = question.answers.filter((a) => a.correct);
+      if (!foundCorrect) {
+        setAnswerError(true);
+        foundError = true;
+      }
+    }
+    return foundError;
   };
 
   const setQtype = () => question.answers.filter((a) => a.correct).length === 1;
   const handleConfirm = async () => {
-    if (!open) {
-      console.log(question);
+    const foundError = errorHandler();
+    console.log(foundError);
+    if (!foundError) {
       // check if the new question has more than one answer then change the type accordingly
       question.qType = setQtype() ? 'single' : 'multi';
       // first find all of the quizzes
@@ -76,7 +105,7 @@ const EditQuestion = (props) => {
       // if we're editting a question, then set the editted question
       if (qExist) {
         const quizQuestions = quiz.questions.map((q) => {
-          if (q.id === params.qid) {
+          if (q.id === Number(params.qid)) {
             return question;
           }
           return q;
@@ -86,7 +115,6 @@ const EditQuestion = (props) => {
       } else {
         quiz.questions = [...quiz.questions, question];
       }
-
       const res = await api.put(`admin/quiz/${params.gid}`, {
         headers: { 'Content-type': 'application/json', Authorization: getToken() },
         body: JSON.stringify({
@@ -95,58 +123,59 @@ const EditQuestion = (props) => {
           thumbnail: quiz.thumbnail,
         }),
       });
-      console.log(7777, res);
       if (res.error) {
+        setApiError(res.error);
         setOpen(true);
       }
       history.push(`/edit/${params.gid}/`);
+    } else {
+      setOpen(true);
     }
   };
   const classes = useStyles();
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
   // if we're editting a previous question
   return (
     <section className={classes.pageLayout}>
       <NavBar />
       <AppBarSpacer />
-      <FormLayout container direction="row">
-        <Grid container item direction="column" spacing={2}>
-          <Grid item xs={8}>
+      <Grid container direction={matches ? 'column' : 'row'} spacing={2}>
+        <Grid container item direction="column" spacing={2} xs={matches ? 12 : 8}>
+          <Grid item xs={12}>
             <TextField
               variant="filled"
               fullWidth
               label="Whats your Question?"
               onBlur={(event) => { handleChange('question', event.target.value); }}
               defaultValue={edit.question}
+              error={questionError}
+              helperText={questionError ? 'Question cannot be left blank' : ''}
             />
           </Grid>
           <Grid item>
             <MediaZone question={question} setQuestion={setQuestion} />
           </Grid>
         </Grid>
-        <Grid container item direction="column" xs={4} justify="space-between" className={classes.sidebar}>
-          <FormControl>
-            <InputLabel id="question-type-label">Question Type</InputLabel>
-            <Select displayEmpty labelId="question-type-label" id="question-type-select" defaultValue={question.qType} onChange={(event) => handleChange('qType', event.target.value)}>
-              <MenuItem value="single">Single Choice</MenuItem>
-              <MenuItem value="multi">Multiple Choice</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField defaultValue={edit.score} id="points" onChange={(event) => handleChange('points', event.target.value)} label="Points?" />
-          <TextField defaultValue={edit.time} id="timer" onChange={(event) => handleChange('time', Number(event.target.value))} label="Question Duration" />
-          <TextField defaultValue={edit.preview} id="preview" onChange={(event) => handleChange('preview', Number(event.target.value))} label="Preview Duration" />
-          <Grid item>
-            <SecondaryButton onClick={handleCancel} variant="contained">Cancel</SecondaryButton>
-          </Grid>
-          <Button color="primary" variant="contained" onClick={handleConfirm}>Confirm Question</Button>
-          <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
-            <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity="error">
-              Please Confirm your question before Continuing
-            </MuiAlert>
-          </Snackbar>
-        </Grid>
-      </FormLayout>
+        {matches
+          ? (
+            <EditQuestionBarDrawer
+              handleChange={handleChange}
+              handleConfirm={handleConfirm}
+              gId={params.gid}
+            />
+          )
+          : (
+            <EditQuestionSideBar
+              handleChange={handleChange}
+              handleConfirm={handleConfirm}
+              gId={params.gid}
+            />
+          )}
+      </Grid>
       <Paper className={classes.answersContainer}>
-        <Grid container direction="row" spacing={2}>
+        {answerError && <Typography color="error">Answer must not be empty and must have a correct choice</Typography>}
+        <Grid container direction="row" spacing={2} className={answerError ? classes.errorContainer : ''}>
           <EditAnswers aId={1} question={question} setQuestion={setQuestion} />
           <EditAnswers aId={2} question={question} setQuestion={setQuestion} />
           <EditAnswers aId={3} question={question} setQuestion={setQuestion} />
@@ -155,7 +184,41 @@ const EditQuestion = (props) => {
           <EditAnswers aId={6} question={question} setQuestion={setQuestion} />
         </Grid>
       </Paper>
+      { matches && (
+      <Grid container direction="row" spacing={1}>
+        <Grid item xs={6}>
+          <Button
+            className={classes.buttonGroup}
+            fullWidth
+            onClick={() => { history.push(`/edit/${params.gid}`); }}
+            size="large"
+            variant="contained"
+            color="secondary"
+          >
+            Cancel
 
+          </Button>
+        </Grid>
+        <Grid item xs={6}>
+          <Button
+            className={classes.buttonGroup}
+            fullWidth
+            color="primary"
+            variant="contained"
+            onClick={handleConfirm}
+            size="large"
+          >
+            Confirm
+
+          </Button>
+        </Grid>
+      </Grid>
+      ) }
+      <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+        <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity="error">
+          {apiError}
+        </MuiAlert>
+      </Snackbar>
     </section>
   );
 };

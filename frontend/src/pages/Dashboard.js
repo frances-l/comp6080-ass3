@@ -1,19 +1,22 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
-import NavBar from '../UIComponents/NavBar';
+import NavBar from '../components/NavBar';
 // import isLogin from '../utils';
 import API from '../utils/api';
 import { getToken } from '../utils/helpers';
-import GameCard from '../UIComponents/GameCard';
+import GameCard from '../components/GameCard';
 import logo from '../assets/BBLogo.jpg';
 import '../styles/styles.css';
 import AppBarSpacer from '../utils/styles';
+import ErrorHandler from '../components/ErrorHandler';
+import { StoreContext } from '../utils/store';
 
 const api = new API('http://localhost:5005');
 
 function Dashboard() {
   const [games, setGames] = React.useState([]);
-
+  const context = React.useContext(StoreContext);
+  const { apiError: [, setApiError] } = context;
   React.useEffect(() => {
     (async () => {
       const quizzes = await api.get('admin/quiz', {
@@ -27,6 +30,9 @@ function Dashboard() {
       if (quizzes.quizzes) {
         const allQuizzes = await Promise.all(quizzes.quizzes.map(async (quiz) => {
           const res = await api.get(`admin/quiz/${quiz.id}`, { headers: { Authorization: getToken() } });
+          if (res.error) {
+            setApiError({ error: true, message: res.error });
+          }
           let { thumbnail } = res;
           if (thumbnail === null) {
             thumbnail = logo;
@@ -35,11 +41,10 @@ function Dashboard() {
             id: quiz.id, questions: res.questions, title: res.name, thumbnail, active: quiz.active,
           };
         }));
-        console.log(allQuizzes);
         setGames(allQuizzes);
       }
     })();
-  }, []);
+  }, [setApiError]);
 
   return (
     <main id="dashboard" className="page-layout">
@@ -50,7 +55,7 @@ function Dashboard() {
       <div />
       <section>
         {/* {Note lint doesn't fucking allow object types so we have to do this} */}
-        <Grid container alignItems="center" spacing={3}>
+        <Grid container alignItems="center" justify="center" spacing={3}>
           {games.map((quiz) => (
             <Grid item>
               <GameCard
@@ -64,6 +69,7 @@ function Dashboard() {
             </Grid>
           ))}
         </Grid>
+        <ErrorHandler />
       </section>
     </main>
   );

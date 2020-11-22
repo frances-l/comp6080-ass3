@@ -1,16 +1,19 @@
-import React from 'react';
 import {
-  Typography, Grid, CardMedia, Divider,
-  useTheme, useMediaQuery, makeStyles,
+  Typography, Grid, Paper, CardMedia,
+  makeStyles, useTheme, useMediaQuery,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import Timer from '../components/Timer';
-import QuestionAnswers from '../components/QuestionAnswers';
+import React from 'react';
 import { StoreContext } from '../utils/store';
 import NavBar from '../components/NavBar';
 import AppBarSpacer from '../utils/styles';
+import LinearTimer from '../components/LinearTimer';
 
 const useStyles = makeStyles((theme) => ({
+  questionContainer: {
+    padding: '1em 3em',
+    borderRadius: '1em',
+  },
   pageLayout: {
     padding: '0 5em',
     [theme.breakpoints.down('sm')]: {
@@ -18,45 +21,31 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-
-// this will interchange with the PlayPage, itll alternate between this and question results
-const QuestionPage = ({ setStage }) => {
+const QuestionPreview = ({ setStage }) => {
   const context = React.useContext(StoreContext);
   const { currQuestion: [currQuestion] } = context;
-  const handleDurationExpire = () => {
-    setStage('results');
+
+  const handleComplete = async () => {
+    setStage('question');
   };
+
   const classes = useStyles();
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down('sm'));
-
   return (
     <div>
       <header>
         <NavBar />
       </header>
       <AppBarSpacer />
-      <article className={classes.pageLayout}>
-        <Grid container direction="column" alignContent="center" justify="center" spacing={5}>
-          <Grid item xs={12}>
-            <Typography color="textPrimary" variant={matches ? 'h3' : 'h1'} align="center">{currQuestion.question}</Typography>
+      <section className={classes.pageLayout}>
+        <Grid container direction="column" spacing={3} alignContent="center" justify="center">
+          <Grid item>
+            <Paper className={classes.questionContainer}>
+              <Typography color="textPrimary" variant={matches ? 'h3' : 'h1'}>{currQuestion.question}</Typography>
+            </Paper>
           </Grid>
-          <Divider />
-          <Grid
-            container
-            item
-            direction={matches ? 'column' : 'row'}
-            alignItems="center"
-            justify="center"
-            spacing={5}
-          >
-
-            <Grid item>
-              <Timer
-                duration={Number(currQuestion.time)}
-                onComplete={handleDurationExpire}
-              />
-            </Grid>
+          <Grid container item alignItems="center" justify="center">
             <Grid item>
               {(() => {
                 if (currQuestion.media.type === 'video') {
@@ -69,16 +58,16 @@ const QuestionPage = ({ setStage }) => {
             </Grid>
           </Grid>
           <Grid item>
-            <QuestionAnswers questionAnswers={currQuestion.answers} type={currQuestion.qType} />
+            <LinearTimer handleComplete={handleComplete} time={currQuestion.preview} />
           </Grid>
         </Grid>
-      </article>
+      </section>
     </div>
   );
 };
 
-QuestionPage.propTypes = {
+QuestionPreview.propTypes = {
   setStage: PropTypes.func.isRequired,
 };
 
-export default QuestionPage;
+export default QuestionPreview;
