@@ -4,21 +4,12 @@
  to return to a "player"
 */
 export const quizQuestionPublicReturn = question => {
-  const parsedAnswers = question.answers.map((a) => {
-    const answerNoCorrect = a;
-    // delete answerNoCorrect.correct;
-    return answerNoCorrect;
+  const withCorr = JSON.parse(JSON.stringify(question));
+  withCorr.answers.forEach((elem) => {
+    delete elem.correct;
   });
-  const retQuestion = {
-    id: question.id,
-    question: question.question,
-    answers: parsedAnswers,
-    time: question.time,
-    media: question.media,
-    preview: question.preview,
-    qType: question.qType,
-  };
-  return retQuestion;
+  console.log(222, withCorr);
+  return withCorr;
 };
 
 /*
